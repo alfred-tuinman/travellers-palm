@@ -1,0 +1,23 @@
+[% INCLUDE layouts/header.tt %] 
+
+<section id="content" class="gray-area">
+    <div class="global-map-area4 section " style="margin-top: 100px;">
+        <div class="container">
+            <div class="testimonial style3">
+                <div class="author"> <a href="http://goindia.about.com/od/Goa/ss/Summertime-Spectacular-and-Secluded-Luxury-Villa-in-Goa.htm#step6" target="_new"><img src="[% IMAGE %]/testimonials/sharell-cook.gif" alt="India bespoke holidays" title="Sharell Cook" width="74" height="74" /></a></div>
+                <blockquote class="description">The Traveller's Palm, Hans and Sucheta's expert tour business, provides bespoke vacations to India as well as customizable itineraries. They offer a selection of atmospheric, handpicked hotels from budget to luxury.</blockquote>
+                <h2 class="name">Sharell Cook<br/><small>travel writer</small></h2>
+            </div>
+        </div>
+    </div>
+     <br>
+</section>
+
+[% INCLUDE layouts/footer.tt %] 
+
+<script type="text/javascript" src="js/theme-scripts.js"></script>
+<script type="text/javascript" src="js/scripts.js"></script>
+
+</body>
+</html>
+

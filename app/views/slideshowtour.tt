@@ -1,0 +1,17 @@
+<div class="photo-gallery style1" id="photo-gallery1" data-animation="slide" data-sync="#image-carousel1">
+    <ul class="slides">
+        [% FOREACH i = items -%]
+        <li><img src="[% IMAGE %]/[% imagepath %]/[% i.imagename %]" alt="[% i.alttag -%]" title="[% i.title -%]" /></li>
+        [% END %]
+    </ul>
+</div>
+<div class="image-carousel style1" id="image-carousel1" data-animation="slide" data-item-width="70" data-item-margin="10" data-sync="#photo-gallery1">
+    <ul class="slides">
+         [% FOREACH i = items -%]
+        <li><img src="[% IMAGE %]/[% imagepath %]/[% i.imagename -%]" alt="[% i.alttag -%]" title="[% i.title -%]" /></li>
+        [% END %]
+    </ul>
+</div>
+<div class="travelo-box book-with-us-box">
+    [% webwriteup %]
+</div> 

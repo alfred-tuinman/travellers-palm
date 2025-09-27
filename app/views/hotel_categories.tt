@@ -1,0 +1,4 @@
+<div class="photo-gallery style1" id="photo-gallery1"></div>
+<div class="travelo-box book-with-us-box">
+	[% hotel_categories.writeup %]
+</div>

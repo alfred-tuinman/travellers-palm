@@ -1,0 +1,160 @@
+<section style="background: #f5f5f5;">
+    <div class="container">
+    <div class="row">
+    <div class="pull-right">
+        <a id="back-to-top" href="#" class="animated" data-animation-type="bounce"><i class="soap-icon-longarrow-up circle"></i></a>
+    </div>
+</div>
+</div>
+</section>
+<footer id="footer">
+    <div class="footer-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                    <h2>&nbsp;</h2>
+                    <div class="thumb">
+                        <img src="data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-src="[% IMAGE %]/why-travel-with-us/lonely-planet-2014.gif" alt="Lonely Planet" width="250" />
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-6 col-md-2">
+                    <h2 class="center">Memberships </h2>
+                    <div class="row">
+                            <div class="col-xs-4 col-sm-4 col-md-12">
+                            <div class="memberships">
+                                <a href="http://www.iato.in" target="_blank">
+                                    <img src="data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-src="[% IMAGE %]/about-us/iato.png" alt="IATO" />
+                                </a>
+                            </div>    
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-12">
+                            <div class="memberships">
+                                <a href="http://www.travelagentsofindia.com" target="_blank">
+                                    <img src="data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-src="[% IMAGE %]/about-us/taai.jpg" alt="TAAI"  />
+                                </a>
+                            </div>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-12">
+                            <div class="memberships">
+                                <a href="http://tourism.gov.in/TourismDivision/AboutDivision.aspx?Name=Travel%20Trade" target="_blank">
+                                    <img src="data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-src="[% IMAGE %]/about-us/ministry.jpg" alt="Ministry of Tourism" />
+                                </a>
+                            </div>
+                            </div>   
+                    </div>
+                    <hr>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-6">
+                    <h2 class="center">Unique Experience in Goa</h2>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="specials">
+                            <a href="http://www.summertimegoa.com" target="_blank">
+                                <img src="data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-src="[% IMAGE %]/specials/summertime/summertime_small.jpg" alt="luxury villa goa" class="footer-specials" >
+                            </a>
+                            </div>
+                            <div class="specials-text">
+                                <a href="http://www.summertimegoa.com" target="_blank">
+                                    <h5 class="footer-specials">Summertime</h5>
+                                    <p>A luxury villa in goa</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-1">
+                    <h2>&nbsp;</h2>
+                    <div id="social">
+                        <ul class="social-icons clearfix">
+                            <li class="twitter"><a title="twitter" href="https://twitter.com/travellers_palm" target="_blank" data-toggle="tooltip"><i class="soap-icon-twitter"></i></a></li>
+                            <li class="googleplus"><a title="googleplus" href="https://plus.google.com/+Summertimegoavilla" target="_blank" data-toggle="tooltip"><i class="soap-icon-googleplus"></i></a></li>
+                            <li class="facebook"><a title="facebook" href="https://www.facebook.com/Travellers-Palm-152821658071605" target="_blank" data-toggle="tooltip"><i class="soap-icon-facebook"></i></a></li>
+                            <li class="linkedin"><a title="linkedin" href="https://www.linkedin.com/company/odyssey-tours-&amp;-travels-pvt-ltd" target="_blank" data-toggle="tooltip" data-original-title="Summertime Luxury Villa Goa"><i class="soap-icon-linkedin"></i></a></li>
+                        </ul>        
+                    </div>
+                    <div>
+                        <a href="[% request.uri_base %]/site-map">Site Map</a>
+                    </div> 
+                </div>
+            </div>
+        </div>
+   
+        <div class="bottom-section">
+           
+            
+
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-6">
+                    <div class="tplogo">
+                        <a href="home" title="Traveller's Palm - home">
+                            <img src="data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-src="[% IMAGE %]/about-us/logo-gold.png" alt="Traveller's Palm" />
+                        </a>
+                    </div>
+                    <div class="subtitle">
+                          <span>The experts in tailor-made holidays to India</span>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-6">
+                    <div class="contact-details phone">
+                        <span class="contact-phone">
+                            <i class="soap-icon-phone"></i>
+                            &nbsp;[% PHONE1 %]
+                        </span>
+                    </div>
+                    <div class="contact-details email">
+                        <span class="odc-contact-email">
+                            <i class="soap-icon-message"></i>
+                            <a href="mailto:info@travellers-palm.com" class="contact-email">info@travellers-palm.com</a>
+                        </span>
+                    </div>
+                </div>
+            <div>
+
+            <div class="row copyright">
+                <div class="col-sm-4 col-md-4">
+                    <p>&copy; 2015 - [% year %] <a href="http://www.odyssey.co.in" target="_blank">Odyssey Tours &amp; Travels Pvt Limited</a></p>
+                </div>
+                <div class="col-sm-4 col-md-4" id="myCookieConsent">
+                    <a href="#myCookieConsent">Cookie Policy</a>
+                </div>
+                <div class="col-sm-4 col-md-4">
+                    <a href="policies">Privacy Policy</a>
+                </div>
+            </div>
+            </div>
+
+        </div>
+    </div>
+</footer>
+</div> 
+
+[% IF state == 1 %]
+<!--  India states map -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/lg-map/raphael.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/lg-map/scale.raphael.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/lg-map/lg-map.js"></script>
+[% END %]
+<script type="text/javascript" src="[% request.uri_base %]/js/jquery-1.11.1.min.js"></script> 
+<script type="text/javascript" src="[% request.uri_base %]/js/jquery.noconflict.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/modernizr.2.7.1.min.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/jquery.placeholder.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/jquery-ui.1.10.4.min.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/bootstrap.js"></script>
+<script type="text/javascript">
+
+  function downloadJSAtOnload() {
+    var element = document.createElement("script");
+    element.src = "[% request.uri_base %]/js/defer.js";
+    document.body.appendChild(element);
+  }
+
+  if (window.addEventListener)
+    window.addEventListener("load", downloadJSAtOnload, false);
+  else if (window.attachEvent)
+    window.attachEvent("onload", downloadJSAtOnload);
+  else window.onload = downloadJSAtOnload;
+
+</script>

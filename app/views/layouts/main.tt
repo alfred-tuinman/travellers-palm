@@ -1,0 +1,31 @@
+[%# main.tt - Layout template %]
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>[% title %]</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Travelo</h1>
+    <nav>
+      <a href="/">Home</a> |
+      <a href="/users">Users</a> |
+      <a href="/about">About</a> |
+      <a href="/contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    [% content %]
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Travelo</p>
+  </footer>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

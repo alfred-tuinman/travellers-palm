@@ -1,0 +1,109 @@
+
+     <div id="travelo-signup" class="travelo-signup-box travelo-box">
+      <div class="login-social">
+               <a href="#travelo-login" class="button login-facebook"><i class="soap-icon-facebook"></i>Login with Facebook</a> 
+       <fb:login-button scope="public_profile,email" data-size="xlarge" onlogin="checkLoginState();">
+     </fb:login-button>
+     <div id="status">
+     </div>
+            <a href="#travelo-signup" class="button login-googleplus"><i class="soap-icon-googleplus"></i>Login with Google+</a>  
+     <div>
+      <span id="signinButton">
+       <span
+       class="g-signin"
+       data-callback="signinCallback"
+       data-clientid="510721710544-dfoalftg63n04r64rdch5ibimn4uns0e.apps.googleusercontent.com"
+       data-cookiepolicy="single_host_origin"
+       data-requestvisibleactions="http://schema.org/AddAction"
+       data-scope="https://www.googleapis.com/auth/plus.login">
+     </span>
+   </span>
+ </div>
+</div>
+<div class="seperator"><label>OR</label></div>
+<div class="simple-signup">
+  <div class="text-center signup-email-section">
+    <a href="#" class="signup-email"><i class="soap-icon-letter"></i>Sign up with Email</a>
+  </div>
+  <p class="description">By signing up, I agree to Traveller's Palm Terms of Service and Privacy Policy.</p>
+</div>
+<div class="email-signup">
+  <form>
+    <div class="form-group">
+      <input type="text" class="input-text full-width" placeholder="first name">
+    </div>
+    <div class="form-group">
+      <input type="text" class="input-text full-width" placeholder="last name">
+    </div>
+    <div class="form-group">
+      <input type="text" class="input-text full-width" placeholder="email address">
+    </div>
+    <div class="form-group">
+      <input type="password" class="input-text full-width" placeholder="password">
+    </div>
+    <div class="form-group">
+      <input type="password" class="input-text full-width" placeholder="confirm password">
+    </div>
+    <div class="form-group">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox"> Tell me about Traveller's Palm news
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <p class="description">By signing up, I agree to the Terms &amp; and Conditions and the Privacy Policy of Travellers-Palm.com</p>
+    </div>
+    <button type="submit" class="full-width btn-medium">SIGNUP</button>
+  </form>
+</div>
+<div class="seperator"></div>
+<p>Already a Traveller's Palm member? <a href="#travelo-login" class="goto-login soap-popupbox">Login</a></p>
+</div>
+<div id="travelo-login" class="travelo-login-box travelo-box">
+  <div class="login-social">
+   <fb:login-button scope="public_profile,email" data-size="xlarge" onlogin="checkLoginState();">
+ </fb:login-button>
+ <div id="status">
+ </div>
+ <div>
+  <span id="signinButton">
+   <span
+   class="g-signin"
+   data-callback="signinCallback"
+   data-clientid="510721710544-dfoalftg63n04r64rdch5ibimn4uns0e.apps.googleusercontent.com"
+   data-cookiepolicy="single_host_origin"
+   data-requestvisibleactions="http://schema.org/AddAction"
+   data-scope="https://www.googleapis.com/auth/plus.login">
+ </span>
+</span>
+</div>
+  <a href="#" class="button login-googleplus"><i class="soap-icon-googleplus"></i>Login with Google+</a>  
+</div>
+
+<div class="seperator"><label>OR</label>
+</div>
+<div id="loginContent" class="container">
+  <div id="loginResult" style="display:none;">
+  </div>
+  <form id="loginForm" name="loginForm" method="post" action="">
+    <div class="form-group">
+      <input type="text" id="username" name="username" class="input-text full-width" size="20" placeholder="email address">
+    </div>
+    <div class="form-group">
+      <input type="password" id="password" name="password" class="input-text full-width" size="20" placeholder="password">
+    </div>
+    <div class="form-group">
+      <a href="#" class="forgot-password pull-right">Forgot password?</a>
+      <div class="checkbox checkbox-inline">
+        <label>
+          <input type="checkbox"> Remember me
+        </label>
+      </div>
+    </div>
+    <button type="submit" class="btn-large full-width yellow">LOGIN TO YOUR ACCOUNT</button>
+  </form>
+</div>
+<div class="seperator"></div>
+<p>Don't have an account? <a href="#travelo-signup" class="goto-signup soap-popupbox">Sign up</a></p>
+</div>

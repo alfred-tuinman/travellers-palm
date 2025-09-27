@@ -1,0 +1,89 @@
+[% INCLUDE layouts/header.tt %]
+
+<section id="content">
+    <div class="banner imagebg-container" style="height: 350px; background-image: url([% IMAGE %]/plan-your-trip/banner.jpg);">
+        <div class="container">
+            <h2 class="med-caption yellow-color">Start your journey by getting in touch with us</h2>
+            <h1 class="big-caption">Travel to India <em>made easy!</em></h1>
+        </div>
+    </div>
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="sidebar col-sm-4 col-md-3">
+                [% INCLUDE layouts/search.tt %]
+             
+    </div>
+    <div id="main" class="col-sm-8 col-md-9">
+        <article class="image-box style6 box">
+            <figure class="col-md-6 middle-block">
+                <a href="#" title=""><img class="middle-item" src="[% IMAGE %]/plan-your-trip/girl.jpg" alt="" width="476" height="318" /></a>
+            </figure>
+            <div class="details col-md-6">
+                <h1>[% get_inspired.title %]</h1>
+                [% get_inspired.writeup %]
+            </div>
+        </article>
+        <h1><p class="dropcap">1</p>[% plan_your_trip.title %]</h1>
+        [% plan_your_trip.writeup %]
+        <h1><p class="dropcap">2</p>[% plan_and_refine.title %]</h1>
+        [% plan_and_refine.writeup %]
+        <h1><p class="dropcap">3</p>[% arrangements.title %]</h1>
+        [% arrangements.writeup %]
+        <br>
+        <blockquote class="style2 border-color-blue quote-color-yellow">
+            <span class="triangle"></span>[% quote.writeup %]
+        </blockquote>
+
+        <div id="message"></div>
+        [% IF error==1 %]
+        <div class="alert alert-error">
+            [% err_msg %]
+            <span class="close"></span>
+        </div>
+        [% END %]
+
+        <div class="travelo-box odc-blue">
+         <form class="contact-form" action="[% request.uri_base %]/plan-your-trip#message" method="post">
+             <h4 class="box-title">Send us a Message</h4>
+             <div class="row form-group">
+                 <div class="col-xs-6">
+                     <label>Your Name</label>
+                     <input type="text" name="name" value="[% name %]" class="input-text full-width">
+                 </div>
+                 <div class="col-xs-6">
+                     <label>Your Email</label>
+                     <input type="text" name="email" value="[% email %]"  class="input-text full-width">
+                 </div>
+             </div>
+             <div>
+                 <label>Reference</label>
+                 <input type="text" name="reference" value="[% reference %]"  class="input-text full-width">
+             </div>
+             <div class="form-group">
+                 <label>Your Message</label>
+                 <textarea name="message" rows="10" class="input-text full-width" placeholder="write message here">[% message %]</textarea>
+             </div>
+             <button type="submit" class="btn-large dark-blue2 full-width">SEND MESSAGE</button>
+         </form>
+     </div>
+
+ </div>
+</div>
+</div>
+</section>
+[% INCLUDE layouts/footer.tt %]
+
+<!-- parallax -->
+<script type="text/javascript" src="js/jquery.stellar.min.js"></script>
+
+<!-- waypoint -->
+<script type="text/javascript" src="js/waypoints.min.js"></script>
+
+<!-- load page Javascript -->
+<script type="text/javascript" src="js/theme-scripts.js"></script>
+<script type="text/javascript" src="js/scripts.js"></script>
+
+</body>
+</html>
+

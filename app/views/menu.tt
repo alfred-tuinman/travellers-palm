@@ -1,0 +1,22 @@
+                <div class="search-box container">
+                    <ul class="search-tabs clearfix">
+                        <li class="active"><a href="[% request.uri_base %]/best-selling-tours/list" >TOURS</a></li>
+                        <li><a href="[% request.uri_base %]/destinations" data-toggle="tab">DESTINATIONS</a></li>
+                        <li><a href="[% request.uri_base %]/icons" data-toggle="tab">ICONS OF INDIA</a></li>
+                        <li><a href="[% request.uri_base %]/accommodation" data-toggle="tab">ACCOMMODATION</a></li>
+                        <li><a href="[% request.uri_base %]/interest" data-toggle="tab">INTEREST</a></li> 
+                        <li><a href="[% request.uri_base %]/search" data-toggle="tab">SEARCH</a></li>
+                    </ul>
+                    <div class="visible-mobile">
+                        <ul id="mobile-search-tabs" class="search-tabs clearfix">
+                            <li class="active"><a href="best-selling-tours">TOURS</a></li>
+                            <li><a href="#flights-tab">FLIGHTS</a></li>
+                            <li><a href="#flight-and-hotel-tab">FLIGHT &amp; HOTELS</a></li>
+                            <li><a href="#cars-tab">CARS</a></li>
+                            <li><a href="#cruises-tab">CRUISES</a></li>
+                            <li><a href="#flight-status-tab">FLIGHT STATUS</a></li>
+                            <li><a href="#online-checkin-tab">ONLINE CHECK IN</a></li>
+                        </ul>
+                    </div>      
+                </div>
+     

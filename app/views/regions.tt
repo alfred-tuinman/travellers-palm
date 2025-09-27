@@ -1,0 +1,127 @@
+[% INCLUDE layouts/header.tt %] 
+
+<section id="content" class="gray-area">
+  <div class="container shortcode">
+    <div class="block">
+      <div class="row" >
+        <div id="main" class="col-sms-6 col-sm-8 col-md-9">
+          <div class="regions-map">
+            <div id="thememap"></div>
+            <h2 class="center">Where would you like to go?</h2>
+          </div>
+        </div>
+        <div class="sidebar col-sms-6 col-sm-4 col-md-3">
+          <div id="themecitydesc"></div>
+          <div class="travelo-box contact-box">
+           <h4>[% title %]</h4>
+           <p>[% writeup %]</p>
+         </div>
+       </div>
+     </div>
+   </div>
+
+   <div class="block">
+    <div class="row match-my-cols image-box style3">
+     [% FOREACH region in regions %]
+     <div class="col-sms-6 col-sm-6 col-md-3">
+       <article class="box">
+        <figure>
+          <a class="hover-effect" title="[% region.title %]" href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% region.url %]/list">
+            <img width="270" height="160" alt="[% region.title %]" src="[% IMAGE %]/module/region_[% region.regions_id %]_small.jpg"></a>
+          </figure>
+          <div class="details text-center">
+            <h4 class="box-title">[% region.title %]</h4>
+            <p>[% region.oneliner %] </p>
+            <div class="odc-five-stars-container" title="5 stars" data-toggle="tooltip" data-placement="bottom">
+              <span class="odc-five-stars" style="width: 80%;"></span>
+            </div>
+            <p class="description">[% region.introduction %]</p>
+            <a href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% region.url %]/list" class="button">SEE ALL</a>
+          </div>
+        </article>
+      </div>
+      [% END %]  
+    </div>
+  </div>
+  </div>
+  <div class="global-map-area1 promo-box no-margin parallax" data-stellar-background-ratio="0.5">
+      <div class="content-section description pull-right col-sm-9">
+        <div class="table-wrapper hidden-table-sm">
+          <div class="table-cell">
+            <h2 class="m-title">
+              Can’t decide where to go?<br /><em>Speak to someone who’s been  <i>there!</i></em>
+            </h2>
+          </div>
+          <div class="action-section table-cell">
+            <a href="[% request.uri_base %]/contact-us" class="btn btn-info btn-large" role="button">Enquire with us now</a>
+          </div>
+        </div>
+      </div>
+      <div class="image-container col-sm-4">
+        <img src="[% IMAGE %]/about-us/staff_large_ivan.gif" alt="Ivan" />
+      </div>
+      </div>
+</section>
+
+[% INCLUDE layouts/footer.tt %] 
+
+<script type="text/javascript" src="[% request.uri_base %]/components/flexslider/jquery.flexslider-min.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/components/jquery.bxslider/jquery.bxslider.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZ1TWStdIWQYeNDBKpE6SgJSEd4EerEdg&callback=initMap" async defer></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/jquery.stellar.min.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/theme-scripts.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/scripts.js"></script>
+
+<script type="text/javascript">
+
+  var locations = [
+  [26.92555556, 75.82361111, 'image_1.png', '[% request.uri_base %]/destinations/[% country %]/[% pathname %]/rajasthan-the-north/list'],
+  [32.28555556, 77.16222222, 'image_2.png', '[% request.uri_base %]/destinations/[% country %]/[% pathname %]/foothills-of-the-himalaya/list'],
+  [24.63750000, 87.84861100, 'image_3.png', '[% request.uri_base %]/destinations/[% country %]/[% pathname %]/kolkata-the-east/list'],
+  [23.02166667, 72.59027778, 'image_4.png', '[% request.uri_base %]/destinations/[% country %]/[% pathname %]/gujarat-central-india/list'],
+  [18.999803, 72.817383,     'image_5.png', '[% request.uri_base %]/destinations/[% country %]/[% pathname %]/mumbai-goa-the-deccan/list'],
+  [13.05027778, 80.23222222, 'image_6.png', '[% request.uri_base %]/destinations/[% country %]/[% pathname %]/karnataka-tamil-nadu/list'],
+  [8.36944444, 77.00444444,  'image_7.png', '[% request.uri_base %]/destinations/[% country %]/[% pathname %]/kerala/list'],
+  [11.63722222, 92.72805556, 'image_8.png', '[% request.uri_base %]/destinations/[% country %]/[% pathname %]/andaman-nicobar-islands/list'],
+  [10.951111, 72.287778,     'image_9.png', '[% request.uri_base %]/destinations/[% country %]/[% pathname %]/the-lakshadweep-islands/list'],
+  ];
+
+  function initMap() {
+    map = new google.maps.Map(document.getElementById('thememap'), {
+      zoom: 4,
+      center: new google.maps.LatLng(23.268764, 81.474609),
+      mapTypeId: google.maps.MapTypeId.TERRAIN,
+      mapTypeControl: false,
+      streetViewControl: false,
+      panControl: false,
+      scrollwheel: false,
+      navigationControl: false,
+      scaleControl: false,
+      draggable: false,
+      disableDefaultUI: true,
+    });
+
+    var gmarkers = new Array();
+
+    for (var i = 0; i < locations.length; i++) { 
+
+      var marker = new google.maps.Marker({
+        position: new google.maps.LatLng(locations[i][0], locations[i][1]),
+        map: map,
+        icon: '[% IMAGE %]/markers/' + locations[i][2],
+        url: locations[i][3]
+      });
+
+      gmarkers.push(marker);
+
+      google.maps.event.addListener(marker, 'click', function() {
+        window.location.href = this.url;
+      });
+    };
+  };
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+[% INCLUDE layouts/header.tt %] 
+
+<section id="content" class="no-padding">
+  <div class="banner imagebg-container" style="height: 350px; background-image: url([% IMAGE %]/why-travel-with-us/banner.jpg);">
+    <div class="container">
+      <h1 class="big-caption">[% destination %]</h1>
+      <h2 class="med-caption">A country which will never seize to amaze you</h2>
+  </div>
+</div>
+</section>
+
+<section class="gray-area">
+    <div class="container">
+
+        <div class="row">
+            <div id="main" class="col-sms-6 col-sm-8 col-md-9">
+                <div class="booking-section travelo-box">
+                    <h2>Independent India Travel</h2>
+                    <p>Great, by clicking on Traveller’s Palm you've decided to travel to India or are thinking about it!</p>
+                    <p>Now where to start with planning your trip? India is such a diverse country, with so much to offer, the choices can be overwhelming.</p>
+                    <p>Do you wish to stay in an Indian village to interact with the local people and gain a rare insight into their way of life? Would you like to learn about Indian cooking? Do you want to come to India to learn yoga, meditate, or spend time at an ashram?  Is game viewing in India’s wildlife parks top of your list? We would like to use our experience and knowledge to help you create your perfect India holiday, designed with your interests in mind.</p>
+                    <p>So as to make it easier for you to work out where you'd like to travel, we have put together a diverse and original range of sample tours that you can use as a guideline to plan yourself a holiday that takes you to places where you most want to go.</p>
+                    <p>Please remember that all our tours can be modified to suit your personal requirements as all our trips are 100% tailor-made.</p>             
+                </div>
+            </div>
+            <div class="sidebar col-sms-6 col-sm-4 col-md-3">
+                <div>
+                    <img src="[% IMAGE %]/hotel/defaulthotel_781.jpg" alt="">
+                </div>   
+            </div>
+        </div>
+</div>
+        <div class="global-map-area promo-box no-margin parallax" data-stellar-background-ratio="0.5">
+            <div class="container">
+                <div class="content-section description pull-right col-sm-9">
+                    <div class="table-wrapper hidden-table-sm">
+                        <div class="table-cell">
+                            <h1 class="m-title animated" data-animation-type="fadeInDown">
+                                Everyone should visit at least once to get a different perspective on life.<br /><em>[% destination.ucfirst %] is an <i>amazing destination!</i></em>
+                            </h1>
+                        </div>
+                        <div class="action-section table-cell">
+                            <a href="[% request.uri_base %]/contact-us"><button class="btn-large animated" data-animation-type="bounce" data-animation-delay="0.5">Enquire with us now</button></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="image-container col-sm-4">
+                    <img src="[% IMAGE %]/about-us/hans.jpg" alt="" width="312" height="195" class="animated" data-animation-type="fadeInUp" />
+                </div>
+            </div>
+        </div>
+
+    
+</section>
+
+[% INCLUDE layouts/footer.tt %] 
+
+<script type="text/javascript" src="[% request.uri_base %]/js/jquery.stellar.min.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/waypoints.min.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/theme-scripts.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/scripts.js"></script>
+
+</body>
+</html>

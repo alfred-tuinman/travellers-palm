@@ -1,0 +1,68 @@
+ <!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <!-- Force latest IE rendering engine or ChromeFrame if installed -->
+<!--[if IE]>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<![endif]-->
+<meta charset="utf-8">
+<title>Admin Portal</title>
+<meta name="description" content="File Upload widget with multiple file selection, drag&amp;drop support, progress bars, validation and preview images, audio and video.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Bootstrap styles -->
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+<!-- blueimp Gallery styles -->
+<link rel="stylesheet" href="//blueimp.github.io/Gallery/css/blueimp-gallery.min.css">
+<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+<link rel="stylesheet" href="[% request.uri_base %]/admin/uploader/css/jquery.fileupload.css">
+<link rel="stylesheet" href="[% request.uri_base %]/admin/uploader/css/jquery.fileupload-ui.css">
+<!-- CSS adjustments for browsers with JavaScript disabled -->
+<noscript><link rel="stylesheet" href="[% request.uri_base %]/admin/uploader/css/jquery.fileupload-noscript.css"></noscript>
+<noscript><link rel="stylesheet" href="[% request.uri_base %]/admin/uploader/css/jquery.fileupload-ui-noscript.css"></noscript>
+<!-- Generic page styles -->
+<link rel="stylesheet" href="[% request.uri_base %]/admin/uploader/css/style.css">
+
+</head>
+<body>
+    <div class="navbar navbar-default navbar-fixed-top">
+
+ <div class="container">
+    <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+            <li><a href="http://www.travellers-palm.com" target="_new">Traveller's Palm</a></li>
+            <li><a href="http://www.solita.co.in" target="_new">The Solita</a></li>
+            <li><a href="http://www.summertimegoa.com" target="_new">Summertime Goa</a></li>
+            <li><a href="http://www.odyssey.co.in/summertime/upload" target="_new">Payment Gateway</a></li>
+            <li><a href="http://www.ourmaninindia.com/it" target="_new">Our Man in India</a></li>
+            <!-- <li><a href="https://api.tineye.com/account_summary" target="_new" title="user is admin@odyssey.co.in">TinEye API</a></li> -->
+            <li><a href="https://api.tineye.com/account_summary" target="_new" title="Image bank compliance">TinEye</a></li>
+            <li><a href="https://tinypng.com/" target="_new" title="File compresssion">TinyPNG</a></li>
+            <li><a href="https://validator.w3.org/" target="_new" title="online HTML validation">HTML Validator</a></li>
+            <li><a href="http://192.168.0.117/it/" target="_new" title="user is administrator">Wiki</a></li>
+
+        </ul>
+    </div>
+    <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+            <li><a href="http://192.168.0.230/uploader">Image Uploader</a></li>
+            <li><a href="[% request.uri_base %]/admin/delete"><span [% IF option == 'delete' %]class="active"[% END %]>Delete images</span></a></li>
+            <li><a href="[% request.uri_base %]/admin/missing" ><span [% IF option == 'missing' %]class="active"[% END %]>Missing images</span></a></li>
+            <li><a href="[% request.uri_base %]/admin/sitemap"><span [% IF option == 'sitemap' %]class="active"[% END %]>Sitemap</span></a></li>
+            <li><a href="[% request.uri_base %]/admin/tineye-logs"><span [% IF option == 'tineye-logs' %]class="active"[% END %]>TinEye logs</span></a></li>
+            <li><a href="[% request.uri_base %]/admin/solita"><span [% IF option == 'solita' %]class="active"[% END %]>Solita</span></a></li>
+        </ul>
+    </div>
+    
+    <h1>[% heading %]</h1>
+    [% IF menu %]
+    <h2 class="lead">Travellers-palm.com</h2>
+    <ul class="nav nav-tabs">
+        <li [% IF menu == 'upload' %]class="active"[% END %]><a href="http://192.168.0.230/uploader">Upload</a></li>
+        <li [% IF menu == 'check'  %]class="active"[% END %]><a href="[% request.uri_base %]/admin/uploader/check">Check</a></li> 
+        <li [% IF menu == 'tineye' %]class="active"[% END %]><a href="[% request.uri_base %]/admin/uploader/tineye/tineye">TinEye</a></li>
+        <li [% IF menu == 'sync'   %]class="active"[% END %]><a href="[% request.uri_base %]/admin/uploader/sync">Synchronise</a></li>
+    </ul>
+    [% END %]
+    <br>
+</div>

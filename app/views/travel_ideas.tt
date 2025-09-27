@@ -1,0 +1,246 @@
+[% INCLUDE layouts/header.tt %] 
+
+        <section id="content">
+            <div class="container">
+                <div class="row">
+                    <div id="main" class="col-md-9">
+                        <div class="travelo-box travel-ideas">
+                            <a href="#" class="button btn-mini pull-right">RESET ALL</a>
+                            <h2 class="idea-title"><span class="index">1</span>What you Like?</h2>
+                            <div class="column-5 image-box suggestions">
+                                <div class="box">
+                                    <a href="#" class="hover-effect style1">
+                                        <img src="http://placehold.it/160x160" alt="" />
+                                    </a>
+                                    <h4 class="caption"><a href="#">Adventure</a></h4>
+                                </div>
+                                <div class="box">
+                                    <a href="#" class="selected-effect">
+                                        <img src="http://placehold.it/160x160" alt="" />
+                                    </a>
+                                    <h4 class="caption"><a href="#">Beaches &amp; Sun</a></h4>
+                                </div>
+                                <div class="box">
+                                    <a href="#" class="hover-effect style1">
+                                        <img src="http://placehold.it/160x160" alt="" />
+                                    </a>
+                                    <h4 class="caption"><a href="#">Casinos</a></h4>
+                                </div>
+                                <div class="box">
+                                    <a href="#" class="hover-effect style1">
+                                        <img src="http://placehold.it/160x160" alt="" />
+                                    </a>
+                                    <h4 class="caption"><a href="#">Family Fun</a></h4>
+                                </div>
+                                <div class="box">
+                                    <a href="#" class="hover-effect style1">
+                                        <img src="http://placehold.it/160x160" alt="" />
+                                    </a>
+                                    <h4 class="caption"><a href="#">History</a></h4>
+                                </div>
+                                <div class="box">
+                                    <a href="#" class="hover-effect style1">
+                                        <img src="http://placehold.it/160x160" alt="" />
+                                    </a>
+                                    <h4 class="caption"><a href="#">Culture</a></h4>
+                                </div>
+                                <div class="box">
+                                    <a href="#" class="hover-effect style1">
+                                        <img src="http://placehold.it/160x160" alt="" />
+                                    </a>
+                                    <h4 class="caption"><a href="#">Romance</a></h4>
+                                </div>
+                                <div class="box">
+                                    <a href="#" class="selected-effect">
+                                        <img src="http://placehold.it/160x160" alt="" />
+                                    </a>
+                                    <h4 class="caption"><a href="#">Shopping</a></h4>
+                                </div>
+                                <div class="box">
+                                    <a href="#" class="hover-effect style1">
+                                        <img src="http://placehold.it/160x160" alt="" />
+                                    </a>
+                                    <h4 class="caption"><a href="#">Skiing</a></h4>
+                                </div>
+                                <div class="box">
+                                    <a href="#" class="hover-effect style1">
+                                        <img src="http://placehold.it/160x160" alt="" />
+                                    </a>
+                                    <h4 class="caption"><a href="#">Clubs</a></h4>
+                                </div>
+                            </div>
+
+                            <a href="#" class="button btn-mini pull-right">RESET ALL</a>
+                            <h2 class="idea-title box"><span class="index">2</span>Where you want to Go?</h2>
+                            <div class="suggested-places">
+                                <div class="overflow-hidden">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <ul class="check-square box">
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">Anywhere<small>5,5785 places</small></h6>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">Melbourne, Australia<small>466 places</small></h6>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">New York, United States<small>3345 places</small></h6>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">New Delhi, India<small>307 places</small></h6>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">Budapest, Hungary<small>1041 places</small></h6>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <ul class="check-square box">
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">Anywhere<small>5,5785 places</small></h6>
+                                                    </a>
+                                                </li>
+                                                <li class="active">
+                                                    <a href="#">
+                                                        <h6 class="box-title">Melbourne, Australia<small>466 places</small></h6>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">New York, United States<small>3345 places</small></h6>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">New Delhi, India<small>307 places</small></h6>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">Budapest, Hungary<small>1041 places</small></h6>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <ul class="check-square box">
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">Anywhere<small>5,5785 places</small></h6>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">Melbourne, Australia<small>466 places</small></h6>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">New York, United States<small>3345 places</small></h6>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">New Delhi, India<small>307 places</small></h6>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <h6 class="box-title">Budapest, Hungary<small>1041 places</small></h6>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="#" class="button btn-medium green">INSPIRE ME NOW!</a>
+                        </div>
+                    </div>
+                    <div class="sidebar col-md-3">
+                        <div class="travelo-box contact-box">
+                            <h4>Need Travelo Help?</h4>
+                            <p>We would be more than happy to help you. Our team advisor are 24/7 at your service to help you.</p>
+                            <address class="contact-details">
+                                <span class="contact-phone"><i class="soap-icon-phone"></i> 1-800-123-HELLO</span>
+                                <br>
+                                <a class="contact-email" href="#">help@travelo.com</a>
+                            </address>
+                        </div>
+                        <div class="travelo-box">
+                            <h4 class="box-title">Holiday Activities</h4>
+                            <div class="image-box style14">
+                                <article class="box">
+                                    <figure><a href="#" title=""><img width="63" height="59" src="http://placehold.it/63x59" alt=""></a></figure>
+                                    <div class="details">
+                                        <h5 class="box-title"><a href="#">Half-Day Island Tour</a></h5>
+                                        <label class="price-wrapper"><span class="price-per-unit">$35</span>Family Package</label>
+                                    </div>
+                                </article>
+                                <article class="box">
+                                    <figure><a href="#" title=""><img width="63" height="59" src="http://placehold.it/63x59" alt=""></a></figure>
+                                    <div class="details">
+                                        <h5 class="box-title"><a href="#">Ocean Park Tour</a></h5>
+                                        <label class="price-wrapper"><span class="price-per-unit">$26</span>Per Person</label>
+                                    </div>
+                                </article>
+                                <article class="box">
+                                    <figure><a href="#" title=""><img width="63" height="59" src="http://placehold.it/63x59" alt=""></a></figure>
+                                    <div class="details">
+                                        <h5 class="box-title"><a href="#">Dream World Trip</a></h5>
+                                        <label class="price-wrapper"><span class="price-per-unit">$11</span>holiday offer</label>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+                        <div class="travelo-box book-with-us-box">
+                            <h4>Why Book with us?</h4>
+                            <ul>
+                                <li>
+                                    <i class="soap-icon-hotel-1 circle"></i>
+                                    <h5 class="title"><a href="#" class="skin-color">135,00+ Hotels</a></h5>
+                                    <p>Nunc cursus libero pur congue arut nimspnty.</p>
+                                </li>
+                                <li>
+                                    <i class="soap-icon-savings circle"></i>
+                                    <h5 class="title"><a href="#" class="skin-color">Low Rates &amp; Savings</a></h5>
+                                    <p>Nunc cursus libero pur congue arut nimspnty.</p>
+                                </li>
+                                <li>
+                                    <i class="soap-icon-support circle"></i>
+                                    <h5 class="title"><a href="#" class="skin-color">Excellent Support</a></h5>
+                                    <p>Nunc cursus libero pur congue arut nimspnty.</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+      [% INCLUDE layouts/footer.tt %] 
+    
+    <!-- parallax -->
+    <script type="text/javascript" src="js/jquery.stellar.min.js"></script>
+    
+    <!-- waypoint -->
+    <script type="text/javascript" src="js/waypoints.min.js"></script>
+
+    <!-- load page Javascript -->
+    <script type="text/javascript" src="js/theme-scripts.js"></script>
+    <script type="text/javascript" src="js/scripts.js"></script>
+    
+</body>
+</html>
+

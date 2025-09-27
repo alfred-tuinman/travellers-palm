@@ -1,0 +1,29 @@
+
+<div class="hotel-list">
+  <div class="row image-box hotel listing-style1">
+    [% FOREACH itin in itineraries %]
+    <div class="col-sm-6 col-md-4">
+      <article class="box [% itin.themes %]" data-cost="[% itin.cost %]" data-duration="[% itin.numdays %]">
+        <figure>
+          <a href="[% request.uri_base %]/ajax/slideshow-tour-[% itin.tourname %].html" class="hover-effect popup-gallery">
+            <img alt="[% itin.title %]" src="[% IMAGE %]/[% IF itin.readytours %]tour/tour_[% ELSE %]module/mod_[% END %][% itin.tourname %]_small.jpg">
+          </a>
+        </figure>
+        <div class="details">
+          <span class="price">
+            <small>From </small>
+            [% currencycode %]  [% itin.cost | comma %]
+          </span>
+          <div >
+            <h4 class="box-title">[% itin.title %]<small>[% itin.oneliner %]</small></h4>
+            <p class="description">[% itin.introduction %]</p>
+          </div>
+          <div class="action">
+            <a class="button btn-small yellow full-width" href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% IF filter == 'theme' %][% themeinfo.url %]/[% END %][% itin.url %]">SELECT</a>
+          </div>
+        </div>
+      </article>
+    </div>
+    [% END %]
+</div>
+</div>

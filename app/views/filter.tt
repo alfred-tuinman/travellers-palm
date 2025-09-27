@@ -1,0 +1,90 @@
+<div class="col-sm-4 col-md-3">
+  <h4  class="search-results-title">
+    <i class="soap-icon-search"></i>
+    <b id="counter">[% itineraries.size %] tours found</b>
+  </h4>
+  <div>
+    <a id="showAll" href="#">&nbsp;</a>
+  </div>
+
+  [% IF itineraries.size > 0 %]
+  <div class="toggle-container filters-container">
+   <div class="panel style1 arrow-right">
+     <h4 class="panel-title odc-toggle">Price</h4>
+     <div id="price-filter" >
+       <div class="panel-content">
+         <div id="price-range"></div>
+         <br />
+         <span id="pmin" class="min-price-label pull-left"></span>
+         <span id="pmax" class="max-price-label pull-right"></span>
+         <div class="clearer"></div>
+       </div><!-- end content -->
+     </div>
+   </div>
+   <div class="panel style1 arrow-right">
+     <h4 class="panel-title odc-toggle">Duration</h4>
+     <div id="duration-filter" >
+       <div class="panel-content">
+         <div id="duration-range"></div>
+         <br />
+         <span id="dmin" class="min-duration-label pull-left"></span>
+         <span id="dmax" class="max-duration-label pull-right"></span>
+         <div class="clearer"></div>
+       </div><!-- end content -->
+     </div>
+   </div>
+
+   [% IF filter == 'regions' %]                      
+   <div class="panel style1 arrow-right">
+     <h4 class="panel-title odc-toggle">Regions</h4>
+     <div>
+       <div id="regions-bar" class="panel-content">
+         <ul  class="chevron box"> <!-- filters-option -->
+           [% FOREACH region in regions %]
+           <li [% IF region.url == thisregion %] id="selected"[% END %]>
+             <a href="[% request.uri_base %]/destinations/[% country %]/[% REGIONS %]/[% region.url %]/[% display %]">[% region.title %]</a>
+           </li>
+           [% END %]                                            
+         </ul>                                           
+       </div>
+     </div>
+   </div>
+
+   <div class="panel style1 arrow-right">
+     <div class="panel-content">
+      <h4 class="panel-title">[% special_interests.title %]</h4>
+      <div class="odc-panel-title">
+        <br>
+        [% special_interests.writeup %]
+        <p>Click <a href="[% request.uri_base %]/destinations/[% country %]/[% THEMES %]/adventure">here </a>to find out more.</p>
+      </div>
+    </div>
+  </div>
+  [% END %]
+
+  [% IF filter == 'tailor' %]
+  <div id="ideas" class="panel style1 arrow-right">
+   <h4 class="panel-title odc-toggle">Trip Ideas</h4>
+   <div id="tripidea-filter" >
+     <div class="panel-content">
+       <ul class="filters-option">
+         [% FOREACH trip in tripideas %]
+         <li>
+          <label for="[% trip.url %]"><input type="checkbox" value="[% trip.url %]" id="[% trip.url %]" />&nbsp;&nbsp;&nbsp;[% trip.pagename %]</label>
+        </li>
+        [% END %]                                            
+      </ul>
+      <h4 class="panel-title">[% read_more.title %]</h4>
+      <div class="odc-panel-title">
+       <br>
+       <p>Click <a href="[% request.uri_base %]/destinations/[% country %]/[% IDEAS %]/family-holidays">here </a>to read more in detail about the above Trip Ideas.</p>
+     </div>
+   </div>
+ </div>
+</div> 
+[% END %]
+
+[% INCLUDE layouts/search.tt %]
+</div>
+[% END %]
+</div>        

@@ -1,0 +1,316 @@
+[% USE Comma %]
+
+<!DOCTYPE html>
+<!--[if IE 8]>          <html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>          <html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->  <html lang="en"> <!--<![endif]-->
+<head>
+  <!-- Page Title -->
+  <title>[% metatags.meta_title %]</title>
+  <!-- Meta Tags -->
+  <meta charset="utf-8">
+
+  <meta name="robots"                   content="index follow">
+  <meta name="keywords"                 content="[% metatags.meta_keywords %]">
+  <meta name="description"              content="[% metatags.meta_descr %]">
+  <meta name="author"                   content="Odyssey Tours &amp; Travels Pvt Ltd">
+  <meta name="viewport"                 content="width=device-width, initial-scale=1.0">
+  <meta name="msapplication-TileColor"  content="#ffffff">
+  <meta name="msapplication-TileImage"  content="/ms-icon-144x144.png">
+  <meta name="theme-color"              content="#ffffff">
+  <meta name="twitter:card"             content="summary"/>
+  <meta name="twitter:description"      content="[% metatags.meta_descr %]"/>
+  <meta name="twitter:title"            content="Tailor Made holidays to India | Traveller's Palm"/>
+  <meta name="twitter:site"             content="@summertime_goa"/>
+  <meta name="twitter:creator"          content="@summertime_goa"/>
+
+  <link rel="publisher"  href="https://plus.google.com/u/0/b/100518806882374754841/100518806882374754841">
+  <link rel="author"     href="https://plus.google.com/u/0/b/100518806882374754841/100518806882374754841">
+  <link rel="author"     href="https://plus.google.com/u/0/b/100518806882374754841/100518806882374754841/posts" title="Alfred Tuinman">
+  <link rel="apple-touch-icon" sizes="57x57" href="[% request.uri_base %]/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="[% request.uri_base %]/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="[% request.uri_base %]/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="[% request.uri_base %]/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="[% request.uri_base %]/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="[% request.uri_base %]/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="[% request.uri_base %]/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="[% request.uri_base %]/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="[% request.uri_base %]/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="[% request.uri_base %]/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="[% request.uri_base %]/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="[% request.uri_base %]/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="[% request.uri_base %]/favicon-16x16.png">
+  
+  <link rel="manifest" href="/manifest.json">
+
+  <link rel="stylesheet" type="text/css" href="[% request.uri_base %]/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="[% request.uri_base %]/css/theme-styles.css">
+  <link rel="stylesheet" type="text/css" href="[% request.uri_base %]/components/revolution_slider/css/settings.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="[% request.uri_base %]/components/revolution_slider/css/style.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="[% request.uri_base %]/components/jquery.bxslider/jquery.bxslider.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="[% request.uri_base %]/components/flexslider/flexslider.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="[% request.uri_base %]/css/style.css" id="main-style">
+  <link rel="stylesheet" type="text/css" href="[% request.uri_base %]/css/updates.css">
+  <link rel="stylesheet" type="text/css" href="[% request.uri_base %]/css/responsive.css">
+  <link rel="stylesheet" type="text/css" href="[% request.uri_base %]/css/custom.css">
+  <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
+<style>
+/* cookie consent */
+.cc-revoke.cc-bottom {
+    bottom: 0;
+    left: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: .5em; 
+    transform: translateY(2em);
+    opacity: 0;
+}
+
+/* home */
+.animated {
+  visibility: visible;
+}
+.pull-right{
+  margin-right: 10px;
+}
+#footer .bottom {
+    height: auto;
+}
+</style>
+  <!-- www.google.com/uds/api/search/1.0/aaf08f6785d79163717330afd4116c8f/default+en.css
+  www.google.com/cse/style/look/greensky.css
+--> 
+
+  <meta property="og:locale" content="en_US"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="[% metatags.meta_title %]"/>
+  <meta property="og:description" content="[% metatags.meta_descr %]"/>
+  <meta property="og:url" content="http://www.travellers-palm.com/destinations/india/"/>
+  <meta property="og:site_name" content="Tailor made individual holidays to India "/>
+
+  <script type='application/ld+json'>
+    {
+      "@context": "http://www.schema.org",
+      "@type": "Tour Operator",
+      "name": "Traveller's Palm",
+      "url": "http://www.travellers-palm.com/destinations/india/",
+      "description": "[% metatags.description %]",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "2/286 Boa Viagem Road, ",
+        "postOfficeBoxNumber": "Naikavaddo,",
+        "addressLocality": "Calangute",
+        "addressRegion": "Goa",
+        "postalCode": "403516",
+        "addressCountry": "India"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "sales contact point",
+        "telephone": "+91 832 2776941"
+      }
+    }
+  </script> 
+
+<!-- CSS for IE -->
+<!--[if lte IE 9]>
+  <link rel="stylesheet" type="text/css" href="[% request.uri_base %]/css/ie.css" />
+<![endif]-->
+
+
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+  <script type='text/javascript' src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <script type='text/javascript' src="http://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
+<![endif]-->
+
+<!-- Cookie Consent -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+<script>
+window.addEventListener("load", function(){
+  var p;
+  window.cookieconsent.initialise({ 
+      "cookie.domain": "[% domain %]",
+      "palette": {
+          "popup": {
+              "background": "#343c66",
+              "text": "#cfcfe8"
+          },
+          "button": {
+              "background": "#f71559"
+          }
+      },
+      "showLink": "true",
+      "revokable": "true",
+      "type": "opt-in",
+      "content": {
+          "message": "This website uses cookies to ensure you get the best experience on our website. By using our site, you are agreeing to our use of cookies. Please consult our ",
+          "link": "cookie statement",
+          "dismiss": "Reject",
+          "allow": "Allow cookies",
+          "deny": "Decline",
+          "href": "http://[% domain %]/policies#cookie-statement",
+      },
+      onInitialise: function (status,options) {
+          setTimeout(function() {
+              document.getElementsByClassName("cc-revoke")[0].style.display = "block";
+          });
+      },
+    }, 
+    function (popup) {
+      p = popup;
+    }, 
+    function (err) {
+      console.error(err);
+    }
+  )
+  document.getElementById("myCookieConsent").onclick = function (e) {
+    p.revokeChoice();
+  };
+});
+</script>
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-PFRG5F4');</script>
+  <!-- End Google Tag Manager -->
+
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PFRG5F4" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div id="page-wrapper">
+    <section class="heading">
+      <header id="header" class="navbar-static-top">
+        <!-- currency option -->
+        <div class="topnav">
+          <ul class="quick-menu pull-right">
+            <li class="ribbon currency">
+              <a href="#">[% currency %]</a>
+              <ul class="menu mini">
+                [% FOREACH i = currencies -%]  
+                [% IF (COUNTRY != 'IN') && (i.currencycode == 'INR') %]
+                [% ELSE %]
+                <li [% IF currency == i.currencycode %]class="active"[% END %]>
+                  <a href="[% request.uri_base %]/currency/[% i.currencycode %]" title="[% i.currencycode %]">[% i.currencycode %]</a>
+                </li>
+                [% END %]
+                [% END %]
+              </ul>
+            </li>
+            <li>
+              <a href="[% request.uri_base %]/contact-us" class="button yellow btn-small" style="height: 30px; font-size: 1em;"><i class="soap-icon-search"></i> MAKE AN ENQUIRY
+              </a>
+            </li>
+          </ul>
+        </div>
+        <!-- currency option end -->
+        <div class="main-header">
+          <a href="#mobile-menu-01" data-toggle="collapse" class="mobile-menu-toggle">
+            Mobile Menu Toggle
+          </a>
+          <div class="tplogo">
+                <div class="tpimg">
+                  <a href="[% request.uri_base %]/" title="Traveller's Palm - India">
+                    <img src="[% IMAGE %]/about-us/logo-gold.png" alt="Custom made individual holidays to India" />
+                  </a>
+                </div>
+                <div class="subtitle">
+                  <span>The experts in tailor-made holidays to India</span>
+                </div>
+          </div>
+          <div class="container">
+            <nav id="main-menu">
+              <ul class="menu">
+                <li>
+                  <a href="[% request.uri_base %]/">Home</a>
+                </li>
+                <li class="menu-item-has-children">
+                  <a href="[% request.uri_base %]/about-us">About Us</a>
+                  <ul>
+                    <li>
+                      <a href="[% request.uri_base %]/testimonials">Testimonials</a> 
+                    </li>  
+                  </ul> 
+                </li>
+                <li class="menu-item-has-children">
+                  <a href="[% request.uri_base %]/destinations/india/[% REGIONS %]">Explore India</a>
+                  <ul>
+                    <li><a href="[% request.uri_base %]/destinations/india/[% REGIONS %]">Explore by Region</a></li>
+                    <li><a href="[% request.uri_base %]/destinations/india/[% STATES %]">Explore by State</a></li>
+                    <li><a href="[% request.uri_base %]/destinations/india/[% THEMES %]">Explore by Interest</a></li>
+                  </ul>
+                </li> 
+                <li>
+                  <a href="[% request.uri_base %]/destinations/india/[% TAILOR %]/list">Ready Tours</a>
+                </li>
+                <li class="menu-item-has-children">
+                  <a href="[% request.uri_base %]/what-to-expect">FAQ</a>
+                  <ul>
+                    <li><a href="[% request.uri_base %]/what-to-expect">What to Expect</a></li>
+                    <li><a href="[% request.uri_base %]/why-travel-with-us">Why Travel With Us</a></li>
+                    <li><a href="[% request.uri_base %]/hand-picked-hotels">Hand-picked Hotels</a></li>
+                    <li><a href="[% request.uri_base %]/policies">Policies</a></li>
+                  </ul>
+                </li>
+                <li>
+                  <a href="[% request.uri_base %]/contact-us">Contact Us</a>
+                </li>   
+              </ul>
+            </nav>
+          </div>
+
+          <nav id="mobile-menu-01" class="mobile-menu collapse">
+            <ul id="mobile-primary-menu" class="menu">
+              <li>
+                <a href="[% request.uri_base %]/">Home</a>
+              </li>
+              <li class="menu-item-has-children">
+                <a href="[% request.uri_base %]/about-us">About Us</a>
+                <ul>
+                  <li>
+                    <a href="[% request.uri_base %]/testimonials">Testimonials</a> 
+                  </li>  
+                </ul>
+              </li>
+              <li class="menu-item-has-children">
+                <a href="[% request.uri_base %]/destinations/india/[% REGIONS %]">Explore India</a>
+                <ul>
+                  <li><a href="[% request.uri_base %]/destinations/india/[% REGIONS %]">Explore by Region</a></li>
+                  <li><a href="[% request.uri_base %]/destinations/india/[% STATES %]">Explore by State</a></li>
+                  <li><a href="[% request.uri_base %]/destinations/india/[% THEMES %]">Explore by Interest</a></li>
+                </ul>
+              </li> 
+              <li>
+                <a href="[% request.uri_base %]/destinations/india/[% TAILOR %]/list">Ready Tours</a>
+              </li>
+              <li class="menu-item-has-children">
+                <a href="[% request.uri_base %]/what-to-expect">FAQ</a>
+                <ul>
+                  <li><a href="[% request.uri_base %]/what-to-expect">What to Expect</a></li>
+                  <li><a href="[% request.uri_base %]/why-travel-with-us">Why Travel With Us</a></li>
+                  <li><a href="[% request.uri_base %]/hand-picked-hotels">Hand-picked Hotels</a></li>
+                  <li><a href="[% request.uri_base %]/policies">Policies</a></li>
+                </ul>
+              </li>
+              <li>
+                <a href="[% request.uri_base %]/contact-us">Contact Us</a>
+              </li>   
+            </ul>
+          </nav>
+        </div>
+      </header>
+    </section>
+
+    [% IF home != 1 %]
+    <div class="page-title-container">
+      <div id="page-title" class="container">
+        <div class="page-title pull-left"><h2 class="entry-title">[% page_title %]</h2></div>
+        <ul class="breadcrumbs pull-right"><li><a href="[% request.uri_base %]/">HOME</a></li>[% crumb %]</ul>
+      </div>
+    </div>
+    [% END %]

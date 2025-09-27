@@ -1,0 +1,19 @@
+<div class="travelo-box contact-box">
+	<h4>[% need_help.title %]</h4>
+	[% need_help.writeup %]
+	<address class="contact-details">
+		<p>The time in [% country.ucfirst %] on [% ourdate %] is now <span class="contact-phone">[% ourtime %] </span> hours.
+			[% IF timediff != 0 %]
+			Your are therefore [% timediff %] hours [% IF timediff < 0 %]ahead[% ELSE %] behind[% END %] us.
+		</p>
+		[% END %]
+		<br><br>
+		<img src="[% IMAGE %]/about-us/large_shalome.jpg" width="235"  alt="Shalome">
+		<br>
+		<span class="contact-phone"><i class="soap-icon-phone"></i> +91  88051 22221</span>
+		<br>
+		<span class="contact-phone"><i class="soap-icon-phone"></i> +91  90111 55551</span>
+		<br>
+		<a class="contact-email" href="mailto:info@travellers-palm.com?Subject=Enquiry%20about%20[% country %]" target="_top">info@travellers-palm.com</a>
+	</address>
+</div>

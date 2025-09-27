@@ -1,0 +1,69 @@
+[% INCLUDE layouts/header.tt %] 
+
+<section id="content">
+    <div class="container">
+        <img src="[% IMAGE %]/home/the-villa.jpg" title="The Villa" alt="The Villa" width="1170">
+
+                <div class="row">
+                    <div id="main" class="col-sm-8 col-md-9">
+                        <div class="booking-information travelo-box">
+                              <h1>summertime</h1>
+                            <hr />
+                            <div class="booking-confirmation clearfix">
+                                <i class="soap-icon-recommend icon circle"></i>
+                                <div class="message">
+                                    <h4 class="main-message">Thank You. Your request has been received.</h4>
+                                    <p>A confirmation email has been sent to your provided email address.</p>
+                                </div>
+                                <a href="#" class="button btn-small print-button uppercase">print Details</a>
+                            </div>
+                            <hr />
+                            <h2>Traveller Information</h2>
+                            <dl class="term-description">
+                                <dt>Name:</dt>
+                                <dd>[% name %]</dd>
+                                <dt>E-mail address:</dt>
+                                <dd>[% email %]</dd>
+                                 <dt>Phone:</dt>
+                                <dd>[% isd %] - [% phone %]</dd>
+                            </dl>
+                             <dl class="term-description">
+                                <dt>Arrive:</dt>
+                                <dd>[% arrdate %]</dd>
+                                <dt>Depart:</dt>
+                                <dd>[% depdate %]</dd>
+                            </dl>
+                            <hr />
+                            <h2>Message</h2>
+                            <dl class="term-description">
+                            <p>[% message %]</p>
+                            <br />
+                            <hr />
+                            <a href="http://www.summertimegoa.com" class="red-color underline view-link">http://www.summertimegoa.com</a>
+                        </div>
+                    </div>
+                    <div class="sidebar col-sm-4 col-md-3"></div>
+                </div>
+            </div>
+        </section>
+        [% INCLUDE layouts/footer.tt %] 
+    
+    <!-- waypoint -->
+    <script type="text/javascript" src="js/waypoints.min.js"></script>
+
+    <!-- load page Javascript -->
+    <script type="text/javascript" src="js/theme-scripts.js"></script>
+    <script type="text/javascript" src="js/scripts.js"></script>
+    
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $(".button.btn-small.print-button.uppercase").click(function(e){
+            e.preventDefault();
+            window.print();
+        })      
+    });
+   
+    </script>
+</body>
+</html>
+

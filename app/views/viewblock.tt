@@ -1,0 +1,18 @@
+
+<div class="row image-box listing-style2">      
+    [% FOREACH itin in itineraries %]
+    <div class="col-sms-6 col-sm-6 col-md-4">
+         <article class="box [% itin.themes %]" data-cost="[% itin.cost %]" data-duration="[% itin.numdays %]">
+           <figure>
+              <a href="[% request.uri_base %]/ajax/slideshow-tour-[% itin.tourname %].html" title="" class="hover-effect yellow popup-gallery">
+                  <img src="[% IMAGE %]/[% IF itin.readytours %]tour/tour_[% ELSE %]module/mod_[% END %][% itin.tourname %]_small.jpg" alt="[% itin.title %]"  />
+              </a>
+          </figure>
+          <div class="details">
+              <h4 class="box-title">[% itin.title %]</h4>
+              <a href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% itin.url %]" title="" class="button">SEE ALL</a>
+          </div>
+      </article>
+  </div>        
+  [% END %]
+</div>

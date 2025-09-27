@@ -1,0 +1,42 @@
+[% tourinfo.title %]
+
+Booking Request received from: [% params.firstname %] [% params.lastname %]
+Email Address of Lead Traveller: [% params.email %]
+Phone: [% params.isd %] [% params.phone %]
+
+
+Dear Mr/Ms [% params.lastname %],
+		
+Thank you for making an enquiry through <a href="www.travellers-palm.com">Traveller's Palm</a>.
+We value your business and look forward to assisting you on your holiday to [% country %].
+
+Please find below the tour you have inquired with us. We will now prepare a quotation 
+for you based on the dates provided and get back to you with the details within the 
+next working day.
+		
+Best regards,
+Phil Rolph 
+Traveller’s Palm
+
+----------------
+
+Tour : [% tourinfo.title %]
+Dates: From [% params.depdate %] to [% params.returndate %]
+[% IF params.arrflight %]
+Flight Details:
+[% params.arrcity %], [% params.arrflight %], [% params.eta %]
+[% params.depcity %], [% params.depflight %], [% params.etd %]
+[% END %]
+[% params.category %]
+No or Rooms: 
+[% IF params.doubles > 0 %][% params.doubles %] double room[% IF params.doubles > 1 %]s[% END %][% END %]
+[% IF params.twins > 0 %][% params.twins %] twin room[% IF params.twins > 1 %]s[% END %][% END %]
+[% IF params.singles > 0 %][% params.singles %] single room[% IF params.singles > 1 %]s[% END %][% END %]
+[% IF params.extrabeds > 0 %][% params.extrabeds %] extra bed[% IF params.extrabeds > 1 %]s[% END %][% END %]
+
+Additional information:
+[% params.info %]
+
+
+
+Our Terms & Conditions are available on <a href="www.travellers-palm.com/policies">www.travellers-palm.com</a>

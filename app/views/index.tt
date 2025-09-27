@@ -1,0 +1,5 @@
+<h2>[% message %]</h2>
+<p>This is the index page, using the main layout.</p>
+ <h1>Hello [% name %]!</h1>
+  <p>Users in users.db: [% users %]</p>
+  <p>Records in Jadoo_2006.db: [% jadoo %]</p>

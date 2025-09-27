@@ -1,0 +1,8 @@
+<div class="travelo-box">
+  <div class="icon-box style10 odc-tweak">
+    <i class="soap-icon-recommend"></i>
+    <h2>[% tweak.title %]</h2>
+    [% tweak.writeup %]
+    <a href="[% request.uri_base %]/contact-us" class="button btn-small sky-blue1">Get in Touch</a>
+  </div>
+</div>

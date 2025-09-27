@@ -1,0 +1,166 @@
+[% INCLUDE layouts/header.tt %] 
+
+<section id="content" class="no-padding">
+  <div class="banner imagebg-container whytravel" style="background-image: url([% IMAGE %]/why-travel-with-us/banner.jpg);">
+    <div class="container">
+      <h1 class="big-caption">[% why_travel_with_us.title %]</h1>
+      <h2 class="med-caption"> </h2>
+    </div>
+  </div>
+
+  <div class="container md-section">
+    <div class="row">
+      <div id="main" class="col-md-9">
+        <div class="block">
+          [% why_travel_with_us.writeup %]
+        </div>
+
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="icon-box style7 box">
+              <i class="soap-icon-search yellow"></i>
+              <div class="description">
+                <h4 class="box-title">[% extensive_knowledge.title %]</h4>
+                [% extensive_knowledge.writeup %]
+                <a class="view" href="/about-us">See our staff at About-Us»</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="icon-box style7 box">
+              <i class="soap-icon-winebar yellow"></i>
+              <div class="description">
+                <h4 class="box-title">[% highly_selective.title %]</h4>
+                [% highly_selective.writeup %]
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="icon-box style7 box">
+              <i class="soap-icon-check yellow"></i>
+              <div class="description">
+                <h4 class="box-title">[% unbiased.title %]</h4>
+                [% unbiased.writeup %]
+
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="icon-box style7 box">
+              <i class="soap-icon-wifi yellow"></i>
+              <div class="description">
+                <h4 class="box-title">[% unrivalled_coverage.title %]</h4>
+                [% unrivalled_coverage.writeup %]
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="icon-box style7 box">
+              <i class="soap-icon-support yellow"></i>
+              <div class="description">
+                <h4 class="box-title">[% in_charge.title %]</h4>
+                [% in_charge.writeup %]
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="icon-box style7 box">
+              <i class="soap-icon-savings yellow"></i>
+              <div class="description">
+                <h4 class="box-title">[% value_for_money.title %]</h4>
+                [% value_for_money.writeup %]
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar col-md-3">
+        <div class="travelo-box guarantee-box">
+          <img width="250" class="guarantee-image" alt="Lonely Planet" src="[% IMAGE %]/why-travel-with-us/lonely-planet-2014.gif">
+          <h4></h4>
+          <p></p>
+        </div>
+        
+        <div class="travelo-box center why-travel-with-us">
+          <a href="http://tourism.gov.in/TourismDivision/AboutDivision.aspx?Name=Travel%20Trade" target="_NEW">
+            <img src="[% IMAGE %]/about-us/ministry.jpg" alt="Ministry of Tourism" width="65" height="65" /><br>Government of India recognised tour operator
+          </a>
+
+          <hr>
+          <a href="http://www.travelagentsofindia.com" target="_NEW">
+            <img src="[% IMAGE %]/about-us/taai.jpg" alt="TAAI" width="65" height="65" /><br>
+            Travel Agents Association of India
+          </a>
+          <hr>  
+          <a href="http://www.iato.in" target="_NEW">
+            <img src="[% IMAGE %]/about-us/iato.png" alt="IATO" width="65" height="65" /><br>
+            Indian Association of Tour Operators
+          </a>
+        </div>
+
+        <div class="travelo-box guarantee-box">
+          <img width="230" class="guarantee-image" alt="" src="[% IMAGE %]/why-travel-with-us/sidebar_satisfied.jpg">
+          <h4>99% Satisfied Customers</h4>
+          <p>A very impressive record.</p>
+        </div>
+
+        
+
+        <div class="travelo-box contact-box">
+          <h4>Need Support?</h4>
+          <div class="icon-box style5">
+           <i class="soap-icon-phone"></i>
+           <div class="description">
+             <p><small>[% PHONE1 %]<br />
+             [% PHONE2 %]</small></p>
+           </div>
+         </div>
+         <div class="clearfix"><br></div>
+         <div class="icon-box style5">
+           <i class="soap-icon-message"></i>
+           <div class="description">
+             <p><a class="why-travel-email" href="mailto:info@travellers-palm.com">info@travellers-palm.com</a>></p>
+           </div>
+         </div>
+       </div>
+
+     </div>
+   </div>
+ </div>
+</section>
+
+[% INCLUDE layouts/footer.tt %] 
+</div>
+
+
+<!-- Javascript -->
+<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="js/jquery.noconflict.js"></script>
+<script type="text/javascript" src="js/modernizr.2.7.1.min.js"></script>
+<script type="text/javascript" src="js/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="js/jquery.placeholder.js"></script>
+<script type="text/javascript" src="js/jquery-ui.1.10.4.min.js"></script>
+
+<!-- Twitter Bootstrap -->
+<script type="text/javascript" src="js/bootstrap.js"></script>
+
+<!-- parallax -->
+<script type="text/javascript" src="js/jquery.stellar.min.js"></script>
+
+<!-- waypoint -->
+<script type="text/javascript" src="js/waypoints.min.js"></script>
+
+<!-- load page Javascript -->
+<script type="text/javascript" src="js/theme-scripts.js"></script>
+<script type="text/javascript" src="js/scripts.js"></script>
+
+</body>
+</html>
+

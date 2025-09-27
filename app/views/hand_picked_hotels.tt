@@ -1,0 +1,81 @@
+[% INCLUDE layouts/header.tt %]   
+
+<section id="content" class="no-padding">
+    <div class="banner imagebg-container" style="height: 350px; background-image: url([% IMAGE %]/hotel-ideas/banner.jpg);">
+        <div class="container">
+            <h2 class="big-caption">There is so much to enjoy...</h2>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="main" class="col-xs-12 col-md-8">
+            <div class="tab-container trans-style">
+                <ul class="tabs no-padding">
+                    <li class="active"><a data-toggle="tab" href="#travel-insurance-get-free-quote"><i class="soap-icon-stories"></i>[% hotel_categories.title %]</a></li>
+                    <li><a data-toggle="tab" href="#travel-insurance-manage-policy"><i class="soap-icon-card"></i>[% heritage_hotels.title %]</a></li>
+                    <li><a data-toggle="tab" href="#booking-conditions"><i class="soap-icon-insurance"></i> [% home_stays.title %]</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="travel-insurance-get-free-quote" class="tab-pane fade in active">
+                       [% hotel_categories.writeup %]
+                   </div>
+                   <div id="travel-insurance-manage-policy" class="tab-pane fade">
+                     [% heritage_hotels.writeup %]
+                 </div>
+                 <div id="booking-conditions" class="tab-pane fade">
+                    [% home_stays.writeup %]
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sidebar" class="col-xs-12 col-md-4">
+        <div class='travelo-box'>              
+          <h2>[% about.title %]</h2>
+          [% about.writeup %]          
+      </div>
+      <div class='travelo-box center why-travel-with-us'>  
+          <address class="contact-details">
+            <span class="contact-phone">
+                <i class="soap-icon-phone"></i> +91 88051 22221
+            </span>
+            <br>
+            <a href="mailto:info@travellers-palm.com" class="contact-email">info@travellers-palm.com</a>
+            <ul class="social-icons clearfix hotel-ideas">
+              <li class="twitter">
+                <a title="twitter" href="http://twitter.com/travellers_palm" target="_new" data-toggle="tooltip">
+                    <i class="soap-icon-twitter"></i>
+                </a>
+            </li>
+            <li class="googleplus">
+                <a title="googleplus" href="[% request.uri_base %]/#" target="_new" data-toggle="tooltip">
+                    <i class="soap-icon-googleplus"></i>
+                </a>
+            </li>
+            <li class="facebook">
+                <a title="facebook" href="http://www.facebook.com/#!/pages/Travellers-Palm/152821658071605?ref=ts" target="_new" data-toggle="tooltip">
+                    <i class="soap-icon-facebook"></i>
+                </a>
+            </li>
+            <li class="flickr">
+                <a title="flickr" href="http://www.flickr.com/photos/travellers-palm/sets/" target="_new" data-toggle="tooltip">
+                    <i class="soap-icon-flickr"></i>
+                </a>
+            </li>
+        </ul>
+    </address>
+</div>
+</div>
+
+</div>
+</section>
+
+[% INCLUDE layouts/footer.tt %]   
+
+<script type="text/javascript" src="js/waypoints.min.js"></script>
+<script type="text/javascript" src="js/theme-scripts.js"></script>
+<script type="text/javascript" src="js/scripts.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,10 @@
+<div class="panel style1 arrow-right">
+    <div class="travelo-box search-questions">
+      <form>
+        <div class="with-icon full-width">
+          <input type="text" class="input-text full-width" placeholder="Search" />
+          <button class="icon green-bg white-color"><i class="soap-icon-search"></i></button>
+        </div>
+      </form>
+    </div>
+</div>

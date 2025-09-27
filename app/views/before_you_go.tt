@@ -1,0 +1,70 @@
+[% INCLUDE layouts/header.tt %] 
+
+        <section id="content" class="no-padding">
+            <div class="banner imagebg-container" style="height: 350px; background-image: url([% IMAGE %]/before-you-go/banner.jpg);">
+                <div class="container">
+                    <h1 class="big-caption">Before You Go </h1>
+                    <h2 class="med-caption yellow-color"><strong>Informed travellers get the best out of their holidays</strong></h2>
+                </div>
+            </div>
+            <div class="main">
+                <div class="container">
+                    <div class="content">
+                        <div id="honeymoon1" class="image-style style2">
+                            <div class="row">
+                                <div class="col-md-6 md-section">
+                                    <h2 class="skin-color">[% getting_ready.title %]</h2>
+                                    [% getting_ready.writeup %]
+                                    <h2 class="skin-color">[% right_attitude.title %]</h2>
+                                    [% right_attitude.writeup %]
+                                </div>
+                                <div class="col-md-6 col-lg-5 pull-right">
+                                    <ul style="" class="image-block clearfix">
+                                        <li style="z-index: 5; left: 50px; top; 10px;">
+                                            <a style="width: 80px; height: 80px; position: relative;" class="middle-block" href="#">
+                                                <img width="133" height="88" alt="" src="[% IMAGE %]/before-you-go/face1.jpg" class="middle-item" style="position: absolute; top: 50%; margin-top: -40px; left: 50%; margin-left: -66.5px;">
+                                            </a>
+                                        </li>
+                                        <li style="z-index: 4; left: 180px; top: 100px;">
+                                            <a style="width: 100px; height: 100px; position: relative;" class="middle-block" href="#">
+                                                <img width="150" height="100" alt="" src="[% IMAGE %]/before-you-go/face2.jpg" class="middle-item" style="position: absolute; top: 50%; margin-top: -50px; left: 50%; margin-left: -75px;">
+                                            </a>
+                                        </li>
+                                        <li style="z-index: 3; left: 250px; top: 20px;">
+                                            <a style="width: 150px; height: 150px; position: relative;" class="middle-block" href="#">
+                                                <img width="220" height="196" alt="" src="[% IMAGE %]/before-you-go/face3.jpg" class="middle-item" style="position: absolute; top: 50%; margin-top: -75px; left: 50%; margin-left: -110px;">
+                                            </a>
+                                        </li>
+                                        <li style="z-index: 2; left: 100px; top: 0;">
+                                            <a style="width: 160px; height: 160px; position: relative;" class="middle-block" href="#">
+                                                <img width="312" height="208" alt="" src="[% IMAGE %]/before-you-go/face4.jpg" class="middle-item" style="position: absolute; top: 50%; margin-top: -80px; left: 50%; margin-left: -156px;">
+                                            </a>
+                                        </li>
+                                        <li style="z-index: 1; left: 0; top: 30px;">
+                                            <a style="width: 156px; height: 156px; position: relative;" class="middle-block" href="#">
+                                                <img width="235" height="156" alt="" src="[% IMAGE %]/before-you-go/face5.jpg" class="middle-item" style="position: absolute; top: 50%; margin-top: -78px; left: 50%; margin-left: -117.5px;">
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+     [% INCLUDE layouts/footer.tt %] 
+    
+    <!-- parallax -->
+    <script type="text/javascript" src="js/jquery.stellar.min.js"></script>
+    
+    <!-- waypoint -->
+    <script type="text/javascript" src="js/waypoints.min.js"></script>
+
+    <!-- load page Javascript -->
+    <script type="text/javascript" src="js/theme-scripts.js"></script>
+    <script type="text/javascript" src="js/scripts.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,68 @@
+any qr{.*} => sub {
+
+	my $message = "";
+	my $searchengine = "false";
+	my $send_mail = 1;
+	my $referer = ''; 
+
+# undef(request->referer) ? '' : request->referer ;
+	
+	if ($referer){
+		my $url = URI->new( $referer );
+		my $domain = $url->host;
+		open(FILE, $domain . "/searchengines.txt") or die "Cannot open the search engine file at $domain/searchengines.txt ";
+		while () {
+			chomp;
+			if (index($referer, $_) >= 0) {
+				$searchengine = "true";
+			};
+		}
+	};						
+
+debug to_dumper(request->uri);
+debug to_dumper( config('app') );
+
+	if (length( $referer // '' ) == 0){
+		   	# Mistyped URL or out-of-date bookmark
+		   	$message = "Typing error? The url <i>http://" . $ENV{'SERVER_NAME'} . $ENV{'REQUEST_URI'} . "</i> does not exist.";
+		   	$send_mail = 0;
+		   	} elsif (index($referer, $ENV{'SERVER_NAME'}) >= 0){ 
+				# Broken link on my website
+				$message = "Oops, we made a mistake. The webmaster has been alerted and this broken link will be corrected shortly"; 
+				} elsif ($searchengine eq "true"){
+				# Broken link from a search engine
+				$message = "Your search engine returned an old link";
+				} else {
+				# Broken link on somebody else’s website
+				$message = "Oops, there appears to be a mistake with an external link. The webmaster has been alerted and this broken link will be corrected shortly";
+			};
+
+			if ($send_mail){
+				my $email_msg = MIME::Lite->new(
+				                                From => 'Traveller\'s Palm Administrator <webmaster@travellers-palm.com>',
+				                                To => 'admin@travellers-palm.com',
+				                                Subject => '404 error',
+				                                Data => "Dear webmaster \n\n
+				                                referer: $referer \n
+				                                $message \n\n
+				                                Traveller's Palm System Administrator \n",
+				                                );
+
+				MIME::Lite->send(
+				                 'smtp', 
+				                 'mail.travellers-palm.com', 
+				                 Timeout => 30,
+				                 AuthUser => 'admin+travellers-palm.com',
+				                 AuthPass => 'ip31415',
+				                 Debug => 1,
+				                 );
+
+				$email_msg->send;
+			};
+
+			template 404, { 
+				path => request->path,
+				metatags => metatags('404'), 
+				message => $message,
+			};
+		};

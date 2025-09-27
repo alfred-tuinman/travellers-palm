@@ -1,0 +1,62 @@
+[% INCLUDE layouts/header.tt %] 
+
+<section id="content">
+    <div class="container">
+        <div class="row">
+            <div id="main" class="col-sm-8 col-md-9">
+             <gcse:searchbox-only resultsUrl="[% request.uri_base %]/search-results"></gcse:searchbox-only>
+             <gcse:searchresults-only></gcse:searchresults-only>
+         </div>
+         <div class="sidebar col-sm-4 col-md-3">
+
+            <div class="icon-box style7 box">
+              <i class="soap-icon-search yellow odc-search"></i>
+              <div class="description">
+                <h4 class="box-title">[% extensive_knowledge.title %]</h4>
+              </div>
+          <hr>
+              <i class="soap-icon-winebar yellow"></i>
+              <div class="description">
+                <h4 class="box-title">[% highly_selective.title %]</h4>
+              </div>
+           <hr>
+              <i class="soap-icon-check yellow"></i>
+              <div class="description">
+                <h4 class="box-title">[% unbiased.title %]</h4>
+              </div>
+          <hr>
+              <i class="soap-icon-wifi yellow"></i>
+              <div class="description">
+                <h4 class="box-title">[% unrivalled_coverage.title %]</h4>
+              </div>
+          <hr>
+              <i class="soap-icon-support yellow"></i>
+              <div class="description">
+                <h4 class="box-title">[% in_charge.title %]</h4>
+              </div>
+            <hr>
+              <i class="soap-icon-savings yellow"></i>
+              <div class="description">
+                <h4 class="box-title">[% value_for_money.title %]</h4>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+[% INCLUDE layouts/footer.tt %] 
+
+<!-- parallax -->
+<script type="text/javascript" src="js/jquery.stellar.min.js"></script>
+
+<!-- waypoint -->
+<script type="text/javascript" src="js/waypoints.min.js"></script>
+
+<!-- load page Javascript -->
+<script type="text/javascript" src="js/theme-scripts.js"></script>
+<script type="text/javascript" src="js/scripts.js"></script>
+
+</body>
+</html>
+

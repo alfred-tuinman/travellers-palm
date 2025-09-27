@@ -1,0 +1,75 @@
+        [% INCLUDE layouts/admin.tt %]
+        <div class="container">
+            <blockquote>
+                Generate and download a report of images which are in the database but not on file.
+            </blockquote>
+
+            <!-- alert section -->
+            [% IF errors.size > 0 %]
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="alert alert-danger">
+                        <ul class="upload-bullets">
+                            [% FOREACH error IN errors %]
+                            <li>[% error.message %]</li>
+                            [% END %]
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            [% END %]
+
+            <div class="row fileupload-buttonbar">
+                <form id="other" action='[% request.uri_base %]/admin/missing' method="POST" enctype="multipart/form-data">
+                    <div class="col-lg-3">
+                        <select name='option'>
+                            [% FOREACH i = directories %]   
+                            <option value="[% loop.count %]">[% i %]</option>
+                            [% END %]
+                        </select> 
+                    </div>
+                    <div class="col-lg-3">
+                        <button type="submit" class="btn btn-warning start">
+                            <i class="glyphicon glyphicon-download"></i>
+                            <span>Download</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-6">&nbsp;</div>
+            <hr>
+
+            [% IF download > 0 %]
+            <div class="panel panel-default">        
+                <a href="[% file %]" download>Download the file here</a></li>
+            </div>
+            [% END %]
+        </div>   
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+    <script src="[% request.uri_base %]/admin/uploader/js/vendor/jquery.ui.widget.js"></script>
+    <!-- The Templates plugin is included to render the upload/download listings -->
+    <script src="//blueimp.github.io/JavaScript-Templates/js/tmpl.min.js"></script>
+    <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+    <script src="//blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
+    <!-- The Canvas to Blob plugin is included for image resizing functionality -->
+    <script src="//blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
+    <!-- Bootstrap JS is not required, but included for the responsive demo navigation -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <!-- blueimp Gallery script -->
+    <script src="//blueimp.github.io/Gallery/js/jquery.blueimp-gallery.min.js"></script>
+    <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+    <script src="[% request.uri_base %]/admin/uploader/js/jquery.iframe-transport.js"></script>
+    <!-- The basic File Upload plugin -->
+    <script src="[% request.uri_base %]/admin/uploader/js/jquery.fileupload.js"></script>
+
+    <!-- The main application script -->
+    <script src="[% request.uri_base %]/admin/uploader/js/main.js"></script>
+    <!-- The XDomainRequest Transport is included for cross-domain file deletion for IE 8 and IE 9 -->
+    <!--[if (gte IE 8)&(lt IE 10)]>
+    <script src="[% request.uri_base %]/admin/uploader/js/cors/jquery.xdr-transport.js"></script>
+    <![endif]-->
+</body> 
+</html>

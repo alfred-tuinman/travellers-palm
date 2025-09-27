@@ -1,0 +1,45 @@
+
+<div class="hotel-list listing-style3 hotel">
+    [% FOREACH itin in itineraries %]
+    <div id="itin-[% loop.index %]" data-cost="[% itin.cost %]" data-duration="[% itin.numdays %]">
+        <article class="box [% itin.themes %]" data-cost="[% itin.cost %]" data-duration="[% itin.numdays %]">
+            <div class="col-sm-5 col-md-4">
+                <figure >
+                    <a  href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% IF filter == 'regions' %][% regionname %]/[% END %][% IF filter == 'states' %][% state %]/[% END %][% itin.url %]" class="hover-effect">
+                    <img alt="[% itin.title %]" src="[% IMAGE %]/[% IF itin.readytours %]tour/tour_[% ELSE %]module/mod_[% END %][% itin.tourname %]_small.jpg">
+                    </a>
+                </figure>
+            </div>
+            <div class="details col-sm-7 col-md-8">
+                <div>
+                    <div>
+                        <h4 class="box-title">[% itin.title %]<small>
+                            <i class="soap-icon-departure yellow-color"></i> 
+                            [% itin.oneliner %]</small>
+                        </h4>
+                        <div class="amenities">
+                            <i class="soap-icon-wifi circle"></i>
+                            <i class="soap-icon-fitnessfacility circle"></i>
+                            <i class="soap-icon-fork circle"></i>
+                            <i class="soap-icon-television circle"></i>
+                        </div>
+                    </div>
+                    <div> 
+                        <div class="five-stars-container">
+                            <span class="five-stars" style="width: 80%;"></span>
+                        </div>
+                        <span class="review"></span>
+                    </div>
+                </div>
+                <div>
+                    <p>[% itin.introduction %] </p>
+                    <div>
+                        <span class="price"><small>[% itin.numdays %] Days<br /><br />From</small>[% currency %] [% itin.cost | comma %]</span>
+                        <a class="button btn-small full-width text-center" title="" href="[% request.uri_base %]/destinations/[%country %]/[% pathname %]/[% IF filter == 'regions' %][% regionname %]/[% END %][% IF filter == 'states' %][% state %]/[% END %][% itin.url %]">SELECT</a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+    [% END %]
+</div>

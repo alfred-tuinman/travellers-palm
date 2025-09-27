@@ -1,0 +1,365 @@
+[% INCLUDE layouts/header.tt %] 
+
+<section id="content">
+  <div class="container">
+    <div class="row">
+      <div id="main" class="col-md-9">
+
+        <div class="tab-container style1" id="hotel-main-content">
+          <ul class="tabs">
+            <li class="active">
+              <a data-toggle="tab" href="#photos-tab">photo</a>
+            </li>
+            <!--
+            <li>
+              <a data-toggle="tab" href="#map-tab">map</a>
+            </li>  
+            -->
+            <li>
+              <a href="[% request.uri_base %]/ajax/slideshow-tour-[% tourdata.fixeditin_id %].html" title="[% tourdata.title %]" class="button sea-blue uppercase btn-small popup-gallery"> 
+               Gallery
+              </a>
+            </li>    
+         </ul>
+
+         <div class="tab-content">
+          <div id="photos-tab" class="tab-pane fade in active">
+            <img class="full-width" src="[% IMAGE %]/[% IF tourdata.readytours %]tour[% ELSE %]module[% END %]/[% image %]" alt="[% image %]"/>
+          </div>
+          <div id="map-tabx" class="tab-pane fade"></div>
+        </div>
+      </div>
+<br>
+
+
+      <div class="row">
+        <div class="itinerary-title">
+          <h2>[% tourdata.title %]</h2>
+          <h4><i>[% tourdata.oneliner %]</i></h4>
+        </div>
+      </div>
+
+      <div id="map-tab"></div>
+
+      <div id="hotel-features" class="tab-container trans-style">
+       <ul class="tabs ">
+        <li class="active">
+          <a href="#itinerary" data-toggle="tab">
+           <i class="soap-icon-stories"></i>Itinerary</a>
+         </li>
+         <li>
+          <a href="#price-guide" data-toggle="tab">
+           <i class="soap-icon-guideline"></i>Price Guide</a>
+         </li>
+         <li>
+          <a href="#places-you-will-visit" data-toggle="tab">
+           <i class="soap-icon-locations"></i>Places you'll visit</a>
+         </li>
+         <li>
+          <a href="#accommodation" data-toggle="tab">
+           <i class="soap-icon-comfort"></i>Accommodation</a>
+         </li>
+         <li>
+          <a href="#how-to-book" data-toggle="tab">
+           <i class="soap-icon-support"></i>How to Book</a>
+         </li>
+       </ul>
+
+       <div class="tab-content">
+         <div class="tab-pane fade in active" id="itinerary">
+           <div class="col-sm-7 features table-cell">
+            <article class="box">
+             <div>   
+               <p>[% tourdata.introduction %]</p>                                      
+               [% IF tourdata.readytours %]
+               <img src="[% IMAGE %]/[% imagepath %]/tour_[% tourdata.tourname%]_collage_1.jpg" />
+               [% END %]
+               <br><br>
+               [% FOREACH pday in days %]
+               <p><a href="[% request.uri_base %]/ajax/slideshow-city-[% pday.cities_id %].html" class="popup-gallery s-title">Day [% pday.dayno %] - [% pday.city %]</a>
+                 <br>
+                 [% pday.dayitinerary %]</p>
+                 [% END %]                                             
+                 <div class="action-section">
+                  <a href="[% request.uri_base %]/destinations/[% country %]/[% uri %]/[% tourdata.url %]/booking-request" title="" class="button btn-small full-width text-center">Enquire Now</a>
+                </div>
+                [% IF tourdata.readytours %]
+                <img src="[% IMAGE %]/[% imagepath %]/tour_[% tourdata.tourname%]_collage_2.jpg" />
+                [% END %]
+              </div>                                           
+            </article>
+          </div>
+          <div class="col-sm-5 features table-cell">
+           [% INCLUDE tweak.tt %] 
+         </div>
+       </div>
+
+       <div class="tab-pane fade" id="price-guide">
+        <div class="col-sm-7 features table-cell">
+          <div class="travelo-box book-with-us-box">
+           <h4>Price Guide</h4>
+           <ul>
+            <li><i class="soap-icon-savings circle"></i> 
+             From <span class="price-left">[% cost.currencycode %] [% cost.cost | comma %]
+           </span> 
+           per person based on two people sharing.</li>
+         </ul>
+         <br>
+         <h4>Inclusions</h4>
+         <ul class="check box">[% inclusions %] </ul>
+         <a class="button yellow full-width uppercase btn-small">Make an enquiry</a>
+       </div>
+     </div>
+     <div class="col-sm-5 features table-cell">
+       [% INCLUDE tweak.tt %] 
+     </div>
+   </div>
+
+   <div class="tab-pane fade" id="places-you-will-visit">
+    <div class="image-box style6">
+     [% FOREACH place in places %]
+     [% IF place.cities_id != loop.prev.cities_id %]
+     <article class="box">
+      <figure class="col-md-5">
+       <div class="flexslider photo-gallery style3">
+         <ul class="slides">
+          [% END %]    
+          <li><img class="middle-item" src="[% IMAGE %]/city/[% place.imagename %]" alt="[% place.city %]" width="476" height="318" /></li>
+          [% IF place.cities_id != loop.next.cities_id %]
+        </ul>
+      </div>
+    </figure>
+    <div class="details col-md-offset-5">
+      <h4 class="box-title">[% place.city %] <small>[% place.oneliner %]</small></h4>
+      <div class="listing-style3 circle">
+        <i class="soap-icon-wifi circle"></i>
+      </div>
+      <p>[% place.writeup %]</p>
+    </div>
+  </article> 
+  [% END %]    
+  [% done = place.cities_id %]
+  [% END %]                              
+</div>            
+</div>
+
+<div class="tab-pane fade" id="how-to-book">
+ <div class="col-sm-7 features table-cell">
+  <article class="box">
+   <div>   
+     <h2><p class="dropcap">1</p>[% plan_your_trip.title %]</h2>
+     [% plan_your_trip.writeup %]
+     <h2><p class="dropcap">2</p>[% plan_and_refine.title %]</h2>
+     [% plan_and_refine.writeup %]
+     <h2><p class="dropcap">3</p>[% arrangements.title %]</h2>
+     [% arrangements.writeup %]      
+   </div>                                           
+ </article>
+</div>
+<div class="col-sm-5 features table-cell">
+  [% INCLUDE tweak.tt %] 
+</div>
+
+<div class="col-sm-12 features table-cell">          
+  <div class="travelo-box odc-blue">
+    <form class="contact-form" action="[% request.uri_base %]/contact-us#message" method="post">
+      <h4 class="box-title">Send us a Message</h4>
+      <div class="row form-group">
+        <div class="col-xs-6">
+          <label>Your Name</label>
+          <input type="text" name="name" value="[% name %]" class="input-text full-width">
+        </div>
+        <div class="col-xs-6">
+          <label>Your Email</label>
+          <input type="text" name="email" value="[% email %]"  class="input-text full-width">
+        </div>
+      </div>
+      <div>
+        <label>Reference</label>
+        <input type="text" name="reference" value="[% reference %]"  class="input-text full-width">
+      </div>
+      <div class="form-group">
+        <label>Your Message</label>
+        <textarea name="message" rows="10" class="input-text full-width" placeholder="write message here">[% message %]</textarea>
+      </div>
+      <button type="submit" class="btn-large dark-blue2 full-width">SEND MESSAGE</button>
+    </form>
+  </div>
+</div>
+
+</div>
+
+<div class="tab-pane fade" id="accommodation">
+ <div class="block">
+  <div class="row">
+    <h3 class="odc-itinerary-dollar"><span style="color:orange">$</span> signs against Hotels indicate its <a href="[% request.uri_base %]/hotel-ideas">Category</a></h3>
+  </div>
+  [% FOREACH hotel in accommodation %]
+  [% IF (loop.prev.city != hotel.city) %]
+  [% IF (loop.count != 1) %]</div>[% END %]
+  [% i = 0 %]                   
+  <div class="row">
+   <h4 class="odc-city">[% hotel.city %]&nbsp;</h4>
+ </div>
+ <div class="row image-box style2" >
+   [% END %]
+   [% i = i + 1 %]        
+   <div class="col-md-6">
+     <article class="box">
+       <figure>
+        <a class="popup-gallery" href="[% request.uri_base %]/ajax/slideshow-hotel-[% hotel.hotel_id %].html" title="[% hotel.hotel %]">
+         <img src="[% IMAGE %]/hotel/defaulthotel_[% hotel.hotel_id %].jpg" alt="[% hotel.hotel %]" width="200" height="137" />
+       </a>
+     </figure>
+     <div class="details">
+       <h4>[% hotel.hotel %] 
+         <a class="popup-gallery" href="[% request.uri_base %]/ajax/hotel_categories.html" title="[% hotel.hotel %]">
+           <span style="color:orange">[% hotel.categoryname %]</span>
+         </a>
+       </h4>
+       <p>[% hotel.truncated_description %]...</p>
+       <a href="[% request.uri_base %]/ajax/slideshow-hotel-[% hotel.hotel_id %].html" title="[% hotel.hotel %]" class="button popup-gallery">SEE ALL
+       </a>
+     </div>
+   </article>
+ </div>
+ [% IF (i == 2 or i == 4) %]<div class="col-md-12">&nbsp;</div>[% END %]
+ [% END %]
+</div>               
+</div> 
+
+</div> <!-- end tab-content -->
+
+</div> <!-- end tab-container -->             
+</div> <!-- end main -->
+</div>
+
+<div class="sidebar col-md-3">
+  <article class="travelo-box contact-box">  
+    <div class="details">
+      <h2>[% tourdata.title %]</h2>
+      <h4><i>[% tourdata.oneliner %]</i></h4>
+      <hr>
+
+      <div class="constant-column-3 timing clearfix">
+        <div class="check-in">
+          <label>Duration</label>
+        </div>
+        <div class="duration text-center">
+          <i class="soap-icon-clock  yellow-color"></i>
+          <!-- <span>[% tourdata.days %] days</span> -->
+        </div>
+        <div class="check-out">
+          <span class="price">[% tourdata.days %] days</span>
+        </div>
+      </div>
+      <hr>
+      <div class="constant-column-2 timing clearfix">
+        <div class="check-in">
+          <label>Price from</label><br>
+        </div>
+        <div class="check-out">
+         <span class="price">[% cost.currencycode %] [% cost.cost | comma %]</span>
+       </div>
+     </div>
+     <hr>
+     <div class="constant-column-3 timing clearfix">
+      <div class="check-in">
+        <label>Start</label><br>
+        <span>[% startcity.city %]</span>
+      </div>
+      <div class="duration text-center">
+        <i class="soap-icon-locations yellow-color"></i>
+        <!-- <span>[% tourdata.days %] days</span> -->
+      </div>
+      <div class="check-in">
+        <label>End</label><br>
+        <span>[% endcity.city %]</span>
+      </div>
+    </div>
+    <div class="odc-align">
+     <hr>
+     <h4>Highlights</h4>                   
+     <p class="description">
+      <ul class="arrow box">[% tourdata.triphighlights %]</ul>
+    </p>
+    <h4>When to Go</h4>
+    <p class="description">[% tourdata.itindates %]</p>
+    <a href="[% request.uri_base %]/contact-us" class="button yellow full-width uppercase btn-small">Make an enquiry</a>
+  </div>
+</div>
+</article>
+
+[% INCLUDE layouts/needhelp.tt %] 
+
+[% IF tours.size > 0 %]
+<div class="travelo-box">
+  <h4>Similar Listings</h4>
+  <ul class="travel-news">
+   [% FOREACH tour in tours %]
+   <li>
+    <div class="description">
+      <h5 class="s-title"><i class="soap-icon-places yellow-color"></i>&nbsp; &nbsp;
+        <a  href="[% request.uri_base %]/destinations/[% country %]/[% TAILOR %]/[% tour.url %]">[% tour.title %]</a>
+      </h5>
+      <p>[% tour.oneliner %] ([% tour.numdays %] days)</p>
+    </div>
+  </li>
+  [% END %]
+</ul>
+</div>
+[% END %]
+</div>
+</div>
+</div>
+</section>
+
+[% INCLUDE layouts/footer.tt %]
+
+<script type="text/javascript" src="[% request.uri_base %]/components/flexslider/jquery.flexslider-min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZ1TWStdIWQYeNDBKpE6SgJSEd4EerEdg&callback=initMap" async defer></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/theme-scripts.js"></script>
+<script type="text/javascript">
+
+function initMap() {
+  
+  var myLatLng = {lat: [% startcity.latitude %],lng: [% startcity.longitute %]};
+
+  var mapOptions = new google.maps.Map(document.getElementById('map-tab'), {
+    zoom: 5,
+    center: new google.maps.LatLng(myLatLng),
+    mapTypeId: google.maps.MapTypeId.TERRAIN,
+    mapTypeControl: false,
+    streetViewControl: false,
+    panControl: false,
+    scrollwheel: false,
+    navigationControl: false,
+    scaleControl: false,
+    draggable: true,
+    disableDefaultUI: false,
+  });
+  
+  var marker = new google.maps.Marker({
+    position: myLatLng,
+    map: mapOptions,
+    title: 'Starting Point'
+  });
+
+  [% FOREACH place in places %] [% IF loop.count != 1 %] [% IF place.cities_id != loop.prev.cities_id %]
+  var marker = new google.maps.Marker({
+    position: {lat: [% place.latitude %],lng: [% place.longitude %]}, 
+    map: mapOptions,
+    title: '[% place.city %]'
+  });
+  [% END %] [% END %] [% done = place.cities_id %] [% END %]        
+};
+ 
+$('a[href="#map-tab"]').on('shown.bs.tab', function(e){
+    initialise();
+});
+
+
+</script>
+</body>
+</html>
+

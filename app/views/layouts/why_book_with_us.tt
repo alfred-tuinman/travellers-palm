@@ -1,0 +1,35 @@
+<div class="travelo-box book-with-us-box">
+  <h4>Why Book with us?</h4>
+  <ul>
+    <li>
+      <i class="soap-icon-hotel-1 circle"></i>
+      <h5 class="title"><a href="#">Extensive knowledge</a></h5>
+      <p>We believe that your trip should be truly unforgettable, so we don't take any chances. We have personally visited each and every village, town, city and hotel featured on the website. Our personal visits have given us an insight into these places, revealing their individual quirks and peculiarities. </p>
+    </li>
+    <li>
+      <i class="soap-icon-savings circle"></i>
+      <h5 class="title"><a href="#">Highly selective</a></h5>
+      <p>We are NOT a listing website. Out of the thousands of hotels that India offers, we have zeroed in on only a few hundred that we feel are unique in some way. These special places may differ in standard and price from moderate to luxury but they all guarantee a memorable experience.</p>
+    </li>
+    <li>
+      <i class="soap-icon-savings circle"></i>
+      <h5 class="title"><a href="#">Unbiased and original</a></h5>
+      <p>All our hotel descriptions are original. We don't use press releases. Each review is based on our personal experience, often after multiple visits. We have an incredible number of personal photographs of destinations and hotels to illustrate the text so enjoy browsing through our pages to see India through our eyes. </p>
+    </li>
+    <li>
+      <i class="soap-icon-support circle"></i>
+      <h5 class="title"><a href="#">Unrivalled coverage</a></h5>
+      <p>There is no other web site that presents such an unrivalled choice of destinations, accommodation and ways of travelling in India. We cover the entire country, including some of the lesser known areas of the country which may not even find a mention in the guidebooks. So if you want to go well beyond the beaten track, Traveller's Palm will magically open doors for you.</p>
+    </li>
+    <li>
+      <i class="soap-icon-support circle"></i>
+      <h5 class="title"><a href="#">Putting you in charge</a></h5>
+      <p>We believe that travel is an extremely personal experience. You choose how and where you want to go and have a chance to be intensely involved in designing the perfect trip. After all, a really enjoyable and memorable holiday is one that centres around your interests, tastes, expectations and budget. Whether you want to concentrate on culture or adventure, action or relaxation, we will help you create your own unique holiday by combining our ideas with your preferences.</p>
+    </li>
+    <li>
+      <i class="soap-icon-support circle"></i>
+      <h5 class="title"><a href="#">Value for money</a></h5>
+      <p>And YES - we can help you plan the perfect trip without breaking the bank! For we believe that custom tours don't have to be the most expensive. We don't use flashy brochure or expensive advertising campaigns and we pass on this benefit to you. Since we are based in India, you get the best value for money holiday.</p>
+    </li>
+  </ul>
+</div>
