@@ -11,24 +11,57 @@ SQLite3 (lightweight DB, with support for multiple DB files)
 
 We’ll use Docker Compose so you can spin up the whole stack in a consistent, reproducible way.
 
+## Dancer / Dancer2
+Dancer is a Perl web application framework, similar in spirit to Flask (Python) or Express (Node.js). 
+
+Key features: Routing (get, post, etc.), Templating, Sessions, cookies, Logging, Plugins (like database connectors)
+
+## Plack
+Plack is a Perl web server interface, like WSGI in Python or Rack in Ruby, and it provides a common interface between our web app (Dancer2) and any web server. Everything talks via PSGI (Perl Web Server Gateway Interface).
+
+# Git
+
+Our repo is called git@github.com:alfred-tuinman/travellers-palm.git
+
+cd to your project.
+```
+git init
+git config --global user.name "Alfred Tuinman"
+git config --global user.email "admin@odyssey.co.in"
+echo "logs/\napp/db/*.db\n*Zone.Identifier" > .gitignore
+git add .
+git commit -m "Initial commit"
+git remote add origin git@github.com:alfred-tuinman/travellers-palm.git
+```
+## New project
+git push -u origin main
+
+## Existing project
+git pull -u origin main
+
 
 # Project Layout
+## Docker Layer:
+Dancer2 defines the web app (routes, database, templates).
 
-A good starting directory tree:
+Plack/Starman serves the app via PSGI interface.
+
+Nginx sits in front, handles static files, logging, reverse proxy.
+
+Docker wraps everything into isolated containers.
+
+This is a good starting directory tree:
 
 plack-app/
 ├── app/
 │   ├── lib/
 │   │   └── MyApp.pm
 │   ├── views/
-│   │   └── index.tt
+│   │   └── index.tt          # plus all other templates
 │   ├── app.psgi
-│   └── db/                  # persistent volume mount
+│   └── db/                   # persistent volume mount
 │       ├── users.db
 │       └── Jadoo_2006.db
-├── scripts/
-│   ├── init-db.sh           # initializes SQLite DBs
-│   └── healthcheck.sh       # checks if app responds
 ├── config/
 │   ├── config.staging.yml
 │   └── config.production.yml
@@ -37,7 +70,7 @@ plack-app/
 ├── Dockerfile
 ├── docker-compose.yml
 ├── cpanfile
-└── .env                     # holds secrets & environment flags
+└── .env                      # holds secrets & environment flags
 
 
 We’ll keep SQLite DB files in app/db/ so that they can be mounted as a volume for persistence.
@@ -81,10 +114,31 @@ Visit: http://localhost:8080
 
 
 # Multiple Databases
-
 In your PSGI app you can open as many SQLite DB connections as you need, each with its own DSN pointing to a file in app/db/.
 
 You may also want a small DB connection manager (e.g., DBIx::Connector) if you expect concurrent access.
+
+I have split the huge Database.pm file into smaller parts.The benefits of this is that each file is < 200 lines instead of 1000+. You can load only what you need in routes and the database logic is modular and testable. 
+
+One could put Routes/ directly under lib/, but the reason we nest it under TravellersPalm/ is namespace hygiene.
+
+I removed this as I cannot find Odyssey2008 and mysql is difficult to set up for some reason
+
+<pre>msqlserver:
+        dsn: dbi:ODBC:Odyssey2008
+        username: sa
+        password: sa123@pwd
+        dbi_params:
+          RaiseError: 1
+          AutoCommit: 1
+          PrintError: 1
+          LongReadLen: 102400 </pre>
+
+# Logs
+Logging depends on the development or production environment set in .env. The log configurations are set in the environments folder and the config.yml and nginx.conf  
+
+```docker-compose logs -f app ```
+
 
 # Running in Staging vs. Production
 
@@ -145,3 +199,68 @@ docker run --rm \
   -d www.travellers-palm.com \
   --email admin@odyssey.co.in \
   --agree-tos --no-eff-email
+
+
+
+  # Background
+
+
+
+## Use a volume (runtime)
+
+# Stop all running containers
+```docker ps -q | xargs -r docker stop```
+
+# Delete all stopped containers
+```docker ps -aq | xargs -r docker rm```
+
+# Run your container 
+
+```docker run -p 8080:80 -v $(pwd)/data:/app/data -v $(pwd)/logs:/app/logs psgi-app```
+
+This maps host port 8080 to the container port 80 and mounts data/ and logs/ from our project folder
+
+# Restart your docker
+```./restart-psgi.sh```
+
+This stops the old container (if running) and removes it and then starts a fresh container with your mounts. It runs in detached mode (-d) so your terminal is free.
+
+You can then also check the logs
+```docker logs -f psgi-app-container```
+
+# Access in the browser
+```http://localhost:8080```
+
+This should now connect directly to Nginx → Starman → PSGI app
+
+# Install cpanm
+```cpanm Template```
+
+If you don’t have cpanm, you can install it first:
+```curl -L https://cpanmin.us | perl - App::cpanminus```
+
+then retry
+```cpanm Template```
+
+# .psgi
+The entrypoint mentions a psgi file.
+
+lib/app.psgi generates the welcome message to test that the site works in the browser.
+
+lib/tt.psgi makes the link to the template toolkit files. All templates are in data/views/ (so index.tt, about.tt, contact.tt go there). The middleware serves static files from public/static/
+
+# Dancer
+Our app logic lives in lib/TravellersPalm.pm (the Dancer app module) and the routes are inside this file. This is the Dancer2 app entry point, and here we link all our routes. We use Module::Find which will scan for everything under TravellersPalm::Routes::*.
+
+As a result we don’t need to manually use TravellersPalm::Routes::Home anymore. Adding a new file like TravellersPalm::Routes::Bookings.pm is enough — it gets auto-loaded on startup.
+
+We specify
+```use Dancer2 appname => 'TravellersPalm';```
+
+This explicitly assigns a named app (TravellersPalm) to that package. The advantages are:
+
+Clear separation: Multiple packages can define routes for the same app without ambiguity.
+
+PSGI testing / embedding: You can reference the app explicitly:
+
+# Database

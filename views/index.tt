@@ -1,0 +1,2 @@
+<h2>[% message %]</h2>
+<p>This is the index page, using the main layout.</p>

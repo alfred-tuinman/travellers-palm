@@ -11,17 +11,16 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /usr/src/app
-
 # Install Perl dependencies from cpanfile
 COPY cpanfile .
 RUN cpanm --notest --installdeps .
 
-# Copy app code
-COPY app/ ./app/
-COPY config/ ./config/
+# Set this before the copy commands!
+WORKDIR /usr/src/app
 
-WORKDIR /usr/src/app/app
+# Copy app code
+COPY . .
+
 EXPOSE 5000
 
 # Run Starman
