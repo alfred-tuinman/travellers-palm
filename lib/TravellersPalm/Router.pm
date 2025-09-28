@@ -9,7 +9,7 @@ sub to_app {
     my $router = Router::Simple->new;
 
     # Define routes
-    $router->connect('/',                 { controller => 'Home',     action => 'index' });
+    $router->connect('/',                 { controller => 'Home',     action => 'show' });
     $router->connect('/about',            { controller => 'About',    action => 'show' });
     $router->connect('/users/{id}',       { controller => 'Users',    action => 'profile' });
     $router->connect('/products',         { controller => 'Products', action => 'list' });

@@ -1,0 +1,1236 @@
+package TravellersPalm;
+
+use Dancer2;
+
+use lib qw{../};
+use strict;
+use warnings;
+
+use Data::FormValidator;
+use Date::Manip::Date;
+use Data::Dumper;
+
+use TravellersPalm::Functions;
+use TravellersPalm::Database;
+
+use DateTime::Format::Strptime;
+use Digest::MD5 qw{md5_hex};
+use MIME::Lite;
+use URI::http;
+use JSON qw//;
+
+our $VERSION 	= '2.0';
+our $TAILOR   	= 'ready-tours', 
+our $THEMES   	= 'explore-by-interest';
+our $STATES   	= 'explore-by-state';
+our $REGIONS  	= 'explore-by-region';
+our $IDEAS    	= 'trip-ideas';
+our $tokens;
+our $session_currency ;
+our $session_country  ;
+
+prefix undef;
+
+#------------ here we go ------------------
+
+hook before => sub {
+    # sessions need to be set to YAML in config for it to work
+    $session_currency = session('currency') ? session('currency') : 'EUR';
+};
+ 
+hook after_template_render => sub {
+
+};
+
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
+$year = $year+1900;
+
+hook before_template_render => sub {
+
+    $tokens = shift;   
+    $tokens->{PHONE1}     	= '+91 88051 22221';
+    $tokens->{PHONE2}     	= '+91 90111 55551';
+    $tokens->{currencies} 	= currencies();
+    $tokens->{TAILOR}     	= $TAILOR,
+    $tokens->{THEMES}     	= $THEMES,
+    $tokens->{STATES}     	= $STATES;
+    $tokens->{REGIONS}    	= $REGIONS;
+    $tokens->{IDEAS}      	= 'trip-ideas';
+    $tokens->{LEARNMORE}  	= 'Learn More';
+    $tokens->{COUNTRY}    	= $session_country;
+    $tokens->{currency}    	= $session_currency;
+    $tokens->{IMAGE}      	= 'http://images.travellers-palm.com';
+    $tokens->{year}         = $year;
+    $tokens->{domain}       = "www.travellers-palm.com";
+};
+
+get '/' => sub {
+    my $slidetext = web(163);
+    my @slides    = $slidetext->{data}->{writeup} =~ /\G(?=.)([^\n]*)\n?/sg;
+    unshift @slides, 'dummy item';
+
+    template home => {
+        metatags             => webpages(6),
+        themes               => themes('LIMIT'),
+        tripideas            => themes('TRIPIDEAS'),
+        country              => 'india',
+        slides               => \@slides,
+        the_travel_experts1  => webtext(119),
+        the_travel_experts2  => webtext(120),
+        the_travel_experts3  => webtext(121),
+        tailor_made_tours    => webtext(187),
+        mini_itineraries     => webtext(188),
+        best_places_to_visit => webtext(189),
+        about                => webtext(60),
+        home                 => 1
+    };
+};
+
+get '/home' => sub {
+    my $slidetext = web(163);
+    my @slides    = $slidetext->{data}->{writeup} =~ /\G(?=.)([^\n]*)\n?/sg;
+    unshift @slides, 'dummy item';
+
+    template home => {
+        metatags             => webpages(6),
+        themes               => themes('LIMIT'),
+        tripideas            => themes('TRIPIDEAS'),
+        country              => 'india',
+        slides               => \@slides,
+        the_travel_experts1  => webtext(119),
+        the_travel_experts2  => webtext(120),
+        the_travel_experts3  => webtext(121),
+        tailor_made_tours    => webtext(187),
+        mini_itineraries     => webtext(188),
+        best_places_to_visit => webtext(189),
+        about                => webtext(60),
+        home                 => 1
+    };
+};
+
+get '/about-us' => sub {
+   
+    template about => {
+        metatags                => metatags('about-us'),
+        totalcities             => totalcities(),
+        totalitineraries        => totalitineraries(),
+        totaltrains             => totaltrains(),
+        intro                   => webtext(9),
+        philosophy              => webtext(170),
+        sustainable_tourism     => webtext(171),
+        responsible_tourism     => webtext(172),
+        meet_the_team           => webtext(31),
+        why_travel_with_us      => webtext(12),
+        what_is_travellers_palm => webtext(8),
+        hans                    => webtext(164),
+        sucheta                 => webtext(165),
+        phil                    => webtext(166),
+        shalome                 => webtext(167),
+        crumb                   => ' <li class="active">About Us</li>',
+        page_title              => 'About Us',
+    };
+};
+
+get '/before-you-go' => sub {
+
+    template before_you_go => {
+        metatags        => metatags('before-you-go'),
+        before_you_go   => webtext(17),
+        getting_ready   => webtext(168),
+        right_attitude  => webtext(169),
+        page_title      => 'Before You Go',
+        crumb           => '<li class="active">Before You Go</li>',
+    };
+};
+
+any [ 'get', 'post' ] => '/contact-us' => sub {
+  
+    my $ourtime = ourtime();
+    my $error   = 0;
+    my $err_msg = '';
+    my $ok      = 0;
+    my $crumb   = "<li><a href='".request->uri_base. request->path . "'>Contact Us</a></li>";
+
+    if ( request->is_post ) {
+
+        my $name = params->{name} ;
+        $name =~ s/^\s*//;
+        $name =~ s/\s*$//;
+        if (length($name) == 0) {
+            $err_msg = 'Please give me a name';
+        };
+
+        my $message = params->{message} ;
+        $message =~ s/^\s*//;
+        $message =~ s/\s*$//;
+        if (length($message) == 0) {
+            $err_msg = 'You forgot your message!' ;
+        }
+
+
+        my $reference = params->{reference} ;
+        $reference =~ s/^\s*//;
+        $reference =~ s/\s*$//;
+        if (length($reference) == 0) {
+            $err_msg = 'You forgot your reference.' ;
+        }
+
+        my $email = params->{email} ;
+        $email =~ s/^\s*//;
+        $email =~ s/\s*$//;
+        if (length($email) == 0) {
+            $err_msg = 'You forgot your email id!';
+        } 
+        elsif (!valid_email($email)) {
+            $err_msg = 'Your email id appears to be wrong.';
+        };
+
+        if (length($err_msg) == 0){
+            $ok = email_request($name, $email, $reference, $message);
+            $error = ($ok) ? 0 : 1;
+
+            if (!$ok) {
+                $err_msg = 'We are unable to send your message. Sorry but please try again or use your own email application.';
+            };
+        }
+        else {
+            $error = 1;
+        }
+
+    };
+    if ($ok) {
+        return template thankyou_for_request => {
+            metatags  => metatags( ( split '/', request->path )[-1] ),
+            crumb     => $crumb,
+            name      => params->{name},
+            email     => params->{email},
+            message   => params->{message},
+            reference => params->{reference},
+            page_title=> 'Thank You',
+        };
+    };
+
+    template contact => {
+        metatags        => metatags( ( split '/', request->path )[-1] ),
+        travellers_palm => webtext(159),
+        fast_replies    => webtext(160),
+        ourtime         => $ourtime->strftime('%H:%M'),
+        ourdate         => $ourtime->strftime('%d %B, %Y'),
+        timediff        => 0, #timediff(),
+        country         => 'India',
+        crumb           => $crumb,
+        error           => $error,
+        err_msg         => $err_msg,
+        name            => params->{name},
+        email           => params->{email},
+        message         => params->{message},
+        reference       => params->{reference},
+        page_title      => 'Contact Us',
+    };
+};
+
+get '/currency/:currency' => sub {
+   	session('currency' => currency( params->{currency} ) );
+	redirect request->referer;
+};
+
+get '/destinations/:destination' => sub {
+
+    my $crumb  = "<li>Destinations</li>
+                  <li class='active'>" . url2text( params->{destination} ) . "</li>";
+
+    template destination => {
+        metatags    => metatags(params->{destination}),
+        destination => params->{destination},
+        crumb       => $crumb,
+        page_title  => url2text( params->{destination} ),
+        writeup     => webtext(7),
+    };
+};
+
+any [ 'get', 'post' ] => "/destinations/*/$TAILOR/**" => sub {
+
+    # valid options are popularity (default), days and price
+
+    my ( $destination, $arg ) = splat;
+
+    my @arg   = @{$arg};
+    my $view  = @$arg[0];
+    my $order = @$arg[1] ? @$arg[1] : 'popularity';
+
+    if ( $view eq 'grid' || $view eq 'block' || $view eq 'list' ) {
+        route_listing( $destination, $TAILOR, $view, $order );
+    }
+    else {
+        route_itinerary( $destination, @$arg[0], $TAILOR );
+    }
+};
+
+get "/destinations/*/$REGIONS" => sub {
+
+    my ($destination) = splat;
+    my $content       = webtext(7);
+    my $webpage       = webpages('11');
+  
+    my $crumb    = "<li>Destinations</li>
+                    <li><a href='".request->uri_base."/destinations/$destination'>" . url2text($destination) . "</a></li>
+                    <li class='active'>" . url2text($REGIONS) . "</li>";
+
+    template regions => {
+        metatags   => metatags("$REGIONS"),
+        writeup    => boldify( addptags( $content->{writeup} ) ),
+        page_title => url2text($REGIONS),
+        regions    => regions(),
+        crumb      => $crumb,
+        pathname   => $REGIONS,
+        country    => $destination,
+    };
+};
+
+get "/destinations/*/$REGIONS/**" => sub {
+
+   # e.g.
+   # destinations/india/mini-itineraries/kolkata-the-east/list/popularity-desc
+   # destinations/india/mini-itineraries/kolkata-the-east/kolkata
+   # destinations/india/mini-itineraries/rajasthan-the-north/list
+   # destinations/india/explore-by-region/mumbai-goa-the-deccan/mumbai
+   my ( $destination, $arg ) = splat;
+
+   my @arg    = @{$arg};
+   my $region = @$arg[0];
+   my $view   = @$arg[1] ? @$arg[1] : 'list';
+   my $order  = @$arg[2] ? @$arg[2] : 'popularity';
+
+   if ( $view eq 'grid' || $view eq 'block' || $view eq 'list' ) {
+        route_listing( $destination, $REGIONS, $view, $order, $region );
+    }
+    else {
+        route_itinerary( $destination, $view, $REGIONS, $region );
+    }
+};
+
+get "/destinations/*/$STATES" => sub {
+
+    my ($destination) = splat;
+
+    my $state    = states($destination);
+    my @states   = grep { $_->{state} } @$state;
+    my $crumb    = "<li>Destinations</li>
+                 <li><a href='".request->uri_base."/destinations/$destination'>". url2text($destination) . "</a></li>
+                 <li class='active'>" . url2text($STATES) . "</li>";
+
+    template state => {
+        metatags        => metatags("$STATES"),
+        writeup         => boldify( webtext(122) ),
+        states          => \@states,
+        country         => $destination,
+        random          => 1 + int( rand 35 ),
+        crumb           => $crumb,
+        call            => webtext(175),
+        page_title      => url2text($STATES),
+        pathname        => $STATES,
+    };
+};
+
+get "/destinations/*/$STATES/**" => sub {
+
+    # e.g. destinations/india/explore-by-state/assam/list/days-desc
+
+    my ( $destination, $arg ) = splat;
+
+    my @arg   = @{$arg};
+    my $state = @$arg[0];
+    my $view  = @$arg[1] ? @$arg[1] : 'list';
+    my $order = @$arg[2] ? @$arg[2] : 'popularity';
+
+    if ( $view eq 'grid' || $view eq 'block' || $view eq 'list' ) {
+        route_listing( $destination, $STATES, $view, $order, $state );
+    }
+    else {
+        route_itinerary( $destination, $view, $STATES, $state );
+    }
+};
+
+get "/destinations/*/$THEMES" => sub {
+
+    my ($destination) = splat;
+
+    my $crumb = "<li>Destinations</li>
+                 <li><a href='".request->uri_base."/destinations/$destination'>" . url2text($destination) . "</a></li>
+                 <li class='active'>" . url2text($THEMES) . "</a></li>";
+
+    template theme => {
+        metatags   => metatags("$THEMES"),
+        themes     => themes(),
+        crumb      => $crumb,
+        pathname   => $THEMES,
+        page_title => url2text($THEMES),
+        country    => $destination,
+    };
+};
+
+get "/destinations/*/$THEMES/**" => sub {
+
+    my ( $destination, $arg ) = splat;
+ 
+    my @arg   = @{$arg};
+    my $theme = @$arg[0] // 'romance';
+    my $view  = @$arg[1] ? @$arg[1] : 'list' ; # list, block or grid
+    my $order = @$arg[2] ? @$arg[2] : 'popularity'; # days, price, popularity
+
+    my $themeinfo = themes_url($theme);    
+    my $ideas     = ($themeinfo->{themes_id} > 6) ? 1 : 0;
+    my $exist     = itinerary_exist($view);
+ 
+    if ($exist->{exist} > 0 ){
+  
+        route_itinerary( $destination, $view, $THEMES, $theme );
+    } 
+    else {
+           
+        my $itineraries = themetrips( $themeinfo->{themes_id}, $session_currency, $order );
+
+        my $max = 0;
+        my $themes ;
+        my @subthemes;
+        my @array  = ();
+        my $subthemes ;
+        my $markers;
+
+        my @icons = (
+             'blue-dot.png',   'orange-dot.png',
+             'purple-dot.png', 'pink-dot.png',
+             'yellow-dot.png', 'red-dot.png',
+             'green-dot.png',  'blue-dot.png',
+             'orange-dot.png', 'purple-dot.png'
+             );
+
+        foreach my $trip (@$itineraries) {
+            $max = ( $trip->{lengthintro} > $max ) ? $trip->{lengthintro} : $max;
+        }
+
+        if ($ideas == 0){
+            $themes = themes('LIMIT');
+
+            $subthemes   = subthemes( $themeinfo->{themes_id} );
+            $markers     = themes_subthemes( $themeinfo->{themes_id} );
+
+            @subthemes = map {{   
+                themes_id    => $_->{themes_id},
+                oneliner     => $_->{oneliner},
+                url          => $_->{url},
+                subthemes_id => $_->{subthemes_id},
+                introduction => boldify( addptags( $_->{introduction} ) ),
+                subtheme     => $_->{subtheme},
+                title        => $_->{title},
+                }} @$subthemes;
+
+            my $colour = -1;
+            my $id     = 0;
+
+            foreach my $mark (@$markers) {
+                if ( $id ne $mark->{subthemes_id} ) {
+                    $id = $mark->{subthemes_id};
+                    $colour++;
+                }
+                $mark->{colour} = $icons[$colour];
+                push @array, $mark;
+            }
+        } 
+        else {
+            $themes = themes('TRIPIDEAS');
+        }
+        
+        # create or update tour popups and set data for sliders
+        my $tt           = Template->new( config('app') );
+        my $min_duration = 30;
+        my $max_duration = 0;
+        my $min_cost     = 1000000;
+        my $max_cost     = 0;
+
+        foreach my $trip (@$itineraries) {
+            $min_duration = ( $trip->{numdays} < $min_duration ) ? $trip->{numdays} : $min_duration;
+            $max_duration = ( $trip->{numdays} > $max_duration ) ? $trip->{numdays} : $max_duration;
+            $min_cost     = ( $trip->{cost}    < $min_cost )     ? $trip->{cost}    : $min_cost;
+            $max_cost     = ( $trip->{cost}    > $max_cost )     ? $trip->{cost}    : $max_cost;
+
+            my @tourimages = images( $trip->{tourname}, 'ready tour', 'large' );
+           
+            my $vars = {
+                items     => \@tourimages,
+                imagepath => 'tours',
+                uribase   => request->uri_base,
+            };
+
+            my $output = "public/ajax/slideshow-tour-" . $trip->{tourname} . ".html";
+            if ( !( -e $output ) || ( -M $output > 30 ) ) {
+                #$tt->process( "slideshowtour.tt", $vars, $output ) || die $tt->error;
+            }
+        }
+
+        my $crumb = "<li>Destinations</li>
+                    <li><a href='".request->uri_base."/destinations/$destination'>". url2text($destination) . "</a></li>
+                    <li><a href='".request->uri_base."/destinations/$destination/$THEMES'>". url2text($THEMES) . "</a></li>
+                    <li class='active'>" . $themeinfo->{pagename} . "</li>";
+      
+        template themes => {
+            metatags        => $themeinfo,
+            introduction    => boldify( addptags( $themeinfo->{introduction} ) ),
+            theme           => $theme,
+            themeinfo       => $themeinfo,
+            themes          => \@$themes,
+            subthemes       => \@subthemes,
+            itineraries     => \@$itineraries,
+            crumb           => $crumb,
+            option          => $THEMES,
+            pathname        => $THEMES.'/'.$themeinfo->{url},
+            filter          => 'themes',
+            country         => $destination,
+            maxlen          => $max,
+            markers         => \@array,
+            sample          => webtext(183),
+            display         => $view,
+            order           => $order,
+            min_cost        => $min_cost,
+            max_cost        => $max_cost,
+            min_duration    => $min_duration,
+            max_duration    => $max_duration,
+            ideas           => $ideas,
+            page_title      => $themeinfo->{pagename},
+        };
+    }
+};
+
+
+get '/enquiry' => sub {
+
+    my $email = ( user_is_registered() ? user_email() : "" );
+
+    template enquiry => {
+        metatags => metatags( ( split '/', request->path )[-1] ),
+        email => $email,
+    };
+};
+
+post '/enquiry' => sub {
+
+    my $email = ( user_is_registered() ? user_email() : "" );
+
+    template enquiry => {
+        metatags => metatags( ( split '/', request->path )[-1] ),
+        subject  => params->{subject},
+        email    => $email,
+    };
+};
+
+get '/faq' => sub {
+
+    template faq =>{ 
+        metatags => metatags( ( split '/', request->path )[-1] ), 
+        crumb =>  '<li class="active">Faq</li>',
+        page_title => 'FAQ', 
+    };
+};
+
+=head
+ajax '/my-account/login' => sub {
+    my $userid   = 0;
+    $userid = 0 unless length params->{username} > 0 ;
+    $userid = 0 unless length params->{password} > 0 ;
+    if ($userid > 0){
+    $userid = user_ok( params->{username}, params->{password} );
+    };
+    my $json
+        = ($userid)
+        ? qq{{"success" : "Login is successful", "userid" : "$userid"}}
+        : qq{{"error"   : "Username or password is wrong"}};
+    #print $json;
+    return $json;
+};
+=cut
+
+get '/hotel-categories' => sub {
+    template hotel_categories => {
+       hotel_categories => webtext(18),
+   };
+};
+
+
+get '/hand-picked-hotels' => sub {
+    
+    template hand_picked_hotels => {
+        metatags => metatags( ( split '/', request->path )[-1] ),
+        hotel_categories => webtext(18),
+        heritage_hotels  => webtext(19),
+        home_stays       => webtext(20),
+        about            => webtext(208),
+        crumb            => '<li class="active">Hand-picked Hotels</li>',
+        page_title       => 'Hand Picked Hotels',
+    };
+};
+
+get '/my-account' => sub {
+
+    my $msg;
+    my $email;
+
+    if ( user_is_registered() ) {
+        $msg = 'You are already registered. 
+        Please logout first should you wish to login as a different user';
+    }
+
+    template login => {
+        metatags => metatags( ( split '/', request->path )[-1] ),
+        message => $msg,
+    };
+};
+
+post '/my-account/register' => sub {
+
+    my $email = params->{email};
+    my $pwd   = params->{passw0rd};
+
+    my $msg;
+
+    if ( user_is_registered() ) {
+        if ( $email == user_email() ) {
+            $msg = 'You are already registered';
+        }
+        else {
+            $msg
+            = 'You are already logged in as a different user. Please log out first.';
+        }
+    }
+    else {
+        unless ( valid_email($email) ) {
+            register_user($email);
+            $msg
+            = 'You have been succesfully registered. Please check your mail box for our message.';
+
+            my $passwd    = generate_password();
+            my $md5passwd = md5_hex($passwd);
+            my $success   = update_password($email);
+
+            my $email_msg = MIME::Lite->new(
+                                            From =>
+                                            'Traveller\'s Palm Administrator <admin@travellers-palm.com>',
+                                            To      => $email,
+                                            Subject => 'Your request for a Password',
+                                            Data    => "Dear User\n\n
+                                            Thank you for registering with Traveller's Palm.\n
+                                            Following your request, we have generated a password for your use.\n
+                                            Please use $passwd to login and use our services.\n\n
+                                            Happy Traveling!\n
+                                            Traveller's Palm Administrator\n",
+                                            );
+
+            MIME::Lite->send(
+                             'smtp',
+                             'mail.travellers-palm.com',
+                             Timeout  => 30,
+                             AuthUser => 'admin+travellers-palm.com',
+                             AuthPass => 'ip31415',
+                             Debug    => 1,
+                             );
+
+            $email_msg->send;
+
+            return redirect uri_for('my-account/wish-list');
+        }
+        else {
+            $msg = 'You have entered an invalid e-mail id';
+        }
+    }
+
+    template login => {
+        metatags => metatags('login'),
+        error    => $msg,
+    };
+};
+
+post '/my-account/mail-password' => sub {
+
+    my $email = params->{email};
+
+    #use Digest::MD5 qw{md5_hex};
+    #use MIME::Lite;
+    #use Email::Valid;
+
+    my $passwd    = generate_password();
+    my $md5passwd = md5_hex($passwd);
+
+    my $success = user_update( $email, $md5passwd );
+
+    if ( $success == 1 ) {
+
+        my $msg = MIME::Lite->new(
+                                  From =>
+                                  'Traveller\'s Palm Administrator <admin@travellers-palm.com>',
+                                  To      => $email,
+                                  Subject => 'Your request for a Password',
+                                  Data    => "Dear User\n\n
+                                  Thank you for registering with Traveller's Palm.\n
+                                  Following your request, we have generated a password for your use.\n
+                                  Please use $passwd to login and use our services.\n\n
+                                  Happy Traveling!\n
+                                  Traveller's Palm Administrator\n",
+                                  );
+
+        MIME::Lite->send(
+                         'smtp',
+                         'mail.travellers-palm.com',
+                         Timeout  => 30,
+                         AuthUser => 'admin+travellers-palm.com',
+                         AuthPass => 'ip31415',
+                         Debug    => 1,
+                         );
+
+        $msg->send;
+    }
+
+};
+
+any [ 'get', 'post' ] => '/plan-your-trip' => sub {
+    
+    my $ourtime         = ourtime();
+    my $ok              = 0;
+    my $error           = 0;
+    my $plan_your_trip  = webtext(73);
+    my $crumb           = "<li><a href='".request->uri_base.'/' . request->path . "'>".$plan_your_trip->title."</a></li>";
+    
+    if ( request->is_post ) {
+        $ok = email_thankyouforrequest(params);
+        $error = ($ok) ? 0 : 1;
+    }
+
+    if ($ok) {
+        template email_thankyouforrequest => {
+            metatags        => metatags( ( split '/', request->path )[-1] ),
+            crumb           => $crumb,
+            name            => params->{name},
+            email           => params->{email},
+            message         => params->{message},
+            reference       => params->{reference},
+            page_title      => $plan_your_trip->{title},
+        };
+    }
+    else {
+        template plan_your_trip => {
+            metatags         => metatags( ( split '/', request->path )[-1] ),
+            plan_your_trip   => $plan_your_trip,
+            get_inspired     => webtext(173),
+            quote            => webtext(174),
+            plan_and_refine  => webtext(184),
+            arrangements     => webtext(185),
+            why_book_with_us => webtext(14),
+            error            => $error,
+            crumb            => $crumb,
+            name             => params->{name},
+            email            => params->{email},
+            message          => params->{message},
+            reference        => params->{reference},
+            page_title       => $plan_your_trip->{title},
+        };
+    }
+};
+
+get '/policies' => sub {
+
+    my @fields = (
+                  webtext(124), webtext(125), webtext(126), webtext(127),
+                  webtext(128), webtext(129), webtext(130), webtext(131),
+                  webtext(132), webtext(133), webtext(134), webtext(135),
+                  webtext(136), webtext(137), webtext(191), webtext(138),
+                  webtext(139), webtext(140), webtext(141), webtext(142),
+                  webtext(143), webtext(144), webtext(145), webtext(146),
+                  );
+
+    template policies => {
+        metatags   => metatags( ( split '/', request->path )[-1] ),
+        conditions => webtext(15),
+        terms      => webtext(35),
+        privacy    => webtext(16),
+        fields     => \@fields,
+        about      => webtext(208),
+        crumb      => '<li class="active">Our Policies</li>',
+        page_title => 'Our Policies',
+    };
+};
+
+any '/search-results' => sub {
+    template search_results => {   
+        metatags            => metatags( ( split '/', request->path )[-1] ), 
+        why_travel_with_us  => webtext(12),
+        extensive_knowledge => webtext(153),
+        highly_selective    => webtext(154),
+        unbiased            => webtext(155),
+        unrivalled_coverage => webtext(156),
+        in_charge           => webtext(157),
+        value_for_money     => webtext(158),
+        page_title          => 'Search Results',
+        crumb               => '<li class="active">Search Results</li>',
+        };
+};
+
+get '/site-map' => sub {
+
+    my $textfile = config->{root}.'/url-report.txt';
+    my @report   = ();
+
+    if (open(my $fh, '<:encoding(UTF-8)', $textfile)) {
+        while (my $row = <$fh>) {
+            chomp $row;
+            $row =~ /^$/ and next; # blank line
+            push @report, {url => $row};
+        }
+    }
+
+    template sitemap => { 
+        metatags    => metatags( ( split '/', request->path )[-1] ), 
+        report      => \@report,
+        crumb       => ' <li class="active">Sitemap</li>',
+        page_title  => 'Sitemap',
+    };
+};
+
+get '/state/:state' => sub {
+
+    # redirect due to flash maps
+    redirect request->uri_base."/destinations/india/$STATES/" . params->{state} . "/list";
+};
+
+get '/specials/:solita' => sub {
+
+    template solita => {
+        metatags            => metatags( ( split '/', request->path )[-1] ),
+        solita              => webtext(177),
+        welcome             => webtext(178),
+        easy_seating        => webtext(179),
+        interiors           => webtext(180),
+        dolphin             => webtext(181),
+        sunset              => webtext(182),
+        elegant             => webtext(194),
+        the_yacht           => webtext(195),
+        dolphin_discovery   => webtext(196),
+        backwater_cruise    => webtext(197),
+        entertainment       => webtext(198),
+        dinner_for_two      => webtext(199),
+        romantic_overnight  => webtext(200),
+        the_story           => webtext(201),
+        recommended         => webtext(206),
+        the_crew            => webtext(202),
+        specifications      => webtext(203),
+        facilities          => webtext(204),
+        tribute             => webtext(205),
+        page_title          => 'The Solita in Goa',
+        crumb               => '<li>Specials</li>
+                                <li class="active">The Solita in Goa</li>',
+
+    };
+};
+
+get '/sustainable-tourism' => sub {
+
+    my $sustainable = webtext(13);
+
+    template sustainable_tourism => {
+        metatags    => metatags( ( split '/', request->path )[-1] ),
+        sustainable => $sustainable,
+        crumb       => '<li class="active">'.$sustainable->{title}.'</li>',
+        page_title  => $sustainable->{title},
+    };
+};
+
+get '/testimonials' => sub {
+
+    template testimonials => {
+        metatags    => metatags('testimonials'),
+        page_title  => 'Testimonials',
+        crumb       =>  '<li><a href="[% request.uri_base %]/about-us">About us</a></li>
+                        <li class="active">Testimonials</li>', 
+    };
+};
+
+get '/travel-ideas' => sub {
+
+    template travel_ideas => {
+        metatags        => metatags('travel-ideas'),
+        page_title      => 'Travel Ideas',
+        crumb           => '<li class="active">Travel Ideas</li>',
+    };
+};
+
+get '/what-to-expect' => sub {
+
+    my $expect  = webtext(21);
+    
+    template what_to_expect => {
+        metatags        => metatags( ( split '/', request->path )[-1] ),
+        what_to_expect  => $expect,
+        special_hotels  => webtext(147),
+        eat_drink       => webtext(148),
+        private_car     => webtext(149),
+        travel_by_train => webtext(150),
+        fly_in_comfort  => webtext(151),
+        delays          => webtext(152),
+        before_you_go   => webtext(17),
+        getting_ready   => webtext(168),
+        right_attitude  => webtext(169),
+        crumb           => '<li class="active">'.$expect->{title}.'</li>',
+        page_title      => $expect->{title},
+    };
+};
+
+get '/why-travel-with-us' => sub {
+  
+    my $ourtime = ourtime();
+    my $why     = webtext(12);
+  
+    template why_travel_with_us => {
+        metatags            => metatags( ( split '/', request->path )[-1] ),
+        why_travel_with_us  => $why,
+        extensive_knowledge => webtext(153),
+        highly_selective    => webtext(154),
+        unbiased            => webtext(155),
+        unrivalled_coverage => webtext(156),
+        in_charge           => webtext(157),
+        value_for_money     => webtext(158),
+        totalcities         => totalcities(),
+        ourtime             => $ourtime->strftime('%H:%M'),
+        ourdate             => $ourtime->strftime('%d %B,%Y'),
+        timediff            => 0, #timediff(),
+        need_help           => webtext(176),
+        crumb               => '<li class="active">'.$why->{title}.'</li>',
+        page_title          => $why->{title},
+    };
+};
+
+any qr{.*} => sub {
+    template 404 => {
+        page => request->path,
+    };
+};
+
+
+#----------------- functions -------------------
+
+sub elog  {
+
+    my $url = shift;
+
+    my @imgnames = ();
+    my $log      = '/var/log/nginx/travellers-palm/error.log';
+
+    open(my $fh, '<:encoding(UTF-8)', $log) || die "Cannot open log file: $!";
+
+    while(my $line = <$fh>) {
+
+        if ($line =~ /failed/) {
+            my @result = split(/"/,$line);
+            push(@imgnames,{ message => $result[1] });
+        }
+    }
+
+    close($fh);
+    return \@imgnames;
+}
+
+
+sub route_listing {
+    my $destination = shift;
+    my $option      = shift;    # TAILOR THEMES STATES REGIONS or IDEAS
+    my $view        = shift;    # list, block or grid
+    my $order       = shift;    # days, price, popularity
+    my $region      = shift;    # region or state
+
+
+    my $crumb = "<li>Destinations</li>
+                 <li><a href=".request->uri_base."/destinations/$destination>" . url2text($destination) . "</a></li>";
+
+    my $itineraries;
+    my $states;
+    my $state;
+    my $stateinfo;
+    my $state_writeup;
+    my $regioninfo;
+    my $places;
+    my $filter;
+    my $regions;
+
+    if ( $option eq $TAILOR ) {
+        $itineraries = itineraries( option => 'itin', currency => $session_currency, order => $order );
+        $filter      = 'tailor';
+
+        $crumb .= "<li class='active'>" . url2text($TAILOR) . "</li>";
+    }
+    elsif ( $option eq $REGIONS ) {
+
+        $itineraries = modules( region => $region, currency => $session_currency, order => $order );
+        $regioninfo  = regionsurl( $region );
+        $regions     = regions();
+        $filter      = 'regions';     
+
+        my $metatags;
+        $metatags->{meta_descr}     = $regioninfo->{introduction};
+        $metatags->{meta_keywords}  = $regioninfo->{meta_keywords};
+        $metatags->{meta_title}     = $regioninfo->{oneliner};
+
+        $crumb .=  "<li><a href='".request->uri_base."/destinations/$destination/$REGIONS'>". url2text($REGIONS) . "</a></li>
+                    <li class='active'>" . $regioninfo->{title} . "</li>";
+    }
+    elsif ( $option eq $STATES ) {
+
+        $state       = $region;
+        $stateinfo   = statesurl($state);
+        $itineraries = toursinstate( state => $state, currency=> $session_currency, order=> $order );
+        $states      = states($destination);
+        $filter      = 'states';
+        $crumb      .= "<li><a href='".request->uri_base."/destinations/$destination/$STATES'>" . url2text($STATES) . "</a></li>
+                        <li class='active'>" . url2text($state) . "</li>";
+
+        ( $state_writeup, $places ) = linkify( addptags( $stateinfo->{webwriteup} ) );
+    }
+
+    # set data for sliders
+    my $min_duration = 30;
+    my $max_duration = 0;
+    my $min_cost     = 1000000;
+    my $max_cost     = 0;
+
+    foreach my $trip (@$itineraries) {
+        $min_duration = ( $trip->{numdays} < $min_duration ) ? $trip->{numdays} : $min_duration;
+        $max_duration = ( $trip->{numdays} > $max_duration ) ? $trip->{numdays} : $max_duration;
+        $min_cost     = ( $trip->{cost}    < $min_cost )     ? $trip->{cost}    : $min_cost;
+        $max_cost     = ( $trip->{cost}    > $max_cost )     ? $trip->{cost}    : $max_cost;
+    }
+
+    if ( $option eq $STATES ) {
+
+        # create or update city popups
+        my $config  = { RELATIVE => 1, INCLUDE_PATH => [ "../views" ] };
+        my $tt      = Template->new($config);
+
+        foreach my $cityid_array (@$places) {
+            my $vars = {
+                items      => images( $cityid_array->{cities_id}, 'city', 'large' ),
+                imagepath  => 'city',
+                uribase    => request->uri_base,
+                webwriteup => addptags( $cityid_array->{writeup} ),
+                cityinfo   => city( $cityid_array->{cities_id} ),
+            };
+    
+            my $output = "../public/ajax/slideshow-city-" . $cityid_array->{cities_id} . ".html";
+           
+            unless ( -f $output && -M $output < 30 ) { 
+                # $tt->process( 'slideshowcity.tt', $vars, $output ) || die $tt->error;
+            }
+        }
+
+        template states => {
+            metatags      => $stateinfo,
+            country       => $destination,
+            itineraries   => \@$itineraries,
+            states        => \@$states,
+            crumb         => $crumb,
+            stateinfo     => $stateinfo,
+            filter        => $filter,
+            pathname      => $STATES,
+            state         => $state,
+            display       => $view,
+            order         => $order,
+            state_intro   => addptags( $stateinfo->{writeup} ),
+            state_writeup => $state_writeup,
+            cities        => \@$places,
+            display       => $view,
+            min_cost      => $min_cost,
+            max_cost      => $max_cost,
+            min_duration  => $min_duration,
+            max_duration  => $max_duration,
+        };
+    }
+    else {
+    	
+        template tours => {
+            metatags          => metatags($TAILOR),
+            country           => $destination,
+            itineraries       => \@$itineraries,
+            tripideas         => themes('TRIPIDEAS'),
+            crumb             => $crumb,
+            filter            => $filter,
+            display           => $view,
+            pathname          => $option,
+            display           => $view,
+            order             => $order,
+            min_cost          => $min_cost,
+            max_cost          => $max_cost,
+            min_duration      => $min_duration,
+            max_duration      => $max_duration,
+            page_title        => ($option eq $REGIONS) ? $regioninfo->{title} : url2text($option),
+            regionname        => $region,
+            special_interests => webtext(190),
+            regions           => \@$regions,
+            currency          => $session_currency,
+        };
+    }
+}
+
+sub route_itinerary {
+
+    my $destination = shift;
+    my $tour        = shift;    # url of the tour name
+    my $option      = shift;    # TAILOR, IDEAS, THEMES, or STATES
+    my $theme       = shift;    # theme or region or state
+    
+    my $itinerary = itinerary( $tour );
+
+    if (ref $itinerary ne ref {}) {
+        return template special_404 => { 
+            message => "$tour has been misspelled and/or is not on file.",
+            url     => request->path, 
+        };
+    }
+
+    my $cost            = itinerary_cost( $itinerary->{fixeditin_id}, $session_currency );
+    my $startcity       = ( exists $itinerary->{startcity} ) ? city( $itinerary->{startcity} ) : '';
+    my $endcity         = city( $itinerary->{endcity} );
+    my $days            = ( $itinerary->{days} ? $itinerary->{days} : '' );
+    my $category        = ( $itinerary->{readytours} ? 'ready tour' : 'module' );
+    my $inclusions      = $itinerary->{inclusions};
+    my $ourtime         = ourtime();
+    my $daybyday        = daybyday($tour);
+    my $accommodation   = youraccommodation($tour);
+    my $similartours    = similartours( $startcity->{cities_id}, $session_currency );
+    my $placesyou       = placesyouwillvisit($tour);
+    my $itin            = $itinerary->{itinerary};
+
+    $inclusions =~ s/\{/<br><h4>/;
+    $inclusions =~ s/\}/<\/h4>/;
+    $itin =~ s/\{/<br><b>/g;
+    # set path for popups
+
+    my $tt = Template->new( { 
+    	RELATIVE => 0, 
+    	INCLUDE_PATH => config->{root}.'/views',
+    });
+
+    my $imagedir = 'http://images.travellers-palm.com';
+
+    # create or update city popups
+    foreach my $cityid_array (@$daybyday) {
+        my $vars = {
+            items => images( $cityid_array->{cities_id}, 'city', 'large' ),
+            imagepath  => 'city',
+            uribase    => request->uri_base,
+            webwriteup => addptags( $cityid_array->{writeup} ),
+            cityinfo   => city( $cityid_array->{cities_id} ),
+            IMAGE      => $imagedir,
+        };
+        my $output = config->{root}.'/public/ajax/slideshow-city-' . $cityid_array->{cities_id} . '.html';
+        unless ( -f $output && -M $output < 30 ) { 
+            $tt->process( 'slideshowcity.tt', $vars, $output ) || die $tt->error;
+        }
+    }
+
+    # create or update tour popups
+    my $vars = {
+        items      => images( $itinerary->{tourname}, $category, 'large' ),
+        imagepath  => $itinerary->{readytours} ? 'tour' : 'module' ,
+        uribase    => request->uri_base,
+        IMAGE      => $imagedir,
+    };
+
+    my $output = config->{root}.'/public/ajax/slideshow-tour-' . $itinerary->{fixeditin_id} .'.html';
+    
+    unless ( -f $output && -M $output < 30 ) {
+        $tt->process( "slideshowtour.tt", $vars, $output ) || die $tt->error;
+    }
+   
+    # create or update hotel popups
+    foreach my $hotel_array (@$accommodation) {
+        my $vars = {
+            items     => images( $hotel_array->{hotel_id}, 'hotel', 'large' ),
+            imagepath => 'hotel',
+            uribase   => request->uri_base,
+            writeup   => addptags( $hotel_array->{description} ),
+            hotelinfo => hotel( $hotel_array->{hotel_id} ),
+            IMAGE      => $imagedir,
+        };
+        
+        my $output = config->{root}.'/public/ajax/slideshow-hotel-' . $hotel_array->{hotel_id} . '.html';
+       
+        unless ( -f $output && -M $output < 30 ) {
+            $tt->process( "slideshowhotel.tt", $vars, $output ) || die $tt->error;
+        }
+    }
+
+    my $themeinfo;
+    my $regioninfo;
+    my $image;
+ 
+    my $crumb =    "<li>Destinations</li>
+                    <li><a href='".request->uri_base."/destinations/$destination'>". url2text($destination) . "</a></li>";
+
+    if ( $option eq $TAILOR ) {
+        $image  = qq/tour_$itinerary->{tourname}_large_1.jpg/;
+
+        $crumb .= "<li><a href='".request->uri_base."/destinations/$destination/$TAILOR/list'>". url2text($TAILOR) . "</a></li>
+                   <li class='active'>" . $itinerary->{title} . "</li>";
+    }
+    elsif ( $option eq $THEMES ) {
+
+        $themeinfo = themes_url($theme);
+        $image     = ($itinerary->{readytours} ? 'tour' : 'mod') . "_$itinerary->{tourname}_large_1.jpg";
+
+        $crumb .= " <li><a href='".request->uri_base."/destinations/$destination/$THEMES'>". url2text($THEMES). "</a></li>
+                    <li><a href='".request->uri_base."/destinations/$destination/$THEMES/$theme'>". $themeinfo->{pagename} . "</a></li>
+                    <li class='active'>" . $itinerary->{title} . "</li>";
+    }
+    elsif ( $option eq $REGIONS ) {
+
+        $regioninfo = regionsurl($theme);
+        $image = qq/mod_$itinerary->{tourname}_large_1.jpg/;
+
+        $crumb .= " <li><a href='".request->uri_base."/destinations/$destination/$REGIONS'>" . url2text($REGIONS) . "</a></li>
+                    <li><a href='".request->uri_base."/destinations/$destination/$REGIONS/"  . $regioninfo->{url} . "/list'>". $regioninfo->{title} . "</a></li>
+                    <li class='active'>" . $itinerary->{title} . "</li>";
+    }
+    elsif ( $option eq $STATES ) {
+
+        $image = ($itinerary->{readytours} ? 'tour' : 'mod') . "_$itinerary->{tourname}_large_1.jpg";
+
+        $crumb .= " <li><a href='".request->uri_base."/destinations/$destination/$STATES'>" . url2text($STATES) . "</a></li>
+                    <li><a href='".request->uri_base."/destinations/$destination/$STATES/"  . $theme . "/list'>". url2text($theme) . "</a></li>
+                    <li class='active'>" . $itinerary->{title} . "</li>";
+    }
+
+    return template itinerary => {
+        metatags        => $itinerary,
+        inclusions      => $inclusions,
+        tourdata        => $itinerary,
+        cost            => $cost,
+        startcity       => $startcity,
+        endcity         => $endcity,
+        itinerary       => $itin,
+        country         => $destination,
+        image           => $image, 
+        tours           => \@$similartours,
+        days            => \@$daybyday,
+        places          => \@$placesyou,
+        accommodation   => \@$accommodation,
+        ourtime         => $ourtime->strftime('%H:%M'),
+        ourdate         => $ourtime->strftime('%d %B,%Y'),
+        timediff        => 0, #timediff(),
+        pathname        => $option,
+        crumb           => $crumb,
+        imagepath       => 'tour',
+        tweak           => webtext(118),
+        need_help       => webtext(176),
+        themeinfo       => $themeinfo,  
+        plan_your_trip  => webtext(73),
+        plan_and_refine => webtext(184),
+        arrangements    => webtext(185),
+        page_title      => $itinerary->{title},
+    };
+};
+
+true;
