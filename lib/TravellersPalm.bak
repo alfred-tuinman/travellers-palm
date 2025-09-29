@@ -1,0 +1,8 @@
+package TravellersPalm;
+use Dancer2;
+
+# Load all controllers to register their routes
+use TravellersPalm::Controller::Home;
+use TravellersPalm::Database::Connector;
+
+1;

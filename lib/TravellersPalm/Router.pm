@@ -10,7 +10,7 @@ sub to_app {
 
     # Define routes
     $router->connect('/', 
-      { controller => 'Home', action => 'show' },
+      { controller => 'Home', action => 'index' },
       { method => 'GET' }
     );
   
