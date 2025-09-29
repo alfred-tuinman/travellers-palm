@@ -317,7 +317,7 @@
 [% INCLUDE layouts/footer.tt %]
 
 <script type="text/javascript" src="[% request.uri_base %]/components/flexslider/jquery.flexslider-min.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZ1TWStdIWQYeNDBKpE6SgJSEd4EerEdg&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=[% sleutel %]&callback=initMap" async defer></script>
 <script type="text/javascript" src="[% request.uri_base %]/js/theme-scripts.js"></script>
 <script type="text/javascript">
 

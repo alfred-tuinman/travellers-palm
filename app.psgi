@@ -4,8 +4,12 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
 
-use TravellersPalm::Router;
+use TravellersPalm::Web;       # load hooks & template setup
+use TravellersPalm::Router;    # route table
 
-# Return PSGI app
-my $app = TravellersPalm::Router->to_app;
-$app;
+# initialize hooks and Dancer2 app
+my $web_app = TravellersPalm::Web->to_app;
+
+# router returns a PSGI app
+my $router_app = TravellersPalm::Router->to_app;
+$router_app;

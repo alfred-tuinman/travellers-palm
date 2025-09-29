@@ -1,0 +1,34 @@
+package TravellersPalm::Controller::Hotels;
+use strict;
+use warnings;
+use Template;
+
+use Dancer2;
+
+use Data::FormValidator;
+use Date::Manip::Date;
+use Data::Dumper;
+
+use TravellersPalm::Functions;
+use TravellersPalm::Database;
+
+
+get '/hotel-categories' => sub {
+    template hotel_categories => {
+       hotel_categories => webtext(18),
+   };
+};
+
+
+get '/hand-picked-hotels' => sub {
+    
+    template hand_picked_hotels => {
+        metatags => metatags( ( split '/', request->path )[-1] ),
+        hotel_categories => webtext(18),
+        heritage_hotels  => webtext(19),
+        home_stays       => webtext(20),
+        about            => webtext(208),
+        crumb            => '<li class="active">Hand-picked Hotels</li>',
+        page_title       => 'Hand Picked Hotels',
+    };
+};

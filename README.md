@@ -134,6 +134,12 @@ I removed this as I cannot find Odyssey2008 and mysql is difficult to set up for
           PrintError: 1
           LongReadLen: 102400 </pre>
 
+## Workflow
+Our workflow is as follows:
+
+Router → Controller → TravellersPalm::Database → SQL server
+
+
 # Logs
 Logging depends on the development or production environment set in .env. The log configurations are set in the environments folder and the config.yml and nginx.conf  
 

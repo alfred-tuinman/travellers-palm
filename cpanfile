@@ -23,3 +23,5 @@ requires 'URI'; # covers URI::http
 requires 'JSON';   
 requires 'Math::Polygon';
 requires 'HTTP::BrowserDetect';
+requires 'HTML::Strip';
+requires 'LWP::UserAgent';

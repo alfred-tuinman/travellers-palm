@@ -4,7 +4,6 @@ use strict;
 use warnings FATAL => 'all';
 
 use Dancer2;
-use TravellersPalm::Database;
 
 use Email::Valid;
 use Geo::Location::TimeZone;
