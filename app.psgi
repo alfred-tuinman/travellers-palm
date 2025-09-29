@@ -1,15 +1,22 @@
 use strict;
 use warnings;
-
 use FindBin;
 use lib "$FindBin::Bin/lib";
 
-use TravellersPalm::Web;       # load hooks & template setup
-use TravellersPalm::Router;    # route table
+use Dancer2;                     # start the app
+use Dancer2::Plugin::Database;   # plugin must be loaded
 
-# initialize hooks and Dancer2 app
-my $web_app = TravellersPalm::Web->to_app;
+use TravellersPalm::Web;         # hooks & template setup
+use TravellersPalm::Router;      # route table
 
-# router returns a PSGI app
-my $router_app = TravellersPalm::Router->to_app;
-$router_app;
+use Plack::Builder;
+
+my $app = builder {
+    # Mount your Web app
+    mount '/' => TravellersPalm::Web->to_app;
+
+    # Mount your Router app
+    mount '/' => TravellersPalm::Router->to_app;
+};
+
+$app;

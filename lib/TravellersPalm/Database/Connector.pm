@@ -2,89 +2,72 @@ package TravellersPalm::Database::Connector;
 use strict;
 use warnings;
 
-use Dancer2 appname => 'TravellersPalm'; 
-
 use Carp qw(croak);
 
+# DO NOT 'use Dancer2' here; assume app is already running via app.psgi
+use Dancer2::Plugin::Database;  # plugin must be loaded in app.psgi
 
-# ------------------------------------------------------------
-# Get a handle for a named connection (defaults to 'sqlserver')
-# ------------------------------------------------------------
+# Get a DB handle at runtime
 sub dbh {
     my ($name) = @_;
     $name //= 'sqlserver';
 
-    my $dbh = eval { database($name) };
-    croak "Cannot get DB handle for connection '$name': $@" if $@ || !$dbh;
+    # Call database() at runtime inside a route
+    my $dbh = Dancer2::Plugin::Database::database($name);
+    croak "Cannot get DB handle for connection '$name'" unless $dbh;
 
     return $dbh;
 }
 
-# In case of multiple databases, just add the servername as the third optional argumnent
-sub main_dbh  { return dbh('sqlserver') };
-sub users_dbh { return dbh('users') };
+sub main_dbh  { return dbh('sqlserver') }
+sub users_dbh { return dbh('users') }
 
-
-# ------------------------------------------------------------
-# Run a SELECT that returns all rows as arrayref of hashrefs
-# ------------------------------------------------------------
+# Fetch all rows
 sub fetch_all {
     my ($sql, $bind, $conn) = @_;
     $conn //= 'sqlserver';
     $bind //= [];
 
     my $dbh = dbh($conn);
-    my $rows = $dbh->selectall_arrayref($sql, { Slice => {} }, @$bind);
-
-    return $rows;
+    return $dbh->selectall_arrayref($sql, { Slice => {} }, @$bind);
 }
 
-# ------------------------------------------------------------
-# Run a SELECT that returns just the first row
-# $sql → 1️⃣ first argument
-# $bind → 2️⃣ second argument (arrayref of bind values)
-# $conn → 3️⃣ third argument (connection name, optional)
-# $key_case → 4️⃣ fourth argument (optional: 'NAME_lc', 'NAME_uc', etc.)
-# ------------------------------------------------------------
+# Fetch first row
 sub fetch_row {
     my ($sql, $bind, $conn, $key_case) = @_;
     $conn     //= 'sqlserver';
     $bind     //= [];
-    $key_case //= 'NAME';    # default (unchanged)
+    $key_case //= 'NAME';
 
     my $dbh = dbh($conn);
-    return $dbh->selectrow_hashref($sql, @$bind, $key_case);
+
+    # Proper DBI call
+    my $row = $dbh->selectrow_hashref($sql, @$bind);
+
+    # If you need lowercase keys
+    if ($key_case eq 'NAME_lc' && $row) {
+        my %lc = map { lc($_) => $row->{$_} } keys %$row;
+        return \%lc;
+    }
+    return $row;
 }
 
-
-# ------------------------------------------------------------
-# Run an INSERT / UPDATE / DELETE
-# ------------------------------------------------------------
+# Execute DML
 sub do_sql {
     my ($sql, $bind, $conn) = @_;
     $conn //= 'sqlserver';
     $bind //= [];
 
     my $dbh = dbh($conn);
-    my $rv = $dbh->do($sql, undef, @$bind);
-
-    return $rv;
+    return $dbh->do($sql, undef, @$bind);
 }
 
-# ------------------------------------------------------------
-# Run something inside a transaction
-# Usage:
-#   Connector::txn(sub {
-#       my $dbh = shift;
-#       $dbh->do(...);
-#       $dbh->do(...);
-#   });
-# ------------------------------------------------------------
+# Run transaction
 sub txn {
     my ($code, $conn) = @_;
     $conn //= 'sqlserver';
-
     my $dbh = dbh($conn);
+
     my $ok = eval {
         $dbh->begin_work;
         $code->($dbh);

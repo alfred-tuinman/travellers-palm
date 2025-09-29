@@ -35,6 +35,24 @@ our $session_country  ;
 prefix undef;
 
 
+sub test {
+    my $dbh;
+    eval {
+        $dbh = Dancer2::Plugin::Database::database('sqlserver');
+    };
+    if ($@ or !$dbh) {
+        # Return explicit PSGI response if DB handle fails
+        return [500, ['Content-Type' => 'text/plain'], ["Cannot get DB handle: $@\n"]];
+    }
+
+    # Run a simple query
+    my ($table) = $dbh->selectrow_array(
+        'SELECT name FROM sqlite_master WHERE type="table" LIMIT 1'
+    );
+
+    return [200, ['Content-Type' => 'text/plain'], ["DB handle OK. First table: $table\n"]];
+};
+
 sub index {
     my ($class, $env, $match) = @_;
 
@@ -48,11 +66,6 @@ sub index {
 
 sub show {
     my $c = shift;   # in Dancer2::Plugin::RouterSimple this may be $c
-
-    my $dbh = database('sqlserver');
-    die "DB handle is undef!" unless $dbh;
-    return "DB handle is OK";
-
     my $slidetext = TravellersPalm::Database::General::web(163);
     my @slides    = $slidetext->{data}->{writeup} =~ /\G(?=.)([^\n]*)\n?/sg;
     unshift @slides, 'dummy item';
