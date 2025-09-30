@@ -10,6 +10,8 @@ use Dancer2::Plugin::Database;   # load the Database plugin
 use TravellersPalm::Web;       # load hooks & template setup
 use TravellersPalm::Router;    # route table
 
+use TravellersPalm::Controller::Images;
+
 # initialize hooks and Dancer2 app
 # my $web_app = TravellersPalm::Web->to_app;
 
