@@ -22,6 +22,7 @@ our @EXPORT = qw{
     boldify
     cutpara
     domain
+    elog
     email_request
     html_strip
     linkExtor
@@ -72,6 +73,26 @@ sub domain {
   # /(?<=\.)[a-z0-9-]*\.com/gm ;
 };
 
+sub elog  {
+
+    my $url = shift;
+
+    my @imgnames = ();
+    my $log      = '/var/log/nginx/travellers-palm/error.log';
+
+    open(my $fh, '<:encoding(UTF-8)', $log) || die "Cannot open log file: $!";
+
+    while(my $line = <$fh>) {
+
+        if ($line =~ /failed/) {
+            my @result = split(/"/,$line);
+            push(@imgnames,{ message => $result[1] });
+        }
+    }
+
+    close($fh);
+    return \@imgnames;
+}
 
 sub email_request {
 
