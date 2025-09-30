@@ -1,0 +1,76 @@
+/**
+ * Greensky theme
+ * A light green colored theme with query match highlighting and dotted rules
+ * between each result. A slightly larger humanist sans, Trebuchet, is also used.
+ */
+/* Slight reset to make the preview have ample padding. */
+undefined/**
+ * Table cell containing the search input.
+ * 12 pixels added to account for the horizontal padding on the input.
+ */
+undefined/* Search input field */
+undefined/* Search button */
+undefined/* Base tab selector styles */
+undefined/* Inactive tab */
+undefined/* Active tab */
+undefined/* This is the tab bar bottom border. */
+undefined/* Inactive refinement */
+undefined/* Wrapper for all results */
+undefined/* Wrapper for a result */
+undefined/* Font size */
+undefined/* Set link colors. */
+undefined/* Override default.css selector to disable underlines. */
+undefined/* Snippet text */
+undefined
+/* URL styling */
+undefined/* Pagination container centered */
+undefined/* Pagination */
+undefined/*Promotion Settings*/
+/* The entire promo */
+undefined/* Promotion links */
+undefined/* Promotion snippet */
+undefined/* Promotion url */
+undefined/* Style for auto-completion table
+ * .gsc-completion-selected : styling for a suggested query which the user has moused-over
+ * .gsc-completion-container : styling for the table which contains the completions
+ */
+undefined
+/* Full URL */
+undefined
+undefined
+undefined
+undefined
+undefined
+undefined
+undefined
+/* Facet box css */
+undefined
+undefined
+undefined
+undefined
+undefined
+undefined
+undefined
+undefined
+/* Universal one box css. */
+undefined.gs-webResult .gs-title
+.gs-title.gsc-usr-group-heading {
+  color: #06c;
+  cursor: pointer;
+}
+undefined.gs-webResult .gs-title
+.gs-title.gsc-usr-group-all-results {
+  font-size: 11px;
+  line-height: 10px;
+}
+.gs-webResult .gs-title
+.gs-title.gsc-usr-group-all-results
+b {
+  font-size: 14px;
+  font-weight: 600;
+}
+.gs-webResult .gs-title
+.gs-title.gsc-usr-group-heading
+b {
+  color: #06c;
+}

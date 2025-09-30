@@ -1,0 +1,101 @@
+/*
+ *  Traveller's Palm Custom Javascript file
+ */
+
+tjq(document).ready(function(){
+
+    // user login UI Form Element
+    tjq("form#loginForm").submit(function() { 
+      var username = tjq('#username').attr('value'); 
+      var password = tjq('#password').attr('value'); 
+      console.log(username);
+      if (username && password) { 
+        tjq.ajax({
+          url: "http://localhost:5000/my-account/login", 
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          data: "username=" + username + "&password=" + password,
+		        // script call was *not* successful
+		        error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    tjq('div#loginResult').text("responseText: " + XMLHttpRequest.responseText 
+                      + ", textStatus: " + textStatus 
+                      + ", errorThrown: " + errorThrown);
+                    tjq('div#loginResult').addClass("error");
+                }, 
+                success: function(data){
+                    if (data.error) { 
+                      tjq('div#loginResult').text("data.error: " + data.error);
+                      tjq('div#loginResult').addClass("error");
+		          } // if
+		          else { 
+                  tjq('form#loginForm').hide();
+                  tjq('div#loginResult').text("data.success: " + data.success 
+                    + ", data.userid: " + data.userid);
+                  tjq('div#loginResult').addClass("success");
+              } 
+          } 
+      }); 
+    } 
+    else {
+        tjq('div#loginResult').text("enter username and password");
+        tjq('div#loginResult').addClass("error");
+		    } // else
+		    tjq('div#loginResult').fadeIn();
+		    return false;
+       });
+});
+
+// popup
+tjq("body").on("click", "a.popup-gallery", function(e) {
+    e.preventDefault();
+    tjq(this).soapPopup({
+        type: "ajax",
+        wrapId: "soap-gallery-popup",
+        callBack: function(stp) {
+            if (stp.wrap.find('.image-carousel').length > 0) {
+                displayImageCarousel(stp.wrap.find('.image-carousel'));
+            }
+            if (stp.wrap.find('.photo-gallery').length > 0) {
+                displayPhotoGallery(stp.wrap.find('.photo-gallery'));
+            }
+        }
+    });
+});
+    
+tjq("body").on("click", ".popup-odc", function(e) {
+    var lngltd = tjq(this).data("box");
+    if (typeof lngltd != "undefined") {
+        e.preventDefault();
+        tjq(this).soapPopup({
+            type: "ajax", 
+            wrapId: "soap-popupbox",
+            lngltd: lngltd
+        });
+    }
+});
+
+tjq("body").on("click", ".soap-popupbox", function(e) {
+    e.preventDefault();
+    var sourceId = tjq(this).attr("href");
+    if (typeof sourceId == "undefined") {
+        sourceId = tjq(this).data("target");
+    }
+    if (typeof sourceId == "undefined") {
+        return;
+    }
+    if (tjq(sourceId).length < 1) {
+        return;
+    }
+    tjq(this).soapPopup({
+        wrapId: "soap-popupbox",
+    });
+});
+
+
+// google site search
+(function() {
+  var cx = '013743661630190283677:rkjcf6riyd8';
+  var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+  gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//www.google.com/cse/cse.js?cx=' + cx;
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
+})();

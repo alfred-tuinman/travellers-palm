@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map map_file="india.swf" zoom="100%" tl_long="68.862305" tl_lat="61.3529189397726" zoom_y="10.79%" zoom_x="0%">
+  <areas>
+    <area mc_name="IN_AN" title="Andaman and Nicobar Islands" url="/destinations/india/states/andaman-nicobar"></area>
+    <area mc_name="IN_AP" title="Andhra Pradesh" url="/destinations/india/states/andhra-pradesh"></area>
+    <area mc_name="IN_AR" title="Arunachal Pradesh" url="/destinations/india/states/arunachal-pradesh"></area>
+    <area mc_name="IN_AS" title="Assam" url="/destinations/india/states/assam"></area>
+    <area mc_name="IN_BR" title="Bihar" url="/destinations/india/states/bihar"></area>
+    <area mc_name="IN_CH" title="Chandigarh" url="/destinations/india/states/chandigarh"></area>
+    <area mc_name="IN_CT" title="Chhattisgarh" url="/destinations/india/states/chhattisgarh"></area>
+    <area mc_name="IN_DN" title="Dadra and Nagar Haveli"></area>
+    <area mc_name="IN_DD" title="Daman and Diu" url="/destinations/india/states/diu"></area>
+    <area mc_name="IN_DL" title="Delhi" url="/destinations/india/states/delhi"></area>
+    <area mc_name="IN_GA" title="Goa" url="/destinations/india/states/goa"></area>
+    <area mc_name="IN_GJ" title="Gujarat" url="/destinations/india/states/gujarat"></area>
+    <area mc_name="IN_HR" title="Haryana" url="/destinations/india/states/haryana"></area>
+    <area mc_name="IN_HP" title="Himachal Pradesh" url="/destinations/india/states/himachal-pradesh"></area>
+    <area mc_name="IN_JK" title="Jammu and Kashmir" url="/destinations/india/states/jammu-kashmir"></area>
+    <area mc_name="IN_JH" title="Jharkhand" url="/destinations/india/states/jharkhand"></area>
+    <area mc_name="IN_KA" title="Karnataka" url="/destinations/india/states/karnataka"></area>
+    <area mc_name="IN_KL" title="Kerala" color="#6e6e6e"></area>
+    <area mc_name="IN_LD" title="Lakshadweep"></area>
+    <area mc_name="IN_MP" title="Madhya Pradesh" url="/destinations/india/states/madhya-pradesh"></area>
+    <area mc_name="IN_MH" title="Maharashtra" url="/destinations/india/states/maharashtra"></area>
+    <area mc_name="IN_MN" title="Manipur" url="/destinations/india/states/manipur"></area>
+    <area mc_name="IN_ML" title="Meghalaya" url="/destinations/india/states/meghalaya"></area>
+    <area mc_name="IN_MZ" title="Mizoram" url="/destinations/india/states/mizoram"></area>
+    <area mc_name="IN_NL" title="Nagaland" url="/destinations/india/states/nagaland"></area>
+    <area mc_name="IN_OR" title="Orissa" url="/destinations/india/states/orissa"></area>
+    <area mc_name="IN_PY" title="Pondicherry" url="/destinations/india/states/pondicherry"></area>
+    <area mc_name="IN_PB" title="Punjab" url="/destinations/india/states/punjab"></area>
+    <area mc_name="IN_RJ" title="Rajasthan" url="/destinations/india/states/rajasthan"></area>
+    <area mc_name="IN_SK" title="Sikkim" url="/destinations/india/states/sikkim"></area>
+    <area mc_name="IN_TN" title="Tamil Nadu" url="/destinations/india/states/tamil-nadu"></area>
+    <area mc_name="IN_TR" title="Tripura" url="/destinations/india/states/tripura"></area>
+    <area mc_name="IN_UT" title="Uttarakhand" url="/destinations/india/states/uttaranchal"></area>
+    <area mc_name="IN_UP" title="Uttar Pradesh" url="/destinations/india/states/uttar-pradesh"></area>
+    <area mc_name="IN_WB" title="West Bengal" url="/destinations/india/states/west-bengal"></area>s
+    <area mc_name="borders" title="borders" color="#FFFFFF" balloon="false"></area>
+  </areas>
+ </map>
