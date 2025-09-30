@@ -1,0 +1,57 @@
+# config.yml
+appname: "TravellersPalm"
+behind_proxy: 1
+layout: "main"
+charset: "UTF-8"
+session: "Simple"
+template: "template_toolkit"
+public_dir: "public"
+engines:
+  template:
+    template_toolkit:
+      start_tag: '[%'
+      end_tag:   '%]'
+  logger:
+    File:
+      log_dir: "/usr/src/app/logs"
+      file_name: "deployment.log"
+
+plugins:
+  Database:
+    connections:
+      sqlserver:
+        dsn: "dbi:SQLite:dbname=/usr/src/app/db/Jadoo_2006.db"
+        username: ""
+        password: ""
+        dbi_params:
+          RaiseError: 1
+          AutoCommit: 1
+          PrintError: 1
+      userserver:
+        dsn: "dbi:SQLite:dbname=/usr/src/app/db/users.db"
+        username: ""
+        password: ""
+        dbi_params:
+          RaiseError: 1
+          AutoCommit: 1
+          PrintError: 1
+
+  MemcachedFast:
+    servers:
+      - "127.0.0.1:11211"
+    default_timeout: 3600
+
+plack_middlewares:
+  -
+    - Expires
+    - content_type
+    -
+      - image/gif
+      - image/jpeg
+      - image/png
+      - text/css
+      - application/javascript
+    - expires
+    - access plus 3 days
+  -
+    - Deflater

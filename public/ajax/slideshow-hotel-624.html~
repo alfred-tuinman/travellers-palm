@@ -1,0 +1,31 @@
+<div><h3>xxSamode Haveli in Jaipur, Rajasthan</h3></div>
+<div class="photo-gallery style1" id="photo-gallery1" data-animation="slide" data-sync="#image-carousel1">
+<div><h3>Samode Haveli in Jaipur, Rajasthan</h3></div>
+    <ul class="slides">
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_1.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_2.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_3.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_4.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_5.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_6.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_7.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_8.jpg" alt="900x500" /></li>
+        
+    </ul>
+</div>
+<div class="image-carousel style1" id="image-carousel1" data-animation="slide" data-item-width="70" data-item-margin="10" data-sync="#photo-gallery1">
+    <ul class="slides">
+                 <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_1.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_2.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_3.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_4.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_5.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_6.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_7.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/hotel/hotel_624_large_8.jpg" alt="70x70" /></li>
+        
+    </ul>
+</div>
+<div class="travelo-box book-with-us-box">
+    <p class="writeup"></p>
+</div>

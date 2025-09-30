@@ -1,0 +1,22 @@
+services:
+  app:
+    build: .
+    container_name: travellers-palm-app
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./db:/usr/src/app/db
+      - ./views:/usr/src/app/views
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: travellers-palm-nginx
+    depends_on:
+      - app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/usr/src/app/public:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped

@@ -1,10 +1,4 @@
-*.yml
-config.yml
-public/images
-public/ajax
-.project
 logs/*
 *.pid
 *.swp
-localdb/*
 *Zone.Identifier

@@ -1,0 +1,33 @@
+<div class="photo-gallery style1" id="photo-gallery1" data-animation="slide" data-sync="#image-carousel1">
+    <ul class="slides">
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_1.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_10.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_11.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_12.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_2.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_3.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_4.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_5.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_6.jpg" alt="900x500" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_7.jpg" alt="900x500" /></li>
+        
+    </ul>
+</div>
+<div class="image-carousel style1" id="image-carousel1" data-animation="slide" data-item-width="70" data-item-margin="10" data-sync="#photo-gallery1">
+    <ul class="slides">
+                 <li><img src="http://192.168.0.230:5000/images/city/city_2_large_1.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_10.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_11.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_12.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_2.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_3.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_4.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_5.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_6.jpg" alt="70x70" /></li>
+                <li><img src="http://192.168.0.230:5000/images/city/city_2_large_7.jpg" alt="70x70" /></li>
+        
+    </ul>
+</div>
+<div class="travelo-box book-with-us-box">
+    <p class="writeup">Agra is home to possibly the most famous and beautiful building in the world: the Taj Mahal, built in the 17th century by the Mughal emperor Shah Jahan as a tomb and memorial for his wife Mumtaz Mahal. </p><p class="writeup"></p><p class="writeup">Along the river Yamuna is the impressive Red Fort from where there are fantastic views of the Taj. The Red Fort was the capital of the Moghul Empire and thus of India during the 16th and 17th centuries. </p>
+</div>
