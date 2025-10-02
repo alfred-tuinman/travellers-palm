@@ -2,9 +2,9 @@ package TravellersPalm::Database::Themes;
 
 use strict;
 use warnings;
-use Dancer2 appname => 'TravellersPalm';
-use TravellersPalm::Database::Connector qw();
+
 use Exporter 'import';
+use TravellersPalm::Database::Connector qw();
 
 our @EXPORT_OK = qw( 
     subthemes
@@ -17,11 +17,10 @@ our @EXPORT_OK = qw(
     );
 
 
-
 sub subthemes {
 
     my $themes_id = shift;
-    my $qry       = "
+    my $sql       = "
             SELECT  subthemes_id    as subthemes_id, 
                     themes_id       as themes_id, 
                     title           as title, 
@@ -33,13 +32,13 @@ sub subthemes {
             WHERE   themes_id = $themes_id
             ORDER   BY title";
 
-            return database('sqlserver')->selectall_arrayref( $qry, { Slice => {} } );
+    return TravellersPalm::Database::Connector::fetch_all( $sql);
 }
 
 sub subthemes_id {
 
     my $subthemes_id = shift;
-    my $qry          = "
+    my $sql          = "
             SELECT  subthemes_id    as subthemes_id, 
                     themes_id       as themes_id, 
                     title           as title, 
@@ -49,12 +48,8 @@ sub subthemes_id {
             FROM    subthemes 
             WHERE   subthemes_id = ?";
 
-            my $sth = database('sqlserver')->prepare($qry);
-            $sth->execute($subthemes_id);
-            my $row = $sth->fetchrow_hashref('NAME_lc');
-            $sth->finish;
-            return $row;
-}
+    return TravellersPalm::Database::Connector::fetch_row( $sql, [$subthemes_id],,'NAME_lc');
+  }
 
 sub themes {
 
@@ -71,7 +66,7 @@ sub themes {
     $order_by = 'pagename' if ( $order =~ m/title/i );
     $order_by = 'url'      if ( $order =~ m/url/i );
 
-    my $qry =  "
+    my $sql =  "
         SELECT  pagename        as pagename, 
                 introduction    as introduction, 
                 url             as url, 
@@ -84,9 +79,7 @@ sub themes {
                 $condition 
         ORDER   BY $order_by";
 
-    my $test = database('sqlserver')->selectall_arrayref( $qry, { Slice => {} } );
-
-    return $test;
+    return TravellersPalm::Database::Connector::fetch_all( $sql);
 }
 
 
@@ -95,7 +88,7 @@ sub themes_subthemes {
     my $themes_id = shift;
 
     # for google map on theme page
-    my $qry = "
+    my $sql = "
         SELECT  s.cities_id         as id, 
                 c.city              as name, 
                 c.latitude          as lat, 
@@ -109,13 +102,13 @@ sub themes_subthemes {
                 c.latitude IS NOT NULL
         ORDER   BY s.subthemes_id";
 
-        return database('sqlserver')->selectall_arrayref( $qry, { Slice => {} } );
+    return TravellersPalm::Database::Connector::fetch_all( $sql);
 }
 
 sub themes_url {
 
     my $theme = shift;
-    my $qry   = "
+    my $sql   = "
         SELECT  pagename        as pagename, 
                 introduction    as introduction, 
                 url, 
@@ -127,12 +120,7 @@ sub themes_url {
         FROM    themes 
         WHERE   url like ? ";
 
-            my $sth = database('sqlserver')->prepare($qry);
-            $sth->execute($theme);
-            my $row = $sth->fetchrow_hashref('NAME_lc');
-            $sth->finish;
-
-        return $row;
+    return TravellersPalm::Database::Connector::fetch_row( $sql, [$theme],,'NAME_lc');
 }
 
 sub themetrips {
@@ -160,7 +148,7 @@ sub themetrips {
         $order_by .= ' DESC';
     }
 
-    my $qry = "
+    my $sql = "
             SELECT  f.fixeditin_id  as tourname,
                     f.title         as title,
                     f.oneliner      as oneliner,
@@ -193,7 +181,7 @@ sub themetrips {
                             frompax = 2 and
                             topax = 2 and
                             wet IS NULL and 
-                            c.currencycode  like '".$currency."'
+                            c.currencycode  like ?
                     ) as cost,
                     (SELECT city FROM cities s WHERE s.cities_id=f.startcities_id) as startcity,
                     (SELECT city FROM cities e WHERE e.cities_id=f.endcities_id) as endcity                                  
@@ -207,18 +195,18 @@ sub themetrips {
                             INNER   JOIN fixeditincosts fc ON fc.fixeditin_id=f.fixeditin_id
                             WHERE   inactivewef is NULL AND 
                                     fc.principalagents_id = 68 AND 
-                                    th.Themes_id = ".$tour."
+                                    th.Themes_id = ?
                             ) 
             ORDER BY ".$order_by ;
 
-    return database('sqlserver')->selectall_arrayref( $qry, { Slice => {} } );
+    return TravellersPalm::Database::Connector::fetch_row( $sql, [$currency,$tour]);
 }
 
 sub themeurl {
 
     my $url = shift;
     my $key = "themes:$url";
-    my $qry = "
+    my $sql = "
         SELECT  title           as title,
                 introduction    as introduction,
                 url,
@@ -229,12 +217,7 @@ sub themeurl {
         FROM    themes 
         where   url like ?";
 
-            my $sth = database('sqlserver')->prepare($qry);
-            $sth->execute($url);
-            my $row = $sth->fetchrow_hashref('NAME_lc');
-            $sth->finish;
-
-            return $row;
+    return TravellersPalm::Database::Connector::fetch_row( $sql, [$url],,'NAME_lc');
 }
 
 1;

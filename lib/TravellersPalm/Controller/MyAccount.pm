@@ -3,47 +3,43 @@ package TravellersPalm::Controller::MyAccount;
 use strict;
 use warnings;
 
-use Dancer2 appname => 'TravellersPalm';
-
 use Digest::MD5 qw(md5_hex);
 use MIME::Lite;
 use Exporter 'import';
 
-use TravellersPalm::Functions;     # for user_is_registered, valid_email, etc.
-use TravellersPalm::Database;      # if you need db access
 
-our @EXPORT_OK = qw(register_routes);
 
-# ------------------------------------
-# Register all routes
-# ------------------------------------
-sub register_routes {
-    get  '/my-account'               => \&show_login_page;
-    post '/my-account/register'      => \&register_user_account;
-    post '/my-account/mail-password' => \&mail_password;
-}
+use TravellersPalm::Constants qw(:all);
+use TravellersPalm::Functions qw(user_is_registered user_email valid_email);
+use TravellersPalm::Database::Users qw(
+  user_update 
+  generate_pasword 
+  update_password 
+  register_email
+  );
 
 # ------------------------------------
 # Actions
 # ------------------------------------
 
-sub show_login_page {
+sub login {
     my $msg;
 
     if ( user_is_registered() ) {
-        $msg = 'You are already registered. 
+        $msg = 'You are already logged in. 
                 Please logout first should you wish to login as a different user';
     }
 
-    template login => {
+    template('login') => {
         metatags => metatags( ( split '/', request->path )[-1] ),
         message  => $msg,
     };
 }
 
-sub register_user_account {
-    my $email = params->{email};
-    my $pwd   = params->{passw0rd};  # currently unused?
+sub register {
+     my $params         = params();
+    my $email = $params->{email};
+    my $pwd   = $params->{passw0rd};  # currently unused?
 
     my $msg;
 
@@ -102,14 +98,15 @@ END_MESSAGE
         }
     }
 
-    template login => {
+    template('login') => {
         metatags => metatags('login'),
         error    => $msg,
     };
 }
 
 sub mail_password {
-    my $email = params->{email};
+     my $params         = params();
+    my $email = $params->{email};
 
     my $passwd    = generate_password();
     my $md5passwd = md5_hex($passwd);
@@ -147,7 +144,7 @@ END_MESSAGE
     }
 
     # optionally render a confirmation template or redirect
-    template login => {
+    template('login') => {
         metatags => metatags('login'),
         message  => 'If your email exists in our records, a new password has been sent.',
     };

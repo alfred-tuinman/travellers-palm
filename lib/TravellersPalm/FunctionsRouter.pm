@@ -4,8 +4,18 @@ use strict;
 use warnings FATAL => 'all';
 
 use Dancer2;
+
 use Exporter qw{ import };
 use POSIX qw( strftime );
+
+use TravellersPalm::Constants qw(
+  $TAILOR 
+  $THEMES 
+  $STATES 
+  $REGIONS 
+  $IDEAS 
+  $session_country 
+  $session_currency);
 
 our @EXPORT = qw{ route_listing route_itinerary };
 

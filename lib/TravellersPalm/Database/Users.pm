@@ -2,36 +2,45 @@ package TravellersPalm::Database::Users;
 
 use strict;
 use warnings;
-use Dancer2 appname => 'TravellersPalm';
-use TravellersPalm::Database::Connector qw();
+
 use Exporter 'import';
+use TravellersPalm::Database::Connector qw();
 
 our @EXPORT_OK = qw( 
     user_exist
     user_insert
     user_ok
-    user_update   
-    );
+    user_update 
+    update_password 
+    generate_pasword 
+    update_password 
+    register_email);
 
-=cut
+sub generate_password {
+
+}
+
+sub update_password {
+
+}
+
+sub register_email {
+
+}
+
+
 sub user_exist {
 
     my $user = shift;
 
-    my $qry = "
+    my $sql = "
             SELECT  rowid,
                     username 
             FROM    users 
             WHERE   username LIKE ? ";
 
-            my $sth = database('sqlserver')->prepare($qry);
-            $sth->execute($user);
-            my $rows = $sth->rows;
-            $sth->finish;
-
-            return $rows;
+       return TravellersPalm::Database::Connector::fetch_row( $sql, [$user]);
 }
-=cut
 
 sub user_insert {
 
@@ -39,11 +48,11 @@ sub user_insert {
 
     my $emailid = shift;
 
-    my $qry = "INSERT INTO users ( username, active, registeredon ) VALUES ( ?, ?, ? )";
-    my $sth = database('sqlserver')->prepare($qry);
-
     my $now = DateTime->now->datetime;
     $now =~ y/T/ /;
+
+    my $sql = "INSERT INTO users ( username, active, registeredon ) VALUES ( ?, ?, ? )";
+    my $sth = database('sqlserver')->prepare($sql);
 
     print STDERR Dumper( [ $emailid, 1, $now, ] );
 
@@ -57,27 +66,23 @@ sub user_ok {
     my $username = shift;
     my $password = shift;
 
-    my $qry = "
+    my $sql = "
             SELECT  rowid as rowid 
             FROM    users 
             WHERE   username LIKE ? AND 
                     password LIKE ?";
 
-            my $sth = database('sqlserver')->prepare($qry);
-            $sth->execute( $username, $password );
-            my $row = $sth->fetchrow_hashref('NAME_lc');
-            $sth->finish;
-
-            return $row ? $row : 0;
+      my $row = TravellersPalm::Database::Connector::fetch_row( $sql, [$username, $password],,'NAME_lc');
+      return $row ? $row : 0;
 }
 
 sub user_update {
 
     my ( $userid, $md5passwd ) = @_;
 
-    my $qry = "UPDATE users SET password = ? WHERE rowid = ?";
+    my $sql = "UPDATE users SET password = ? WHERE rowid = ?";
 
-    my $sth = database('sqlserver')->prepare($qry);
+    my $sth = database('sqlserver')->prepare($sql);
     $sth->execute( $md5passwd, $userid );
     $sth->finish;
 

@@ -3,9 +3,6 @@ package TravellersPalm::Controller::Destinations;
 use strict;
 use warnings;
 
-use Dancer2 appname => 'TravellersPalm';      # link to main app
-use Dancer2::Plugin::Database;
-
 use Template;
 use Data::FormValidator;
 use Date::Manip::Date;
@@ -17,32 +14,17 @@ use URI::http;
 use JSON qw//;
 use Exporter 'import';
 
+
+use TravellersPalm::Functions qw/webtext/;
 use TravellersPalm::FunctionsRouter qw/route_listing route_itinerary/;
 use TravellersPalm::Database::States;
+use TravellersPalm::Constants ;
 
-our @EXPORT_OK  = qw/register_routes/; # _OK means on request only, not automatic
-our $TAILOR   	= 'ready-tours', 
+our $TAILOR   	= 'ready-tours';
 our $STATES   	= 'explore-by-state';
 our $THEMES   	= 'explore-by-interest';
 our $REGIONS  	= 'explore-by-region';
 
-sub register_routes {
-
-    get '/destinations/:destination' => \&show_destination;
-
-    any [ 'get', 'post' ] => "/destinations/*/$TAILOR/**" => \&show_tailor;
-
-    get "/destinations/*/$REGIONS" => \&show_region_list;
-    get "/destinations/*/$REGIONS/**" => \&show_region_detail;
-
-    get "/destinations/*/$STATES" => \&show_state_list;
-    get "/destinations/*/$STATES/**" => \&show_state_detail;
-
-    get "/destinations/*/$THEMES" => \&show_theme_list;
-    get "/destinations/*/$THEMES/**" => \&show_theme_detail;
-
-    any [ 'get', 'post' ] => '/plan-your-trip' => \&plan_your_trip;
-}
 
 # ------------------------------------------------------------------
 #                     named subroutines
@@ -54,7 +36,7 @@ sub show_destination {
     my $crumb = "<li>Destinations</li>
                  <li class='active'>" . url2text($destination) . "</li>";
 
-    template destination => {
+    template('destination') => {
         metatags    => metatags($destination),
         destination => $destination,
         crumb       => $crumb,
@@ -64,8 +46,9 @@ sub show_destination {
 }
 
 sub show_tailor {
-    my ( $destination, $arg ) = splat;
-    my @arg   = @$arg;
+    my ($destination, $arg) = @{ request->splat };
+
+    my @arg   = @$arg;                 # if second capture is an arrayref
     my $view  = $arg[0];
     my $order = $arg[1] // 'popularity';
 
@@ -77,8 +60,9 @@ sub show_tailor {
     }
 }
 
+
 sub show_region_list {
-    my ($destination) = splat;
+    my ($destination) = @{ request->splat };
 
     my $content = webtext(7);
     my $webpage = webpages('11');
@@ -88,7 +72,7 @@ sub show_region_list {
                  . url2text($destination) . "</a></li>
                  <li class='active'>" . url2text($REGIONS) . "</li>";
 
-    template regions => {
+    template('regions') => {
         metatags   => metatags("$REGIONS"),
         writeup    => boldify( addptags( $content->{writeup} ) ),
         page_title => url2text($REGIONS),
@@ -100,7 +84,7 @@ sub show_region_list {
 }
 
 sub show_region_detail {
-    my ( $destination, $arg ) = splat;
+    my ( $destination, $arg ) =  @{ request->splat };
 
     my @arg    = @$arg;
     my $region = $arg[0];
@@ -116,7 +100,7 @@ sub show_region_detail {
 }
 
 sub show_state_list {
-    my ($destination) = splat;
+    my ($destination) =  @{ request->splat };
 
     my $state    = states($destination);
     my @states   = grep { $_->{state} } @$state;
@@ -126,7 +110,7 @@ sub show_state_list {
                  . url2text($destination) . "</a></li>
                  <li class='active'>" . url2text($STATES) . "</li>";
 
-    template state => {
+    template('state') => {
         metatags   => metatags("$STATES"),
         writeup    => boldify( webtext(122) ),
         states     => \@states,
@@ -140,7 +124,7 @@ sub show_state_list {
 }
 
 sub show_state_detail {
-    my ( $destination, $arg ) = splat;
+    my ( $destination, $arg ) = @{ request->splat };
 
     my @arg   = @$arg;
     my $state = $arg[0];
@@ -156,14 +140,14 @@ sub show_state_detail {
 }
 
 sub show_theme_list {
-    my ($destination) = splat;
+    my ($destination) = @{ request->splat };
 
     my $crumb = "<li>Destinations</li>
                  <li><a href='".request->uri_base."/destinations/$destination'>"
                  . url2text($destination) . "</a></li>
                  <li class='active'>" . url2text($THEMES) . "</li>";
 
-    template theme => {
+    template('theme') => {
         metatags   => metatags("$THEMES"),
         themes     => themes(),
         crumb      => $crumb,
@@ -183,28 +167,30 @@ sub plan_your_trip {
     my $ourtime        = ourtime();
     my $ok             = 0;
     my $error          = 0;
+    my $params         = params();
     my $plan_your_trip = webtext(73);
     my $crumb          = "<li><a href='".request->uri_base.'/'.request->path."'>"
                            .$plan_your_trip->title."</a></li>";
 
     if ( request->is_post ) {
-        $ok = email_thankyouforrequest(params);
+        $ok = email_thankyouforrequest($p);
         $error = $ok ? 0 : 1;
     }
 
     if ($ok) {
-        template email_thankyouforrequest => {
-            metatags   => metatags( ( split '/', request->path )[-1] ),
-            crumb      => $crumb,
-            name       => params->{name},
-            email      => params->{email},
-            message    => params->{message},
-            reference  => params->{reference},
-            page_title => $plan_your_trip->{title},
-        };
+      template('email_thankyouforrequest') => {
+          metatags   => metatags( ( split '/', request->path )[-1] ),
+          crumb      => $crumb,
+          name       => $params->{name},
+          email      => $params->{email},
+          message    => $params->{message},
+          reference  => $params->{reference},
+          page_title => $plan_your_trip->{title},
+      };
+
     }
     else {
-        template plan_your_trip => {
+        template('plan_your_trip') => {
             metatags         => metatags( ( split '/', request->path )[-1] ),
             plan_your_trip   => $plan_your_trip,
             get_inspired     => webtext(173),
@@ -214,10 +200,10 @@ sub plan_your_trip {
             why_book_with_us => webtext(14),
             error            => $error,
             crumb            => $crumb,
-            name             => params->{name},
-            email            => params->{email},
-            message          => params->{message},
-            reference        => params->{reference},
+            name             => $params->{name},
+            email            => $params->{email},
+            message          => $params->{message},
+            reference        => $params->{reference},
             page_title       => $plan_your_trip->{title},
         };
     }

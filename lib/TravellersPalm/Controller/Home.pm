@@ -3,55 +3,20 @@ package TravellersPalm::Controller::Home;
 use strict;
 use warnings;
 
-use Dancer2 appname => 'TravellersPalm';
-use Dancer2::Plugin::Database;
-
-use Dancer2                   # (get, post, template, params, etc.)
-use Dancer2::Plugin::Database # (database calls)
 use Digest::MD5 qw(md5_hex);  # for password/email handling
-use MIME::Lite 
+use MIME::Lite; 
 
 use Data::FormValidator;
 use Date::Manip::Date;
 use DateTime::Format::Strptime;
-use URI::http;                 # obtain the URI base
+use URI::http;  # obtain the URI base
 use JSON qw();
 # use Data::Dumper;
 
-use TravellersPalm::Functions;
-use TravellersPalm::Database::General;
 
-our $IDEAS    	= 'trip-ideas';
-
-#--------------------------------------------------
-# Register routes
-#--------------------------------------------------
-
-get '/'                     => \&index;
-get '/before-you-go'        => \&before_you_go;
-any '/contact-us'           => \&contact_us;
-get '/enquiry'              => \&get_enquiry;
-post '/enquiry'             => \&post_enquiry;
-get '/faq'                  => \&faq;
-get '/policies'             => \&policies;
-get '/search-results'       => \&search_results;
-get '/site-map'             => \&site_map;
-get '/state/:state'         => \&state;
-get '/sustainable-tourism'  => \&sustainable_tourism;
-get '/testimonials'         => \&testimonials;
-get '/travel-ideas'         => \&travel_ideas;
-get '/what-to-expect'       => \&what_to_expect;
-get '/why-travel_with_us'   => \&why_travel_with_us;
-
-get '/currency/:currency' => sub {
-    session currency => currency( params->{currency} );
-    redirect request->referer;
-};
-
-# Catch-all 404
-any qr{.*} => sub {
-    template '404' => { page => request->path };
-};
+use TravellersPalm::Functions qw(webtext);
+use TravellersPalm::Database::General qw(web webpages);
+use TravellersPalm::Constants qw(:all);
 
 #--------------------------------------------------
 # Actions
@@ -63,9 +28,9 @@ sub index {
     my @slides    = $slidetext->{data}->{writeup} =~ /\G(?=.)([^\n]*)\n?/sg;
     unshift @slides, 'dummy item';
 
-    template 'home' => {
+    template('home') => {
         title                => 'Home Page',
-        metatags => TravellersPalm::Database::General::webpages(6),
+        metatags             => webpages(6),
         themes               => themes('LIMIT'),
         tripideas            => themes('TRIPIDEAS'),
         country              => 'india',
@@ -85,7 +50,7 @@ sub index {
 
 
 sub before_you_go {
-    template 'before_you_go' => {
+    template('before_you_go') => {
         metatags        => metatags('before-you-go'),
         before_you_go   => webtext(17),
         getting_ready   => webtext(168),
@@ -97,14 +62,15 @@ sub before_you_go {
 
 sub contact_us {
     my $ourtime = ourtime();
+    my $params  = params();
     my ($error, $err_msg, $ok) = (0, '', 0);
     my $crumb = "<li><a href='".request->uri_base. request->path . "'>Contact Us</a></li>";
 
     if ( request->is_post ) {
-        my $name      = clean_text(params->{name});
-        my $message   = clean_text(params->{message});
-        my $reference = clean_text(params->{reference});
-        my $email     = clean_text(params->{email});
+        my $name      = clean_text($params->{name});
+        my $message   = clean_text($params->{message});
+        my $reference = clean_text($params->{reference});
+        my $email     = clean_text($params->{email});
 
         if (!$name)       { $err_msg = 'Please give me a name' }
         elsif (!$message) { $err_msg = 'You forgot your message!' }
@@ -121,17 +87,17 @@ sub contact_us {
         }
     }
 
-    return template 'thankyou_for_request' => {
+    return template('thankyou_for_request') => {
         metatags  => metatags( (split '/', request->path)[-1] ),
         crumb     => $crumb,
-        name      => params->{name},
-        email     => params->{email},
-        message   => params->{message},
-        reference => params->{reference},
+        name      => $params->{name},
+        email     => $params->{email},
+        message   => $params->{message},
+        reference => $params->{reference},
         page_title=> 'Thank You',
     } if $ok;
 
-    template 'contact' => {
+    template('contact') => {
         metatags        => metatags( (split '/', request->path)[-1] ),
         travellers_palm => webtext(159),
         fast_replies    => webtext(160),
@@ -142,31 +108,32 @@ sub contact_us {
         crumb           => $crumb,
         error           => $error,
         err_msg         => $err_msg,
-        name            => params->{name},
-        email           => params->{email},
-        message         => params->{message},
-        reference       => params->{reference},
+        name            => $params->{name},
+        email           => $params->{email},
+        message         => $params->{message},
+        reference       => $params->{reference},
         page_title      => 'Contact Us',
     };
 }
 
 sub get_enquiry {
-    template 'enquiry' => {
+    template('enquiry') => {
         metatags => metatags( (split '/', request->path)[-1] ),
         email    => (user_is_registered() ? user_email() : ''),
     };
 }
 
 sub post_enquiry {
-    template 'enquiry' => {
+    my $params  = params();
+    template('enquiry') => {
         metatags => metatags( (split '/', request->path)[-1] ),
-        subject  => params->{subject},
+        subject  => $params->{subject},
         email    => (user_is_registered() ? user_email() : ''),
     };
 }
 
 sub faq {
-    template 'faq' => {
+    template('faq') => {
         metatags   => metatags( (split '/', request->path)[-1] ),
         crumb      => '<li class="active">FAQ</li>',
         page_title => 'FAQ',
@@ -176,7 +143,7 @@ sub faq {
 sub policies {
     my @fields = map { webtext($_) } (124..146,191);
 
-    template 'policies' => {
+    template ('policies') => {
         metatags   => metatags( (split '/', request->path)[-1] ),
         conditions => webtext(15),
         terms      => webtext(35),
@@ -189,7 +156,7 @@ sub policies {
 }
 
 sub search_results {
-    template 'search_results' => {
+    template('search_results') => {
         metatags            => metatags( (split '/', request->path)[-1] ),
         why_travel_with_us  => webtext(12),
         extensive_knowledge => webtext(153),
@@ -215,7 +182,7 @@ sub site_map {
         }
     }
 
-    template 'sitemap' => {
+    template('sitemap') => {
         metatags   => metatags( (split '/', request->path)[-1] ),
         report     => \@report,
         crumb      => '<li class="active">Sitemap</li>',
@@ -224,12 +191,13 @@ sub site_map {
 }
 
 sub state {
-    redirect request->uri_base . "/destinations/india/explore-by-state/" . params->{state} . "/list";
+   my $params  = params();
+    redirect request->uri_base . "/destinations/india/explore-by-state/" . $params->{state} . "/list";
 }
 
 sub sustainable_tourism {
     my $sustainable = webtext(13);
-    template 'sustainable_tourism' => {
+    template('sustainable_tourism') => {
         metatags    => metatags( (split '/', request->path)[-1] ),
         sustainable => $sustainable,
         crumb       => '<li class="active">'.$sustainable->{title}.'</li>',
@@ -238,7 +206,7 @@ sub sustainable_tourism {
 }
 
 sub testimonials {
-    template 'testimonials' => {
+     template('testimonials') => {
         metatags   => metatags('testimonials'),
         page_title => 'Testimonials',
         crumb      => '<li><a href="[% request.uri_base %]/about-us">About us</a></li><li class="active">Testimonials</li>',
@@ -246,7 +214,7 @@ sub testimonials {
 }
 
 sub travel_ideas {
-    template 'travel_ideas' => {
+    template('travel_ideas') => {
         metatags   => metatags('travel-ideas'),
         page_title => 'Travel Ideas',
         crumb      => '<li class="active">Travel Ideas</li>',
@@ -255,7 +223,7 @@ sub travel_ideas {
 
 sub what_to_expect {
     my $expect = webtext(21);
-    template 'what_to_expect' => {
+    template('what_to_expect') => {
         metatags        => metatags( (split '/', request->path)[-1] ),
         what_to_expect  => $expect,
         special_hotels  => webtext(147),
@@ -276,7 +244,7 @@ sub why_travel_with_us {
     my $ourtime = ourtime();
     my $why     = webtext(12);
 
-    template 'why_travel_with_us' => {
+    template('why_travel_with_us') => {
         metatags            => metatags( (split '/', request->path)[-1] ),
         why_travel_with_us  => $why,
         extensive_knowledge => webtext(153),

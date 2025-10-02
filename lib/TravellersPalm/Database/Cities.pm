@@ -2,9 +2,9 @@ package TravellersPalm::Database::Cities;
 
 use strict;
 use warnings;
-use Dancer2 appname => 'TravellersPalm';
-use TravellersPalm::Database::Connector qw();
+
 use Exporter 'import';
+use TravellersPalm::Database::Connector qw();
 
 our @EXPORT_OK = qw( 
   airports 
@@ -15,21 +15,21 @@ our @EXPORT_OK = qw(
   citythemes 
   nearcities 
   randomcities 
-  totalcities );
+  totalcities);
 
 sub airports {
     my $country = shift // 0;
-    my $sql = q{
+    my $sql = q/
       SELECT city, RTRIM(citycode
       FROM cities c INNER JOIN countries co ON co.countries_id=c.countries_id
       WHERE airport = 1 AND  nighthalt = 1 AND  citycode IS NOT NULL AND co.url = ? 
-      ORDER BY c.city };
+      ORDER BY c.city /;
    return TravellersPalm::Database::Connector::fetch_row( $sql, [ $country ]);
 }
 
 sub get_airports_by_country {
     my $country = shift // 0;
-    my $sql = q{
+    my $sql = q/
         SELECT city,
                RTRIM(citycode) AS citycode
         FROM   cities c
@@ -38,15 +38,14 @@ sub get_airports_by_country {
                AND nighthalt = 1
                AND citycode IS NOT NULL
                AND co.url = ?
-        ORDER BY c.city
-    };
+        ORDER BY c.city/;
     return TravellersPalm::Database::Connector::fetch_all( $sql, [ $country ]);
 }
 
 sub city {
     my $cities_id = shift // 0;
 
-    my $sql = q{
+    my $sql = q/
             SELECT 
             cities_id,
             rtrim(citycode) as citycode,
@@ -86,8 +85,7 @@ sub city {
             meta_keywords as meta_keywords, 
             url
             FROM cities 
-            WHERE cities_id = ? 
-    };
+            WHERE cities_id = ? /;
     return TravellersPalm::Database::Connector::fetch_row( $sql, [ $cities_id ],,'NAME_lc');
 }
 
@@ -97,7 +95,7 @@ sub cityhotels {
     # hotel *and* all hotels in a city
 
     my $cityid = shift;
-    my $qry    = q/
+    my $sql    = q/
             SELECT wh.hotel_id, wh.hotel, wh.description, wh.category, wh.categoryname, dh.addressbook_id isdefault
             FROM 
                 (

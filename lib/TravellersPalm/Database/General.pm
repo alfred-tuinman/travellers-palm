@@ -2,9 +2,9 @@ package TravellersPalm::Database::General;
 
 use strict;
 use warnings;
-use Dancer2 appname => 'TravellersPalm';
-use TravellersPalm::Database::Connector qw();
+
 use Exporter 'import';
+use TravellersPalm::Database::Connector qw();
 
 our @EXPORT_OK = qw( 
     categories   

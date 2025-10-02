@@ -1,8 +1,12 @@
 package TravellersPalm::Controller::Api;
+
 use strict;
 use warnings;
+
 use DBI;
 use JSON;
+
+use Dancer2::Plugin::Database; 
 
 sub ping {
     return [200, ['Content-Type'=>'application/json'], [ encode_json({ status => 'ok' }) ]];

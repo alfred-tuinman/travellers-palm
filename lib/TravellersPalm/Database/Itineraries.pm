@@ -2,9 +2,9 @@ package TravellersPalm::Database::Itineraries;
 
 use strict;
 use warnings;
-use Dancer2 appname => 'TravellersPalm';
-use TravellersPalm::Database::Connector qw();
+
 use Exporter 'import';
+use TravellersPalm::Database::Connector qw();
 
 our @EXPORT_OK = qw( 
     isquoted
@@ -27,22 +27,17 @@ sub isquoted {
 
     my ( $user, $id ) = @_;
 
-    my $qry = "
+    my $sql = "
         select count(*) from quotes where username = ? and id = ?";
 
-            my $sth = database->prepare($qry);
-            $sth->execute($user);
-            my ($isquoted) = $sth->fetchrow_array;
-            $sth->finish;
-
-            return $isquoted;
+    return TravellersPalm::Database::Connector::fetch_row( $sql, [$user ]);
 }
 
 sub itincost {
 
     my ( $itinid, $currency ) = shift;
 
-    my $qry = "
+    my $sql = "
     SELECT   cost as cost
     FROM     fixeditincosts, currencies 
     WHERE    fixeditin_id = ? AND 
@@ -53,10 +48,7 @@ sub itincost {
              currencies.currencycode = ?
     ORDER BY wef DESC ";
 
-    my $sth = database->prepare($qry);
-    $sth->execute( $itinid, $currency );
-    my ($cost) = $sth->fetchrow_array;
-
+    my cost = return TravellersPalm::Database::Connector::fetch_row( $sql, [$itinid, $currency] );
     return int($cost);
 }
 
@@ -94,7 +86,7 @@ sub itineraries {
         }
     }
 
-    my $qry = "
+    my $sql = "
         SELECT  fixeditin_id            as tourname,
                 f.title                 as title, 
                 f.oneliner              as oneliner,
@@ -132,12 +124,11 @@ sub itineraries {
                                  WHERE fit.fixeditin_id = f.fixeditin_id
                 ) as themes
         FROM    fixeditin f 
-                LEFT JOIN regions r ON r.regions_id=f.regions_id ". $condition . " AND 
+                LEFT JOIN regions r ON r.regions_id=f.regions_id ? AND 
                 inactivewef IS NULL
         ORDER   BY " . $order_by;
 
-    return 0 unless database('sqlserver')->selectall_arrayref( $qry, { Slice => {} } );
-}
+    return TravellersPalm::Database::Connector::fetch_row( $sql, [$condition ]);}
 
 
 sub itinerary {
@@ -146,7 +137,7 @@ sub itinerary {
 
     die('No tour name passed') unless $tour;
 
-    my $qry = q/
+    my $sql = q/
             SELECT  f.fixeditin_id  as tourname,
                     f.fixeditin_id  as fixeditin_id,
                     f.title         as title, 
@@ -175,21 +166,17 @@ sub itinerary {
                     WHERE   cde.fixeditin_id = f.fixeditin_id
                     ORDER   BY dayno DESC
                     LIMIT   1
-                    )               as endcity,
+                    ) as endcity,
                     (
                     SELECT  sc.cities_id 
                     FROM    cities sc JOIN citydayfixeditin cds ON cds.cities_id=sc.cities_id 
                     WHERE   cds.fixeditin_id = f.fixeditin_id and 
                             dayno=1
-                    )               as startcity
+                    ) as startcity
             FROM    fixeditin f 
             WHERE   f.url = ? /;
             
-            my $sth = database('sqlserver')->prepare($qry);
-            $sth->execute($tour);
-            my $row = $sth->fetchrow_hashref('NAME_lc');
-            $sth->finish;
-            return $row;
+    return TravellersPalm::Database::Connector::fetch_row( $sql, [ ],,'NAME_lc');
 }
 
 
@@ -198,7 +185,7 @@ sub itinerary_cost {
     my $fixeditin_id  = shift // 0;
     my $currencycode  = shift // 'USD';
 
-    my $qry = qq/
+    my $sql = qq/
             SELECT  CAST(MIN(fc.cost) AS INT) as cost, 
                     c.currencycode, 
                     c.symbol
@@ -212,12 +199,7 @@ sub itinerary_cost {
                     c.currencycode  like ?
             GROUP BY c.currencycode, symbol/;
 
-            my $sth = database('sqlserver')->prepare( $qry );
-            $sth->execute( $fixeditin_id, $currencycode );
-            my $row = $sth->fetchrow_hashref('NAME_lc');
-            $sth->finish;
-
-            return $row;
+    return TravellersPalm::Database::Connector::fetch_row( $sql, [$fixeditin_id, $currencycode,,'NAME_lc');
 }
 
 
@@ -225,9 +207,9 @@ sub itinerary_exist {
 
     my $tour = shift ;
 
-            my $qry = "SELECT f.fixeditin_id FROM  fixeditin f WHERE f.url = ? ";
+            my $sql = "SELECT f.fixeditin_id FROM  fixeditin f WHERE f.url = ? ";
 
-            my $sth = database('sqlserver')->prepare($qry);
+            my $sth = database('sqlserver')->prepare($sql);
             $sth->execute($tour);
             my $row = $sth->fetchrow_hashref('NAME_lc');
             $sth->finish;
@@ -242,7 +224,7 @@ sub itinerary_id {
 
     my $id = shift // 0;
 
-    my $qry = "
+    my $sql = "
             SELECT  title           as title,
                     oneliner        as oneliner,
                     introduction    as introduction,
@@ -263,19 +245,14 @@ sub itinerary_id {
             FROM    fixeditin f 
             WHERE   fixeditin_id = ? ";
 
-            my $sth = database('sqlserver')->prepare($qry);
-            $sth->execute($id);
-            my $row = $sth->fetchrow_hashref('NAME_lc');
-            $sth->finish;
-
-            return $row;
+    return TravellersPalm::Database::Connector::fetch_row( $sql, [$id],,'NAME_lc');
 }
 
 
 sub placesyouwillvisit {
 
     my $tour = shift;
-    my $qry  = "
+    my $sql  = "
         SELECT  city        as city,
                 cities_id   as cities_id,
                 oneliner    as oneliner,
@@ -297,7 +274,7 @@ sub placesyouwillvisit {
                 FROM    fixeditin f 
                         INNER JOIN CityDayFixedItin cdf on f.FixedItin_id = cdf.FixedItin_id
                         INNER JOIN cities c on cdf.cities_id = c.cities_id
-                WHERE   f.url like '$tour' 
+                WHERE   f.url like ?
                 ORDER   BY c.city 
                 ) a  
                 JOIN images on cities_id = images.ImageObjectId
@@ -305,15 +282,15 @@ sub placesyouwillvisit {
                 ImageTypes_id = 4 and 
                 srno < 6 
         ORDER   BY dayno";
-                          
-        return database('sqlserver')->selectall_arrayref( $qry, { Slice => {} } );
+
+    return TravellersPalm::Database::Connector::fetch_all( $sql, [$tour]);}
 }
 
 sub similartours {
 
     my $city     = shift // 0;
     my $currency = shift;
-    my $qry      = "
+    my $sql      = "
             SELECT  fixeditin_id        as tourname,
                     f.title             as title,
                     f.oneliner          as oneliner,
@@ -335,16 +312,16 @@ sub similartours {
                                 frompax = 2 and 
                                 topax = 2 and
                                 fc.currencies_id = c.currencies_id and
-                                c.currencycode like '$currency'
+                                c.currencycode like ?
                     ) as cost                       
             FROM    fixeditin f LEFT JOIN regions r ON r.regions_id=f.regions_id 
             WHERE   (f.readytours=1 or r.url is not null) and 
                     inactivewef is NULL and 
-                    f.startcities_id = $city  
+                    f.startcities_id = ?
             ORDER   BY RANDOM() 
             LIMIT   3 ";
                     
-            return database('sqlserver')->selectall_arrayref( $qry, { Slice => {} } );
+    return TravellersPalm::Database::Connector::fetch_all( $sql, [$currency,$city]);
 }
 
 
@@ -366,7 +343,7 @@ sub tripideas_trips {
         $order_by .= ' DESC';
     }
 
-    my $qry = "
+    my $sql = "
             SELECT f.fixeditin_id   as tourname,
                 f.title             as title,
                 f.oneliner          as oneliner,
@@ -389,7 +366,7 @@ sub tripideas_trips {
                 f.meta_keywords     as meta_keywords, 
                 f.url,f.startcities_id as scity,
                 (
-                SELECT  cast(min(fc.cost/$exchrate) as INT) 
+                SELECT  cast(min(fc.cost/?) as INT) 
                 FROM    fixeditincosts fc,
                         currencies c
                 WHERE   fc.fixeditin_id=f.fixeditin_id and 
@@ -411,17 +388,17 @@ sub tripideas_trips {
                     INNER   JOIN fixeditincosts fc ON fc.fixeditin_id=f.fixeditin_id
                     WHERE   inactivewef is NULL AND 
                     fc.principalagents_id = 68 AND 
-                    th.url LIKE $tour
+                    th.url LIKE ?
                     ) 
             ORDER   BY $order_by ";
 
-    return database('sqlserver')->selectall_arrayref( $qry, { Slice => {} } );
+    return TravellersPalm::Database::Connector::fetch_all( $sql, [$exchrate,$tour]);}
 }
 
 
 sub totalitineraries {
 
-    my $qry = "
+    my $sql = "
             SELECT  fixeditin_id                              
             FROM    fixeditin f 
                     LEFT JOIN regions r ON r.regions_id=f.regions_id 
@@ -429,12 +406,8 @@ sub totalitineraries {
                     inactivewef is NULL
             ORDER   BY days ";
 
-            my $sth = database('sqlserver')->prepare($qry);
-            $sth->execute();
-            my $rows = $sth->fetchall_arrayref( {} );
-            $sth->finish;
-
-            return ( 0 + @{$rows} );
+        my $rows = TravellersPalm::Database::Connector::fetch_all( $sql, [ ]);
+        return ( 0 + @{$rows} );
 }
 
 
@@ -460,7 +433,7 @@ sub toursinstate {
 
     # in the addressbook Odyssey is 68 which is linked as principalagents_id in fixeditincosts
 
-    my $qry = "
+    my $sql = "
         SELECT  f.fixeditin_id  as tourname,
                 f.title         as title,
                 f.oneliner      as oneliner,
@@ -516,7 +489,7 @@ sub toursinstate {
                 ) 
         ORDER BY $order_by";
 
-        return database('sqlserver')->selectall_arrayref( $qry, { Slice => {} } );
+    return TravellersPalm::Database::Connector::fetch_all( $sql, [ ]);
 }
 
 
@@ -524,7 +497,7 @@ sub youraccommodation {
 
     my $tour = shift;
 
-    my $qry = "
+    my $sql = "
                    SELECT DISTINCT 
                             c.city              as city,
                             h.addressbook_id    as hotel_id,
@@ -554,7 +527,7 @@ sub youraccommodation {
                     WHERE   cdf.EndOfTour <> 1 AND
                             a.categories_id in (23, 36, 8) AND
                             a.ranking = 1 AND
-                            f.url like '$tour' 
+                            f.url like ? 
                             order by cdf.dayno, category ASC
                     ";
 
@@ -591,12 +564,12 @@ sub youraccommodation {
                     WHERE   cdf.EndOfTour <> 1 AND
                             a.categories_id in (23, 36, 8) AND
                             a.ranking = 1 AND
-                            f.url like '$tour'
+                            f.url like ?
                     ) a 
             WHERE rn = 1
             ORDER BY dayno, category ASC";
 
-            return database('sqlserver')->selectall_arrayref( $qry, { Slice => {} } );
+    return TravellersPalm::Database::Connector::fetch_all( $sql, [$tour]);
 }
 
 1;

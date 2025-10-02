@@ -2,9 +2,9 @@ package TravellersPalm::Database::States;
 
 use strict;
 use warnings;
-use Dancer2 appname => 'TravellersPalm';
-use TravellersPalm::Database::Connector qw();
+
 use Exporter 'import';
+use TravellersPalm::Database::Connector qw();
 
 our @EXPORT_OK = qw( 
     state
@@ -16,7 +16,7 @@ our @EXPORT_OK = qw(
 sub state {
 
     my $states_id = shift // 0;
-    my $qry       = "
+    my $sql       = "
             SELECT  states_id,
                     statecode,
                     state,
@@ -34,13 +34,8 @@ sub state {
             FROM    states 
             WHERE   states_id = ?";
 
-            my $sth = database('sqlserver')->prepare($qry);
-            $sth->execute($states_id);
-            my $row = $sth->fetchrow_hashref('NAME_lc');
-            $sth->finish;
-
-            return $row;
-}
+    return TravellersPalm::Database::Connector::fetch_row( $sql, [$states_id],,'NAME_lc');
+ }
 
 sub states {
 
@@ -51,7 +46,7 @@ sub states {
     $order = 'state'      if ( $order =~ m/name/i );
 
     my $category_hotel = 27;
-    my $qry = "
+    my $sql = "
             SELECT  states_id, 
                     statecode, 
                     state, 
@@ -71,20 +66,20 @@ sub states {
                     (
                     SELECT  DISTINCT states.states_id 
                     FROM    vw_hoteldetails, addresscategories, states
-                    WHERE   addresscategories.categories_id = $category_hotel AND 
+                    WHERE   addresscategories.categories_id = ? AND 
                     addresscategories.addressbook_id = vw_hoteldetails.addressbook_id AND 
                     vw_hoteldetails.states_id = states.states_id
                     ) AND
-                    (c.url like '" . $country . "%') 
+                    (c.url like ?%) 
             ORDER   BY  ". $order;
 
-        return database('sqlserver')->selectall_arrayref( $qry, { Slice => {} } );
+    return TravellersPalm::Database::Connector::fetch_all( $sql, [$category_hotel,$country]);
 }
 
 sub statesurl {
 
     my $url = shift;
-    my $qry = " 
+    my $sql = " 
             SELECT  states_id, 
                     statecode, 
                     state, 
@@ -101,11 +96,7 @@ sub statesurl {
             FROM    states 
             WHERE   url like ?";
 
-            my $sth = database('sqlserver')->prepare($qry);
-               $sth->execute($url);
-            my $row = $sth->fetchrow_hashref('NAME_lc');
-            $sth->finish;
-            return $row;
+    return TravellersPalm::Database::Connector::fetch_row( $sql, [$url],,'NAME_lc');
 }
 
 1;

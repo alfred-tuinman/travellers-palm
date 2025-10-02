@@ -1,23 +1,21 @@
 package TravellersPalm::Database::Connector;
+
 use strict;
 use warnings;
 
-use Carp qw(croak);
+use Carp qw(croak); 
+use Dancer2::Plugin::Database; 
 
-# DO NOT 'use Dancer2' here; assume app is already running via app.psgi
-use Dancer2::Plugin::Database;  # plugin must be loaded in app.psgi
-
-# Get a DB handle at runtime
 sub dbh {
     my ($name) = @_;
     $name //= 'sqlserver';
 
-    # Call database() at runtime inside a route
-    my $dbh = Dancer2::Plugin::Database::database($name);
+    my $dbh = database($name);   # NOT Dancer2::Plugin::Database::database($name)
     croak "Cannot get DB handle for connection '$name'" unless $dbh;
 
     return $dbh;
 }
+
 
 sub main_dbh  { return dbh('sqlserver') }
 sub users_dbh { return dbh('users') }

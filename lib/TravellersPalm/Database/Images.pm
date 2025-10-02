@@ -2,9 +2,9 @@ package TravellersPalm::Database::Images;
 
 use strict;
 use warnings;
-use Dancer2 appname => 'TravellersPalm';
-use TravellersPalm::Database::Connector qw();
+
 use Exporter 'import';
+use TravellersPalm::Database::Connector qw();
 
 our @EXPORT_OK = qw( 
    imageproperties
@@ -24,7 +24,7 @@ sub imageproperties {
 
     if ( defined($imgcat) and defined($imgtype) ) {
 
-        my $qry = '
+        my $sql = '
                 SELECT  imageproperties_id  as imagecategories_id,
                         imagetypes_id       as imagetypes_id, 
                         imagepattern        as imagepattern, 
@@ -35,12 +35,7 @@ sub imageproperties {
                 WHERE   imagecategories_id = ? AND 
                         imagetypes_id = ?';
 
-                my $sth = database('sqlserver')->prepare($qry);
-                $sth->execute( $imgcat, $imgtype );
-                my $row = $sth->fetchrow_hashref('NAME_lc');
-                $sth->finish;
-
-                return $row;
+      return TravellersPalm::Database::Connector::fetch_row( $sql, [$imgcat, $imgtype],,'NAME_lc');
     }
     return 0;
 }
@@ -48,7 +43,7 @@ sub imageproperties {
 sub imageproperties_id {
     my $id = shift // 0;
 
-    my $qry = '
+    my $sql = '
             SELECT  imageproperties_id  as imagecategories_id,
                     imagetypes_id       as imagetypes_id, 
                     imagepattern        as imagepattern, 
@@ -58,19 +53,14 @@ sub imageproperties_id {
             FROM    imageproperties 
             WHERE   imageproperties_id = ?';
 
-    my $sth = database('sqlserver')->prepare($qry);
-    $sth->execute( $id );
-    my $row = $sth->fetchrow_hashref('NAME_lc');
-    $sth->finish;
-
-    return $row;
+    return TravellersPalm::Database::Connector::fetch_row( $sql, [$id],,'NAME_lc');
 }
 
 sub image {
 
     my $imagename = shift;
 
-    my $qry = '
+    my $sql = '
             SELECT  images_id,
                     imagename           as imagename, 
                     width               as width, 
@@ -87,12 +77,8 @@ sub image {
             FROM    images 
             WHERE   imagename like ?';
 
-            my $sth = database('sqlserver')->prepare($qry);
-            $sth->execute($imagename);
-            my $row = $sth->fetchrow_hashref('NAME_lc');
-            $sth->finish;
-
-            return $row;
+    return TravellersPalm::Database::Connector::fetch_row( $sql, [$imagename],,'NAME_lc');
+    
     return 0;
 }
 
@@ -117,7 +103,7 @@ sub images {
     $type     = 6 if ( lc($type)     eq q/small/ );
 
     eval {
-        my $qry = qq/ 
+        my $sql = qq/ 
              SELECT  width                as width,
                      height               as height,
                      title                as title,
@@ -134,10 +120,7 @@ sub images {
              ORDER   BY imagename
              LIMIT   10 ; /;
 
-             my $sth = database('sqlserver')->prepare($qry);
-             $sth->execute( $id, $category, $type );
-             $row = $sth->fetchall_arrayref( {} );
-             $sth->finish;
+        return TravellersPalm::Database::Connector::fetch_all( $sql, [$id, $category, $type] );
     };
 
     print "An error occurred: $@\n" if $@;
@@ -147,23 +130,21 @@ sub images {
 sub imagesall {
 
     my $id  = shift // 0;
-    my $qry = qq/
+    my $sql = qq/
             SELECT  imagename       as imagename, 
                     ImageName2      as imagename2
             FROM    images 
             WHERE   ImageCategories_id = $id 
             ORDER   BY imagename/;
 
-            return database('sqlserver')->selectall_arrayref( $qry, { Slice => {} } );
+    return TravellersPalm::Database::Connector::fetch_all( $sql);
 }
 
 sub images_delete {
 
     my $imagename = shift // 0 ;
-    my $qry       = qq/DELETE FROM images WHERE imagename like '$imagename'/ ;
-    my $sth       = database('sqlserver')->prepare($qry);
-    my $ok        = $sth->execute();
-    $sth->finish;
+    my $sql       = qq/DELETE FROM images WHERE imagename like '$imagename'/ ;
+    TravellersPalm::Database::Connector::fetch_row( $sql);
     return;
 }
 
@@ -171,7 +152,7 @@ sub images_dropdown
 {
     # used by upload.travellers-palm.com
     # , imagetype, t.imagetypes_id,ImagePattern,imagewidth,imageheight
-    my $qry = " SELECT  imagefolder, 
+    my $sql = " SELECT  imagefolder, 
                         (SELECT imagetype FROM imagetypes WHERE imagetypes_id =p.imagetypes_id) as imagetype, 
                         ImageCategories_Id, 
                         ImagePattern,
@@ -181,8 +162,7 @@ sub images_dropdown
                 FROM    ImageProperties p 
                 ORDER BY imagefolder;";
 
-    my $data = database('sqlserver')->selectall_arrayref( $qry, { Slice => {} } );
-    return $data;
+    return TravellersPalm::Database::Connector::fetch_all( $sql);
 }
 
 
@@ -209,29 +189,29 @@ sub images_update {
 
     if ( ref $onfile eq ref {} ) {
 
-        my $qry = qq(UPDATE images SET imagefolder = ? );
+        my $sql = qq(UPDATE images SET imagefolder = ? );
         my @val = () ; 
         push(@val,q/NULL/);
 
-        if (length $args{imagename}    > 0 )   { $qry .= qq( ,imagename           = ? );  push(@val, lc qq($args{imagename})    );} 
-        if ($args{imagecategories_id}  > 0 )   { $qry .= qq( ,imagecategories_id  = ? );  push(@val, $args{imagecategories_id}  );}
-        if ($args{imagetypes_id}       > 0 )   { $qry .= qq( ,imagetypes_id       = ? );  push(@val, $args{imagetypes_id}       );}
-        if ($args{width}               > 0 )   { $qry .= qq( ,width               = ? );  push(@val, $args{width}               );}
-        if ($args{height}              > 0 )   { $qry .= qq( ,height              = ? );  push(@val, $args{height}              );}
-        if ($args{filesize}            > 0 )   { $qry .= qq( ,filesize            = ? );  push(@val, $args{filesize}            );}
-        if (length($args{alttag})      > 0 )   { $qry .= qq( ,alttag              = ? );  push(@val, qq($args{alttag})          );}
-        if (length($args{title})       > 0 )   { $qry .= qq( ,title               = ? );  push(@val, qq($args{title})           );} 
-        if ($args{srno}                > 0 )   { $qry .= qq( ,srno                = ? );  push(@val, $args{srno}                );}
-        if ($args{imageobjectid}       > 0 )   { $qry .= qq( ,imageobjectid       = ? );  push(@val, $args{imageobjectid}       );} 
-        if ($args{tineye}             != 0 )   { $qry .= qq( ,tineye              = ? );  push(@val, ($args{tineye} < 0) ? 0: $args{tineye} );} 
+        if (length $args{imagename}    > 0 )   { $sql .= qq( ,imagename           = ? );  push(@val, lc qq($args{imagename})    );} 
+        if ($args{imagecategories_id}  > 0 )   { $sql .= qq( ,imagecategories_id  = ? );  push(@val, $args{imagecategories_id}  );}
+        if ($args{imagetypes_id}       > 0 )   { $sql .= qq( ,imagetypes_id       = ? );  push(@val, $args{imagetypes_id}       );}
+        if ($args{width}               > 0 )   { $sql .= qq( ,width               = ? );  push(@val, $args{width}               );}
+        if ($args{height}              > 0 )   { $sql .= qq( ,height              = ? );  push(@val, $args{height}              );}
+        if ($args{filesize}            > 0 )   { $sql .= qq( ,filesize            = ? );  push(@val, $args{filesize}            );}
+        if (length($args{alttag})      > 0 )   { $sql .= qq( ,alttag              = ? );  push(@val, qq($args{alttag})          );}
+        if (length($args{title})       > 0 )   { $sql .= qq( ,title               = ? );  push(@val, qq($args{title})           );} 
+        if ($args{srno}                > 0 )   { $sql .= qq( ,srno                = ? );  push(@val, $args{srno}                );}
+        if ($args{imageobjectid}       > 0 )   { $sql .= qq( ,imageobjectid       = ? );  push(@val, $args{imageobjectid}       );} 
+        if ($args{tineye}             != 0 )   { $sql .= qq( ,tineye              = ? );  push(@val, ($args{tineye} < 0) ? 0: $args{tineye} );} 
         
         if (($args{imagecategories_id} == 1) && length($args{title}) == 0 )  
-        { $qry .= qq( ,title  = ? );  push(@val, qq($args{alttag}) );}
+        { $sql .= qq( ,title  = ? );  push(@val, qq($args{alttag}) );}
 
-        $qry .= qq( WHERE images_id = ?) ;
+        $sql .= qq( WHERE images_id = ?) ;
         push(@val, $onfile->{images_id});
 
-        my $sth = database('sqlserver')->prepare($qry);
+        my $sth = database('sqlserver')->prepare($sql);
         $sth->execute( @val );
         $sth->finish;
         return {
@@ -243,7 +223,7 @@ sub images_update {
         # insert
         if (length $args{imagename} > 0) {
 
-            my $qry  = q/imagename/;
+            my $sql  = q/imagename/;
             my @val  = (lc qq($args{imagename}) );
             my $plh  = qq(?);
 =head
@@ -251,32 +231,32 @@ sub images_update {
             while $column in @columns{
                 if( $column eq 'alttag'|| $column eq 'title'){
                     if (length $args{alttag} > 0) 
-                        $qry .= qq(,$column);
+                        $sql .= qq(,$column);
                         $plh .= q(,?); 
                         push(@val,qq('$args{$column}'));
                     }
                 }
                 elsif ($args{$column} > 0)   {
-                    $qry .= qq(,$column);
+                    $sql .= qq(,$column);
                     $plh .= q(,?); 
                     push(@val,$args{$column});
                 }; 
             };
 =cut
-            if ($args{imagecategories_id}   > 0)   {  $qry .= q(,imagecategories_id)    ;  $plh .= q(,?); push(@val,$args{imagecategories_id});    }; 
-            if ($args{imagetypes_id}        > 0)   {  $qry .= q(,imagetypes_id)         ;  $plh .= q(,?); push(@val,$args{imagetypes_id});         };
-            if ($args{width}                > 0)   {  $qry .= q(,width)                 ;  $plh .= q(,?); push(@val,$args{width});                 };
-            if ($args{height}               > 0)   {  $qry .= q(,height)                ;  $plh .= q(,?); push(@val,$args{height});                };
-            if ($args{filesize}             > 0)   {  $qry .= q(,filesize)              ;  $plh .= q(,?); push(@val,$args{filesize});              };
-            if (length $args{alttag}        > 0)   {  $qry .= q(,alttag)                ;  $plh .= q(,?); push(@val,qq($args{alttag}));            };
-            if (length $args{title}         > 0)   {  $qry .= q(,title)                 ;  $plh .= q(,?); push(@val,qq($args{title}));             };
-            if ($args{srno}                 > 0)   {  $qry .= q(,srno)                  ;  $plh .= q(,?); push(@val,$args{srno});                  };
-            if ($args{imageobjectid}        > 0)   {  $qry .= q(,imageobjectid)         ;  $plh .= q(,?); push(@val,$args{imageobjectid});         };
-            if ($args{tineye}              != 0)   {  $qry .= q(,tineye)                ;  $plh .= q(,?); push(@val,($args{tineye} < 0 ) ? 0 : $args{tineye}); };
+            if ($args{imagecategories_id}   > 0)   {  $sql .= q(,imagecategories_id)    ;  $plh .= q(,?); push(@val,$args{imagecategories_id});    }; 
+            if ($args{imagetypes_id}        > 0)   {  $sql .= q(,imagetypes_id)         ;  $plh .= q(,?); push(@val,$args{imagetypes_id});         };
+            if ($args{width}                > 0)   {  $sql .= q(,width)                 ;  $plh .= q(,?); push(@val,$args{width});                 };
+            if ($args{height}               > 0)   {  $sql .= q(,height)                ;  $plh .= q(,?); push(@val,$args{height});                };
+            if ($args{filesize}             > 0)   {  $sql .= q(,filesize)              ;  $plh .= q(,?); push(@val,$args{filesize});              };
+            if (length $args{alttag}        > 0)   {  $sql .= q(,alttag)                ;  $plh .= q(,?); push(@val,qq($args{alttag}));            };
+            if (length $args{title}         > 0)   {  $sql .= q(,title)                 ;  $plh .= q(,?); push(@val,qq($args{title}));             };
+            if ($args{srno}                 > 0)   {  $sql .= q(,srno)                  ;  $plh .= q(,?); push(@val,$args{srno});                  };
+            if ($args{imageobjectid}        > 0)   {  $sql .= q(,imageobjectid)         ;  $plh .= q(,?); push(@val,$args{imageobjectid});         };
+            if ($args{tineye}              != 0)   {  $sql .= q(,tineye)                ;  $plh .= q(,?); push(@val,($args{tineye} < 0 ) ? 0 : $args{tineye}); };
 
-            $qry = qq(INSERT INTO images ($qry) VALUES ($plh);); 
+            $sql = qq(INSERT INTO images ($sql) VALUES ($plh);); 
 
-            my $sth = database('sqlserver')->prepare($qry);
+            my $sth = database('sqlserver')->prepare($sql);
             $sth->execute( @val );
             $sth->finish;
             return {
@@ -296,14 +276,14 @@ sub imgupload_type {
     my $imgcat = shift // 0;
     my $option = shift // 0;
     
-    my $qry = "SELECT t.imagetypes_id,t.imagetype FROM imagetypes t";
+    my $sql = "SELECT t.imagetypes_id,t.imagetype FROM imagetypes t";
 
     if ($imgcat > 0) {
-        $qry .= ' INNER JOIN imageproperties p on t.imagetypes_id=p.imagetypes_id 
+        $sql .= ' INNER JOIN imageproperties p on t.imagetypes_id=p.imagetypes_id 
         WHERE p.imagecategories_id = ' . $imgcat;
     }
 
-    my $sth = database('sqlserver')->prepare($qry);
+    my $sth = database('sqlserver')->prepare($sql);
     $sth->execute();
 
     my @results = ();

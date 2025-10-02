@@ -3,7 +3,7 @@ appname: "TravellersPalm"
 behind_proxy: 1
 layout: "main"
 charset: "UTF-8"
-session: "Simple"
+session: "YAML" # instead of "Simple" which is memory based
 template: "template_toolkit"
 public_dir: "public"
 engines:
