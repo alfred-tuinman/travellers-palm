@@ -9,6 +9,7 @@ use Date::Manip::Date;
 use Data::Dumper;
 use Exporter 'import';
 
+use TravellersPalm::Database::Connector qw(dbh);
 use TravellersPalm::Functions qw(webtext);
 use TravellersPalm::Constants qw(:all);
 

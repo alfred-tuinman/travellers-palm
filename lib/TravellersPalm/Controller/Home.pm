@@ -13,7 +13,7 @@ use URI::http;  # obtain the URI base
 use JSON qw();
 # use Data::Dumper;
 
-
+use TravellersPalm::Database::Connector qw(dbh);
 use TravellersPalm::Functions qw(webtext);
 use TravellersPalm::Database::General qw(web webpages);
 use TravellersPalm::Constants qw(:all);
@@ -171,7 +171,8 @@ sub search_results {
 }
 
 sub site_map {
-    my $textfile = config->{root}.'/url-report.txt';
+  my $app = Dancer2->runner->app('TravellersPalm');
+    my $textfile = $app->config->{root}.'/url-report.txt';
     my @report;
 
     if (open my $fh, '<:encoding(UTF-8)', $textfile) {

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw();
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
 
 our @EXPORT_OK = qw( 
     isquoted
@@ -209,10 +209,7 @@ sub itinerary_exist {
 
             my $sql = "SELECT f.fixeditin_id FROM  fixeditin f WHERE f.url = ? ";
 
-            my $sth = database('sqlserver')->prepare($sql);
-            $sth->execute($tour);
-            my $row = $sth->fetchrow_hashref('NAME_lc');
-            $sth->finish;
+            my $row = TravellersPalm::Database::Connector::fetch_row( $sql, [$tour],,'NAME_lc');
 
             my $exist->{exist} = (ref $row eq ref {} ) ? $row->{fixeditin_id} : 0 ;
 

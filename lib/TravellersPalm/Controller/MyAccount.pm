@@ -8,7 +8,7 @@ use MIME::Lite;
 use Exporter 'import';
 
 
-
+use TravellersPalm::Database::Connector qw(dbh);
 use TravellersPalm::Constants qw(:all);
 use TravellersPalm::Functions qw(user_is_registered user_email valid_email);
 use TravellersPalm::Database::Users qw(

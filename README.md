@@ -270,3 +270,17 @@ Clear separation: Multiple packages can define routes for the same app without a
 PSGI testing / embedding: You can reference the app explicitly:
 
 # Database
+
+
+use TravellersPalm::Database::Connector qw(txn insert update delete);
+
+## Single transaction example
+txn(sub {
+    insert('users', { name => 'Alice', email => 'alice@example.com' });
+    update('users', { email => 'alice2@example.com' }, { name => 'Alice' });
+    delete('temp_table', { id => 42 });
+});
+
+All three operations will commit together, or rollback if any fail.
+
+No need to pass $dbh explicitly—dbh() inside the helpers automatically uses the transaction handle.

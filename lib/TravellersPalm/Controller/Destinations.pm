@@ -17,6 +17,7 @@ use Exporter 'import';
 
 use TravellersPalm::Functions qw/webtext/;
 use TravellersPalm::FunctionsRouter qw/route_listing route_itinerary/;
+use TravellersPalm::Database::Connector qw(dbh);
 use TravellersPalm::Database::States;
 use TravellersPalm::Constants ;
 
@@ -173,7 +174,7 @@ sub plan_your_trip {
                            .$plan_your_trip->title."</a></li>";
 
     if ( request->is_post ) {
-        $ok = email_thankyouforrequest($p);
+        $ok = email_thankyouforrequest($params);
         $error = $ok ? 0 : 1;
     }
 

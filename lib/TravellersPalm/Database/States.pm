@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw();
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
 
 our @EXPORT_OK = qw( 
     state

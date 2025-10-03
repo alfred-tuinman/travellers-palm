@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw();
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row insert);
 
 our @EXPORT_OK = qw( 
     currencies 
@@ -92,10 +92,10 @@ sub exchange_rates_historical {
         ORDER   BY date DESC";
 
     my $data;
-    $data->{AUD} = database('sqlite')->selectall_arrayref( $sql, { Slice => {} } ,'AUD');
-    $data->{EUR} = database('sqlite')->selectall_arrayref( $sql, { Slice => {} } ,'EUR');
-    $data->{GBP} = database('sqlite')->selectall_arrayref( $sql, { Slice => {} } ,'GBP');
-    $data->{USD} = database('sqlite')->selectall_arrayref( $sql, { Slice => {} } ,'USD');
+    $data->{AUD} = TravellersPalm::Database::Connector::fetch_row( $sql,['AUD']);
+    $data->{EUR} = TravellersPalm::Database::Connector::fetch_row( $sql,['EUR']);
+    $data->{GBP} = TravellersPalm::Database::Connector::fetch_row( $sql,['GBP']);
+    $data->{USD} = TravellersPalm::Database::Connector::fetch_row( $sql,['USD']);
     
     return $data;
 }
@@ -110,12 +110,10 @@ sub exchange_rates_update {
       INSERT INTO exchange_rates (currency,date,exchange_rate) 
       VALUES (?,(strftime('%s','now')),?); /; 
 
-    my $sth = database('sqlite')->prepare($sql);
-       $sth->execute( 'AUD',$rates->{AUD} );
-       $sth->execute( 'EUR',$rates->{EUR} );
-       $sth->execute( 'GBP',$rates->{GBP} );
-       $sth->execute( 'USD',$rates->{USD} );
-       $sth->finish;
+    my $sth = TravellersPalm::Database::Connector::insert( $sql,['AUD',$rates->{AUD}] );
+       $sth = TravellersPalm::Database::Connector::insert( $sql,['EUR',$rates->{EUR}] );
+       $sth = TravellersPalm::Database::Connector::insert( $sql,['GBP',$rates->{GBP}] );
+       $sth = TravellersPalm::Database::Connector::insert( $sql,['USD',$rates->{USD}] );
 
     return exchange_rates();
 }

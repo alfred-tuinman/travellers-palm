@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw();
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row insert update);
 
 our @EXPORT_OK = qw( 
     user_exist
@@ -52,11 +52,10 @@ sub user_insert {
     $now =~ y/T/ /;
 
     my $sql = "INSERT INTO users ( username, active, registeredon ) VALUES ( ?, ?, ? )";
-    my $sth = database('sqlserver')->prepare($sql);
 
     print STDERR Dumper( [ $emailid, 1, $now, ] );
 
-    $sth->execute( $emailid, 1, $now, );
+    TravellersPalm::Database::Connector::insert( $sql,[$emailid, 1, $now] );
 
     return;
 }
@@ -82,9 +81,7 @@ sub user_update {
 
     my $sql = "UPDATE users SET password = ? WHERE rowid = ?";
 
-    my $sth = database('sqlserver')->prepare($sql);
-    $sth->execute( $md5passwd, $userid );
-    $sth->finish;
+    TravellersPalm::Database::Connector::update( $sql,[$md5passwd, $userid] );
 
     return 1;
 }

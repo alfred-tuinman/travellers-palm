@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw();
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row insert update delete);
 
 our @EXPORT_OK = qw( 
    imageproperties
@@ -142,9 +142,11 @@ sub imagesall {
 
 sub images_delete {
 
-    my $imagename = shift // 0 ;
-    my $sql       = qq/DELETE FROM images WHERE imagename like '$imagename'/ ;
-    TravellersPalm::Database::Connector::fetch_row( $sql);
+    my $image_name = shift // 0 ;
+    my $sql       = qq/DELETE FROM images WHERE imagename like ?/ ;
+
+    TravellersPalm::Database::Connector::delete( $sql,[$image_name]);
+    
     return;
 }
 
@@ -211,9 +213,8 @@ sub images_update {
         $sql .= qq( WHERE images_id = ?) ;
         push(@val, $onfile->{images_id});
 
-        my $sth = database('sqlserver')->prepare($sql);
-        $sth->execute( @val );
-        $sth->finish;
+        TravellersPalm::Database::Connector::update( $sql, @val);
+
         return {
             status  => 1,
             message => lc $args{imagename} . q( updated),
@@ -256,10 +257,8 @@ sub images_update {
 
             $sql = qq(INSERT INTO images ($sql) VALUES ($plh);); 
 
-            my $sth = database('sqlserver')->prepare($sql);
-            $sth->execute( @val );
-            $sth->finish;
-            return {
+            TravellersPalm::Database::Connector::insert( $sql, @val);
+               return {
                 status  => 1,
                 message => lc $args{imagename} . q( inserted),
             };
@@ -283,14 +282,12 @@ sub imgupload_type {
         WHERE p.imagecategories_id = ' . $imgcat;
     }
 
-    my $sth = database('sqlserver')->prepare($sql);
-    $sth->execute();
+    my $sth = TravellersPalm::Database::Connector::fetch_row($sql);
 
     my @results = ();
-    while ( my $row = $sth->fetchrow_hashref ) {
+    while ( my $row = $sth ) {
         push @results, $row;
     }
-    $sth->finish();
 
     return @results;
 }
