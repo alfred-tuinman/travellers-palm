@@ -3,20 +3,14 @@ package TravellersPalm::Controller::MyAccount;
 use strict;
 use warnings;
 
-use Digest::MD5 qw(md5_hex);
+# use Digest::MD5 qw(md5_hex);
 use MIME::Lite;
+
 use Exporter 'import';
-
-
+use Template;
 use TravellersPalm::Database::Connector qw(dbh);
 use TravellersPalm::Constants qw(:all);
-use TravellersPalm::Functions qw(user_is_registered user_email valid_email);
-use TravellersPalm::Database::Users qw(
-  user_update 
-  generate_pasword 
-  update_password 
-  register_email
-  );
+use TravellersPalm::Functions qw(user_email user_is_registered valid_email);
 
 # ------------------------------------
 # Actions
@@ -31,19 +25,19 @@ sub login {
     }
 
     template('login') => {
-        metatags => metatags( ( split '/', request->path )[-1] ),
+        metatags => TravellersPalm::Database::General::metatags( ( split '/', request->path )[-1] ),
         message  => $msg,
     };
 }
 
 sub register {
-     my $params         = params();
-    my $email = $params->{email};
-    my $pwd   = $params->{passw0rd};  # currently unused?
+    my $params = params();
+    my $email  = $params->{email};
+    my $pwd    = $params->{passw0rd};  # currently unused?
 
     my $msg;
 
-    if ( user_is_registered() ) {
+    if (user_is_registered() ) {
 
         if ( $email eq user_email() ) {
             $msg = 'You are already registered';
@@ -58,10 +52,10 @@ sub register {
             register_user($email);
             $msg = 'You have been succesfully registered. Please check your mail box for our message.';
 
-            my $passwd    = generate_password();
-            my $md5passwd = md5_hex($passwd);
+            my $passwd    = TravellersPalm::Database::Users::generate_password();
+            my $md5passwd = Digest::MD5::md5_hex($passwd);
 
-            my $success   = update_password($email);    # consider passing $md5passwd
+            my $success   = TravellersPalm::Database::Users::update_password($email); # consider passing $md5passwd
 
             # --- send email ---
             my $email_msg = MIME::Lite->new(
@@ -99,19 +93,17 @@ END_MESSAGE
     }
 
     template('login') => {
-        metatags => metatags('login'),
+        metatags => TravellersPalm::Database::General::metatags('login'),
         error    => $msg,
     };
 }
 
 sub mail_password {
-     my $params         = params();
-    my $email = $params->{email};
-
-    my $passwd    = generate_password();
-    my $md5passwd = md5_hex($passwd);
-
-    my $success = user_update( $email, $md5passwd );
+    my $params    = params();
+    my $email     = $params->{email};
+    my $passwd    = TravellersPalm::Database::Users::generate_password();
+    my $md5passwd = Digest::MD5::md5_hex($passwd);
+    my $success   = TravellersPalm::Database::Users::user_update( $email, $md5passwd );
 
     if ( $success == 1 ) {
 
@@ -145,7 +137,7 @@ END_MESSAGE
 
     # optionally render a confirmation template or redirect
     template('login') => {
-        metatags => metatags('login'),
+        metatags => TravellersPalm::Database::General::metatags('login'),
         message  => 'If your email exists in our records, a new password has been sent.',
     };
 }

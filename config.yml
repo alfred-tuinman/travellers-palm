@@ -1,5 +1,7 @@
 # config.yml
 appname: "TravellersPalm"
+appdir: "/usr/src/app"
+views: "/usr/src/app/views"
 behind_proxy: 1
 layout: "main"
 charset: "UTF-8"
@@ -23,18 +25,10 @@ plugins:
         dsn: "dbi:SQLite:dbname=/usr/src/app/db/Jadoo_2006.db"
         username: ""
         password: ""
-        dbi_params:
-          RaiseError: 1
-          AutoCommit: 1
-          PrintError: 1
       userserver:
         dsn: "dbi:SQLite:dbname=/usr/src/app/db/users.db"
         username: ""
         password: ""
-        dbi_params:
-          RaiseError: 1
-          AutoCommit: 1
-          PrintError: 1
 
   MemcachedFast:
     servers:

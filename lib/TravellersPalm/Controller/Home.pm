@@ -11,12 +11,19 @@ use Date::Manip::Date;
 use DateTime::Format::Strptime;
 use URI::http;  # obtain the URI base
 use JSON qw();
-# use Data::Dumper;
 
+use Template;
+use Dancer2 ':syntax';
 use TravellersPalm::Database::Connector qw(dbh);
-use TravellersPalm::Functions qw(webtext);
-use TravellersPalm::Database::General qw(web webpages);
 use TravellersPalm::Constants qw(:all);
+use TravellersPalm::Functions qw/
+                  clean_text 
+                  email_request 
+                  ourtime 
+                  user_email 
+                  user_is_registered 
+                  valid_email
+                  webtext/;
 
 #--------------------------------------------------
 # Actions
@@ -24,15 +31,15 @@ use TravellersPalm::Constants qw(:all);
 
 
 sub index {
-    my $slidetext = web(163);
+    my $slidetext = TravellersPalm::Database::General::web(163);
     my @slides    = $slidetext->{data}->{writeup} =~ /\G(?=.)([^\n]*)\n?/sg;
     unshift @slides, 'dummy item';
 
     template('home') => {
         title                => 'Home Page',
-        metatags             => webpages(6),
-        themes               => themes('LIMIT'),
-        tripideas            => themes('TRIPIDEAS'),
+        metatags             => TravellersPalm::Database::General::webpages(6),
+        themes               => TravellersPalm::Database::Themes::themes('LIMIT'),
+        tripideas            => TravellersPalm::Database::Themes::themes('TRIPIDEAS'),
         country              => 'india',
         slides               => \@slides,
         the_travel_experts1  => webtext(119),
@@ -46,12 +53,11 @@ sub index {
     };
 };
 
-
-
-
 sub before_you_go {
-    template('before_you_go') => {
-        metatags        => metatags('before-you-go'),
+
+  warn "[DEBUG] Before you go ". TravellersPalm->config->{views} . "\n";
+    template 'before_you_go' => {
+        metatags        => TravellersPalm::Database::General::metatags('before-you-go'),
         before_you_go   => webtext(17),
         getting_ready   => webtext(168),
         right_attitude  => webtext(169),
@@ -72,10 +78,10 @@ sub contact_us {
         my $reference = clean_text($params->{reference});
         my $email     = clean_text($params->{email});
 
-        if (!$name)       { $err_msg = 'Please give me a name' }
-        elsif (!$message) { $err_msg = 'You forgot your message!' }
+        if (!$name)        { $err_msg = 'Please give me a name' }
+        elsif (!$message)  { $err_msg = 'You forgot your message!' }
         elsif (!$reference){ $err_msg = 'You forgot your reference.' }
-        elsif (!$email)   { $err_msg = 'You forgot your email id!' }
+        elsif (!$email)    { $err_msg = 'You forgot your email id!' }
         elsif (!valid_email($email)) { $err_msg = 'Your email id appears to be wrong.' }
 
         if (!$err_msg) {
@@ -88,7 +94,7 @@ sub contact_us {
     }
 
     return template('thankyou_for_request') => {
-        metatags  => metatags( (split '/', request->path)[-1] ),
+        metatags  => TravellersPalm::Database::General::metatags( (split '/', request->path)[-1] ),
         crumb     => $crumb,
         name      => $params->{name},
         email     => $params->{email},
@@ -98,7 +104,7 @@ sub contact_us {
     } if $ok;
 
     template('contact') => {
-        metatags        => metatags( (split '/', request->path)[-1] ),
+        metatags        => TravellersPalm::Database::General::metatags( (split '/', request->path)[-1] ),
         travellers_palm => webtext(159),
         fast_replies    => webtext(160),
         ourtime         => $ourtime->strftime('%H:%M'),
@@ -118,23 +124,25 @@ sub contact_us {
 
 sub get_enquiry {
     template('enquiry') => {
-        metatags => metatags( (split '/', request->path)[-1] ),
-        email    => (user_is_registered() ? user_email() : ''),
+        metatags => TravellersPalm::Database::General::metatags( (split '/', request->path)[-1] ),
+        email    => (user_is_registered() ? 
+                    user_email() : ''),
     };
 }
 
 sub post_enquiry {
     my $params  = params();
     template('enquiry') => {
-        metatags => metatags( (split '/', request->path)[-1] ),
+        metatags => TravellersPalm::Database::General::metatags( (split '/', request->path)[-1] ),
         subject  => $params->{subject},
-        email    => (user_is_registered() ? user_email() : ''),
+         email    => (user_is_registered() ? 
+                    user_email() : ''),
     };
 }
 
 sub faq {
     template('faq') => {
-        metatags   => metatags( (split '/', request->path)[-1] ),
+        metatags   => TravellersPalm::Database::General::metatags( (split '/', request->path)[-1] ),
         crumb      => '<li class="active">FAQ</li>',
         page_title => 'FAQ',
     };
@@ -144,7 +152,7 @@ sub policies {
     my @fields = map { webtext($_) } (124..146,191);
 
     template ('policies') => {
-        metatags   => metatags( (split '/', request->path)[-1] ),
+        metatags   => TravellersPalm::Database::General::metatags( (split '/', request->path)[-1] ),
         conditions => webtext(15),
         terms      => webtext(35),
         privacy    => webtext(16),
@@ -157,7 +165,7 @@ sub policies {
 
 sub search_results {
     template('search_results') => {
-        metatags            => metatags( (split '/', request->path)[-1] ),
+        metatags            => TravellersPalm::Database::General::metatags( (split '/', request->path)[-1] ),
         why_travel_with_us  => webtext(12),
         extensive_knowledge => webtext(153),
         highly_selective    => webtext(154),
@@ -184,7 +192,7 @@ sub site_map {
     }
 
     template('sitemap') => {
-        metatags   => metatags( (split '/', request->path)[-1] ),
+        metatags   => TravellersPalm::Database::General::metatags( (split '/', request->path)[-1] ),
         report     => \@report,
         crumb      => '<li class="active">Sitemap</li>',
         page_title => 'Sitemap',
@@ -199,7 +207,7 @@ sub state {
 sub sustainable_tourism {
     my $sustainable = webtext(13);
     template('sustainable_tourism') => {
-        metatags    => metatags( (split '/', request->path)[-1] ),
+        metatags    => TravellersPalm::Database::General::metatags( (split '/', request->path)[-1] ),
         sustainable => $sustainable,
         crumb       => '<li class="active">'.$sustainable->{title}.'</li>',
         page_title  => $sustainable->{title},
@@ -208,7 +216,7 @@ sub sustainable_tourism {
 
 sub testimonials {
      template('testimonials') => {
-        metatags   => metatags('testimonials'),
+        metatags   => TravellersPalm::Database::General::metatags('testimonials'),
         page_title => 'Testimonials',
         crumb      => '<li><a href="[% request.uri_base %]/about-us">About us</a></li><li class="active">Testimonials</li>',
     };
@@ -216,7 +224,7 @@ sub testimonials {
 
 sub travel_ideas {
     template('travel_ideas') => {
-        metatags   => metatags('travel-ideas'),
+        metatags   => TravellersPalm::Database::General::metatags('travel-ideas'),
         page_title => 'Travel Ideas',
         crumb      => '<li class="active">Travel Ideas</li>',
     };
@@ -225,7 +233,7 @@ sub travel_ideas {
 sub what_to_expect {
     my $expect = webtext(21);
     template('what_to_expect') => {
-        metatags        => metatags( (split '/', request->path)[-1] ),
+        metatags        => TravellersPalm::Database::General::metatags( (split '/', request->path)[-1] ),
         what_to_expect  => $expect,
         special_hotels  => webtext(147),
         eat_drink       => webtext(148),
@@ -246,7 +254,7 @@ sub why_travel_with_us {
     my $why     = webtext(12);
 
     template('why_travel_with_us') => {
-        metatags            => metatags( (split '/', request->path)[-1] ),
+        metatags            => TravellersPalm::Database::General::metatags( (split '/', request->path)[-1] ),
         why_travel_with_us  => $why,
         extensive_knowledge => webtext(153),
         highly_selective    => webtext(154),
@@ -262,15 +270,6 @@ sub why_travel_with_us {
         crumb               => '<li class="active">'.$why->{title}.'</li>',
         page_title          => $why->{title},
     };
-}
-
-#--------------------------------------------------
-# Helper
-#--------------------------------------------------
-sub clean_text {
-    my $t = shift // '';
-    $t =~ s/^\s+|\s+$//g;
-    return $t;
 }
 
 1;

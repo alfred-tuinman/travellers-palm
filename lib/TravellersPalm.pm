@@ -1,5 +1,7 @@
 package TravellersPalm;
 
+warn "[DEBUG] TravellersPalm loaded, config views = " . (config->{views} // '(no views)') . "\n";
+
 use strict;
 use warnings;
 
@@ -116,8 +118,13 @@ post '/my-account/register'      => \&TravellersPalm::Controller::MyAccount::reg
 post '/my-account/mail-password' => \&TravellersPalm::Controller::MyAccount::mail_password;
 
 # Catch-all 404
+
+# template('404') => { page => request->path };
+
 any qr{.*} => sub {
-    template('404') => { page => request->path };
+    status 'not_found';
+    template '404';
 };
+
 
 true;   

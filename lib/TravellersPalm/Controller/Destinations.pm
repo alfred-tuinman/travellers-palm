@@ -14,9 +14,7 @@ use URI::http;
 use JSON qw//;
 use Exporter 'import';
 
-
-use TravellersPalm::Functions qw/webtext/;
-use TravellersPalm::FunctionsRouter qw/route_listing route_itinerary/;
+use TravellersPalm::Functions qw/boldify email_request ourtime url2text webtext/;
 use TravellersPalm::Database::Connector qw(dbh);
 use TravellersPalm::Database::States;
 use TravellersPalm::Constants ;
@@ -38,7 +36,7 @@ sub show_destination {
                  <li class='active'>" . url2text($destination) . "</li>";
 
     template('destination') => {
-        metatags    => metatags($destination),
+        metatags    => TravellersPalm::Database::General::metatags($destination),
         destination => $destination,
         crumb       => $crumb,
         page_title  => url2text($destination),
@@ -54,10 +52,10 @@ sub show_tailor {
     my $order = $arg[1] // 'popularity';
 
     if ( $view =~ /^(grid|block|list)$/ ) {
-        route_listing( $destination, $TAILOR, $view, $order );
+        TravellersPalm::FunctionsRouter::route_listing( $destination, $TAILOR, $view, $order );
     }
     else {
-        route_itinerary( $destination, $view, $TAILOR );
+        TravellersPalm::FunctionsRouter::route_itinerary( $destination, $view, $TAILOR );
     }
 }
 
@@ -74,7 +72,7 @@ sub show_region_list {
                  <li class='active'>" . url2text($REGIONS) . "</li>";
 
     template('regions') => {
-        metatags   => metatags("$REGIONS"),
+        metatags   => TravellersPalm::Database::General::metatags("$REGIONS"),
         writeup    => boldify( addptags( $content->{writeup} ) ),
         page_title => url2text($REGIONS),
         regions    => regions(),
@@ -93,17 +91,17 @@ sub show_region_detail {
     my $order  = $arg[2] // 'popularity';
 
     if ( $view =~ /^(grid|block|list)$/ ) {
-        route_listing( $destination, $REGIONS, $view, $order, $region );
+        TravellersPalm::FunctionsRouter::route_listing( $destination, $REGIONS, $view, $order, $region );
     }
     else {
-        route_itinerary( $destination, $view, $REGIONS, $region );
+        TravellersPalm::FunctionsRouter::route_itinerary( $destination, $view, $REGIONS, $region );
     }
 }
 
 sub show_state_list {
     my ($destination) =  @{ request->splat };
 
-    my $state    = states($destination);
+    my $state    = TravellersPalm::Database::States::states($destination);
     my @states   = grep { $_->{state} } @$state;
 
     my $crumb = "<li>Destinations</li>
@@ -112,7 +110,7 @@ sub show_state_list {
                  <li class='active'>" . url2text($STATES) . "</li>";
 
     template('state') => {
-        metatags   => metatags("$STATES"),
+        metatags   => TravellersPalm::Database::General::metatags("$STATES"),
         writeup    => boldify( webtext(122) ),
         states     => \@states,
         country    => $destination,
@@ -133,10 +131,10 @@ sub show_state_detail {
     my $order = $arg[2] // 'popularity';
 
     if ( $view =~ /^(grid|block|list)$/ ) {
-        route_listing( $destination, $STATES, $view, $order, $state );
+        TravellersPalm::FunctionsRouter::route_listing( $destination, $STATES, $view, $order, $state );
     }
     else {
-        route_itinerary( $destination, $view, $STATES, $state );
+        TravellersPalm::FunctionsRouter::route_itinerary( $destination, $view, $STATES, $state );
     }
 }
 
@@ -149,8 +147,8 @@ sub show_theme_list {
                  <li class='active'>" . url2text($THEMES) . "</li>";
 
     template('theme') => {
-        metatags   => metatags("$THEMES"),
-        themes     => themes(),
+        metatags   => TravellersPalm::Database::General::metatags("$THEMES"),
+        themes     => TravellersPalm::Database::Themes::themes(),
         crumb      => $crumb,
         pathname   => $THEMES,
         page_title => url2text($THEMES),
@@ -174,13 +172,13 @@ sub plan_your_trip {
                            .$plan_your_trip->title."</a></li>";
 
     if ( request->is_post ) {
-        $ok = email_thankyouforrequest($params);
+        $ok = email_request($params);
         $error = $ok ? 0 : 1;
     }
 
     if ($ok) {
       template('email_thankyouforrequest') => {
-          metatags   => metatags( ( split '/', request->path )[-1] ),
+          metatags   => TravellersPalm::Database::General::metatags( ( split '/', request->path )[-1] ),
           crumb      => $crumb,
           name       => $params->{name},
           email      => $params->{email},
@@ -192,7 +190,7 @@ sub plan_your_trip {
     }
     else {
         template('plan_your_trip') => {
-            metatags         => metatags( ( split '/', request->path )[-1] ),
+            metatags         => TravellersPalm::Database::General::metatags( ( split '/', request->path )[-1] ),
             plan_your_trip   => $plan_your_trip,
             get_inspired     => webtext(173),
             quote            => webtext(174),

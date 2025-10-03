@@ -20,6 +20,7 @@ use POSIX qw(strftime);
 our @EXPORT = qw{
     addptags
     boldify
+    clean_text
     cutpara
     domain
     elog
@@ -30,12 +31,12 @@ our @EXPORT = qw{
     ourtime
     seo
     trim
-    validate_date
-    valid_email
     url2text
     user_is_registered
     user_register
     user_email
+    validate_date
+    valid_email
     webtext
     weeknumber
 };
@@ -56,6 +57,12 @@ sub boldify {
     my $str = shift;
     $str =~ s/\{/\<strong\>/gm;  $str =~ s/\}/\<\/strong\>/gm;
     return $str;
+}
+
+sub clean_text {
+    my $t = shift // '';
+    $t =~ s/^\s+|\s+$//g;
+    return $t;
 }
 
 sub cutpara {

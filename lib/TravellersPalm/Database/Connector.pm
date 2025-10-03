@@ -2,26 +2,46 @@ package TravellersPalm::Database::Connector;
 
 use strict;
 use warnings;
+
 use Carp qw(croak);
+use DBI;  # For $DBI::err and friends
 use Dancer2::Plugin::Database ();
 
 #--------------------------------------------
 # Connection helpers
 #--------------------------------------------
+
+warn "[DEBUG] Connector loaded\n";
+
 sub dbh {
-    my ($name) = @_;
-    $name //= 'sqlserver';
+    my ($conn) = @_;
+    warn "[DEBUG] dbh() called for $conn\n";
+    $conn //= 'sqlserver';
 
     # Use overridden DB handle inside txn if present
     if ($ENV{DB_CONN_OVERRIDE}) {
         return $ENV{DB_CONN_OVERRIDE};
     }
 
-    my $dbh = Dancer2::Plugin::Database::database($name)
-      or croak "Cannot get DB handle for connection '$name'";
+    my $dbh = Dancer2::Plugin::Database::database($conn);
+
+    unless ($dbh) {
+        my $err     = $DBI::err     // 'N/A';
+        my $errstr  = $DBI::errstr  // 'Unknown DBI error';
+        my $state   = $DBI::state   // 'N/A';
+
+        croak "Cannot get DB handle for connection '$conn': "
+            . "DBI error $err ($state): $errstr";
+    }
+
+    # Optional: Ensure common DBI error behavior
+    $dbh->{RaiseError}  = 1;
+    $dbh->{PrintError}  = 1;
+    $dbh->{AutoCommit}  = 1;
 
     return $dbh;
 }
+
 
 sub database  { return dbh(@_) }
 sub main_dbh  { return dbh('sqlserver') }
