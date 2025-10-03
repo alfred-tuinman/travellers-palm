@@ -17,4 +17,6 @@ use TravellersPalm;
 # Force views path explicitly for this app instance
 TravellersPalm->set(views => '/usr/src/app/views');
 
+warn "[DEBUG] Forced DANCER_VIEWS = $ENV{DANCER_VIEWS}\n";
+
 TravellersPalm->to_app;

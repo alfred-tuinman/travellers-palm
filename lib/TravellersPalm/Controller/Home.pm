@@ -15,6 +15,7 @@ use JSON qw();
 use Template;
 use Dancer2 ':syntax';
 use TravellersPalm::Database::Connector qw(dbh);
+use TravellersPalm::Database::General;
 use TravellersPalm::Constants qw(:all);
 use TravellersPalm::Functions qw/
                   clean_text 
@@ -54,9 +55,8 @@ sub index {
 };
 
 sub before_you_go {
-
-  warn "[DEBUG] Before you go ". TravellersPalm->config->{views} . "\n";
-    template 'before_you_go' => {
+   warn "[DEBUG] Before you go ". TravellersPalm->config->{views} . "\n";
+    template('before_you_go') => {
         metatags        => TravellersPalm::Database::General::metatags('before-you-go'),
         before_you_go   => webtext(17),
         getting_ready   => webtext(168),

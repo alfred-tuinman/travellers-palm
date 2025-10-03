@@ -25,11 +25,18 @@ plugins:
         dsn: "dbi:SQLite:dbname=/usr/src/app/db/Jadoo_2006.db"
         username: ""
         password: ""
+        dbi_params:
+          RaiseError: 1
+          AutoCommit: 1
+          PrintError: 1
       userserver:
         dsn: "dbi:SQLite:dbname=/usr/src/app/db/users.db"
         username: ""
         password: ""
-
+        dbi_params:
+          RaiseError: 1
+          AutoCommit: 1
+          PrintError: 1
   MemcachedFast:
     servers:
       - "127.0.0.1:11211"

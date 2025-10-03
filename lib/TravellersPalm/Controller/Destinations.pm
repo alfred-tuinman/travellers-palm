@@ -17,6 +17,7 @@ use Exporter 'import';
 use TravellersPalm::Functions qw/boldify email_request ourtime url2text webtext/;
 use TravellersPalm::Database::Connector qw(dbh);
 use TravellersPalm::Database::States;
+use TravellersPalm::Database::General;
 use TravellersPalm::Constants ;
 
 our $TAILOR   	= 'ready-tours';
