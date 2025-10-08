@@ -1,0 +1,189 @@
+[% INCLUDE layouts/header.html.tt %]   
+<!-- [% template.name %] -->
+<section id="content">      
+  <div class="container">
+    <div id="main">
+      <div class="row">
+        [% INCLUDE filter.html.tt %]  
+        <div class="col-sm-8 col-md-9">
+          <div class="sort-by-section clearfix">
+            <h4 class="sort-by-title block-sm">Sort results by:</h4>
+            <ul class="sort-bar clearfix block-sm">
+              <li class="sort-by-name [% IF order == 'popularity-desc' || order == 'popularity' %]active[% END %]">
+                <a class="sort-by-container" href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% IF filter == 'regions' %][% regionname %]/[% END %][% IF filter == 'states' %][% state %]/[% END %][% display %]/[% IF order == 'popularity-desc' %]popularity[% ELSE %]popularity-desc[% END %]">
+                  <span>Popularity</span>
+                </a>
+              </li>
+              <li class="sort-by-name [% IF order == 'days-desc' || order == 'days' %]active[% END %]">
+                <a class="sort-by-container" href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% IF filter == 'regions' %][% regionname %]/[% END %][% IF filter == 'states' %][% state %]/[% END %][% display %]/[% IF order == 'days-desc' %]days[% ELSE %]days-desc[% END %]">
+                  <span>days</span>
+                </a>
+              </li>
+              <li class="sort-by-price [% IF order == 'price-desc' || order == 'price' %]active[% END %]">
+                <a class="sort-by-container" href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% IF filter == 'regions' %][% regionname %]/[% END %][% IF filter == 'states' %][% state %]/[% END %][% display %]/[% IF order == 'price-desc' %]price[% ELSE %]price-desc[% END %]">
+                  <span>price</span>
+                </a>
+              </li>
+              <li class="clearer visible-sms"></li>
+            </ul>
+            <ul class="swap-tiles clearfix block-sm">
+              <li class="swap-list [% IF display == 'list'  %]active[% END %]">
+                <a href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% IF filter == 'regions' %][% regionname %][% END %][% IF filter == 'states' %][% state %][% END %]/list"><i class="soap-icon-list"></i></a>
+              </li>
+              <li class="swap-grid [% IF display == 'grid'  %]active[% END %]">
+                <a href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% IF filter == 'regions' %][% regionname %][% END %][% IF filter == 'states' %][% state %][% END %]/grid"><i class="soap-icon-grid"></i></a>
+              </li>
+              <li class="swap-block [% IF display == 'block'  %]active[% END %]">
+                <a href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% IF filter == 'regions' %][% regionname %][% END %][% IF filter == 'states' %][% state %][% END %]/block"><i class="soap-icon-block"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div id='itineraries'>
+            [% IF display == 'list'  %][% INCLUDE viewlist.html.tt  %][% END %]
+            [% IF display == 'grid'  %][% INCLUDE viewgrid.html.tt  %][% END %]
+            [% IF display == 'block' %][% INCLUDE viewblock.html.tt %][% END %]
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+[% INCLUDE layouts/footer.html.tt %]
+
+<script type="text/javascript" src="[% request.uri_base %]/components/flexslider/jquery.flexslider-min.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/theme-scripts.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/scripts.js"></script>
+
+<script type="text/javascript">
+
+/* filter */
+tjq("#themes :checkbox").click(function() {
+  tjq("article").hide();
+  tjq("#themes :checkbox:checked").each(function() {
+    tjq("." + tjq(this).val()).show();
+  });
+  tjq("#ideas :checkbox:checked").each(function() {
+    tjq("." + tjq(this).val()).show();
+  });
+});
+
+tjq(document).ready(function() {
+
+  function runCheck() {
+    var $count=0;
+    var $tours=0;
+    var $cost=0;
+    var $duration=0;
+    var $show = 0;
+
+    [% IF filter == 'tailor' %]
+      [% FOREACH trip in tripideas -%] 
+      if (document.getElementById("[% trip.url %]").checked){
+        $count++;
+      }; 
+      [% END %] 
+
+      if ($count == 0){
+        [% FOREACH trip in tripideas -%] 
+        document.getElementById("[% trip.url %]").checked = true;
+        [% END %] 
+      };
+    [% END %]
+    $count = 0;
+
+    var $pmin = document.getElementById("pmin").innerHTML;
+        $pmin = parseInt($pmin.replace(/\D/g,''));
+    var $pmax = document.getElementById("pmax").innerHTML;
+        $pmax = parseInt($pmax.replace(/\D/g,''));
+    var $dmin = document.getElementById("dmin").innerHTML;
+        $dmin = parseInt($dmin.replace(/\D/g,''));
+    var $dmax = document.getElementById("dmax").innerHTML;
+        $dmax = parseInt($dmax.replace(/\D/g,''));
+
+    tjq("article").each(function(){
+
+      tjq(this).show();
+
+      $cost     = parseInt(tjq(this).attr('data-cost'));
+      $duration = parseInt(tjq(this).attr('data-duration'));
+      $option   = tjq(this).attr('class');
+      $show     = 0;
+      $tours++;
+
+      if (($cost >= $pmin) && ($cost <= $pmax) && ($duration >= $dmin) && ($duration <= $dmax)){
+
+        [% IF filter == 'tailor' %]
+          [% FOREACH trip in tripideas -%] 
+          if ( /[% trip.url %]/.test($option) ){
+            if (document.getElementById("[% trip.url %]").checked){
+              tjq(this).show();
+              $show = 1;
+            }
+            else {
+              tjq(this).hide();
+            };
+          }; 
+          [% END %] 
+        [% END %]
+
+        [% IF filter == 'regions' %]
+        tjq(this).show();
+        $show = 1;
+        [% END %]
+
+        if ($show == 1){
+          $count++;
+        };
+      }
+      else 
+      {
+        tjq(this).hide();
+      };
+    });
+    document.getElementById("counter").innerHTML=$count + ' of ' + $tours + ' tours showing'  ;
+    
+    if($count < $tours){
+      document.getElementById("showAll").innerHTML='<a href="[% request.uri %]">Show All</a>' ; 
+    }
+  };
+
+  tjq("#price-range").slider({
+    range: true,
+    min: [% min_cost %],
+    max: [% max_cost %],
+    values: [ [% min_cost %], [% max_cost %] ],
+    slide: function( event, ui ) {
+      tjq(".min-price-label").html( "[% currency %] " + ui.values[ 0 ]);
+      tjq(".max-price-label").html( "[% currency %] " + ui.values[ 1 ]);
+    },
+    change: runCheck
+  });
+
+  tjq(".min-price-label").html( "[% currency %] " + tjq("#price-range").slider( "values", 0 ));
+  tjq(".max-price-label").html( "[% currency %] " + tjq("#price-range").slider( "values", 1 ));
+
+  tjq("#duration-range").slider({
+    range: true,
+    min: [% min_duration %],
+    max: [% max_duration %],
+    values: [ [% min_duration %], [% max_duration %] ],
+    slide: function( event, ui ) {
+      tjq(".min-duration-label").html(  ui.values[ 0 ] + " days");
+      tjq(".max-duration-label").html(  ui.values[ 1 ] + " days");
+    },
+    change: runCheck
+  });
+
+  tjq(".min-duration-label").html( tjq("#duration-range").slider( "values", 0 ) + " days");
+  tjq(".max-duration-label").html( tjq("#duration-range").slider( "values", 1 ) + " days");
+
+  tjq("#ideas :checkbox").click(function() {
+    runCheck();
+  });
+});
+
+</script>
+</body>
+</html>

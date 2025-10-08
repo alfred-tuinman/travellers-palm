@@ -1,27 +1,13 @@
-requires 'Plack';
-requires 'Starman';
+requires 'Mojolicious';
+requires 'Mojolicious::Plugin::TtRenderer';
+requires 'Mojolicious::Plugin::YamlConfig';
+# requires 'Mojolicious::Plugin::TemplateToolkit';
+requires 'Template::Plugin::Comma';
 requires 'DBI';
 requires 'DBD::SQLite';
-requires 'Template';
-requires 'Template::Plugin::Comma';
-requires 'Router::Simple';
 requires 'JSON';
-requires 'Plack::Test';
-requires 'HTTP::Request::Common';
-requires 'Test::More';
-
-requires 'Dancer2';
-requires 'Dancer2::Plugin::Database', '0.21';   # example
-
-requires 'Geo::Location::TimeZone';
+requires 'DateTime';
+requires 'File::Spec';
+requires 'YAML::XS';
 requires 'Data::FormValidator';
-requires 'Date::Manip'; # covers Date::Manip::Date
-requires 'DateTime::Format::Strptime';
-requires 'Digest::MD5';
-requires 'MIME::Lite';
-requires 'URI'; # covers URI::http
-requires 'JSON';   
-requires 'Math::Polygon';
-requires 'HTTP::BrowserDetect';
-requires 'HTML::Strip';
-requires 'LWP::UserAgent';
+requires 'Data::Dumper';

@@ -1,0 +1,112 @@
+[% INCLUDE layouts/header.html.tt %] 
+
+<section id="content">
+    <div class="container">
+        <div class="row">
+            <div id="main" class="col-sm-8 col-md-9">
+                <div class="image-style style1 box">
+                    <ul class="image-block column-3 pull-left clearfix">
+                        <li><a href="#" class="middle-block"><img class="middle-item" src="http://placehold.it/80x80" alt="" /></a></li>
+                        <li><a href="#" class="middle-block"><img class="middle-item" src="http://placehold.it/80x80" alt="" /></a></li>
+                        <li><a href="#" class="middle-block"><img class="middle-item" src="http://placehold.it/80x80" alt="" /></a></li>
+                        <li><a href="#" class="middle-block"><img class="middle-item" src="http://placehold.it/80x80" alt="" /></a></li>
+                        <li><a href="#" class="middle-block"><img class="middle-item" src="http://placehold.it/80x80" alt="" /></a></li>
+                        <li><a href="#" class="middle-block"><img class="middle-item" src="http://placehold.it/80x80" alt="" /></a></li>
+                    </ul>
+
+
+                    <p class="dropcap">The Solita is a beautiful, 42-foot motor yacht built along the sweetly old-fashioned lines of the classic ‘trawler’ design. She sails Goa’s gorgeous coastline, and her gentle, romantic rivers and backwaters.
+                    </p><p>
+                    But to our family, she is so much more than that:
+                    she is the reason why we moved our home across six-hundred kilometres from Mumbai to Goa so that we could experience some of our lives' happiest moments and share the joy she brings with the world. 
+                </p>
+                <div class="clearfix"></div>
+
+            </div>
+            <h1>The Solita in Goa</h1>
+
+            <p>You could have the Solita to yourselves for a family reunion, a corporate celebration or the perfect romantic setting just for two.</p>
+            <p>With her spacious decks, lounge room and two en-suite cabins, the Solita is perfect for just about any occasion. Four crew members, including a Captain and an Engineer who have been with the Solita from the day she was built, will care for you and up to twenty-six guests.</p>
+                <p>So, take a deep breath and let Goa and the Solita work their magic on you.</p>
+                    <br>
+                    <blockquote class="style1 border-color-blue quote-color-yellow">
+                        <span class="triangle"></span>Vivamus sit amet lectus venenatis est rhoncus interdum a vitae velit Massa sagittis vestibulum. Vestibulum pretium blandit tellus, sodales volutpat sien varius vel. Phasellus tristique cursus erat, a placerat tellus laoreet egeat. sce vitae dui sit amet lacus rutrum convallis.
+                    </blockquote>
+                    <p></p>
+                </div>
+                <div class="sidebar col-sm-4 col-md-3">
+                        <!--
+                        <div class="travelo-box">
+                            <h5 class="box-title">Search Stories</h5>
+                            <div class="with-icon full-width">
+                                <input type="text" class="input-text full-width" placeholder="story name or category">
+                                <button class="icon green-bg white-color"><i class="soap-icon-search"></i></button>
+                            </div>
+                        </div>
+                    -->
+                    <div class="travelo-box book-with-us-box">
+                        <img src="[% IMAGE %]/specials/solita.jpg" width="230" alt="The Solita in Goa" />
+                        <p>Dolphin spotting in the morning</p>
+                    </div>
+                    <div class="tab-container box">
+                        <ul class="tabs full-width">
+                            <li><a data-toggle="tab" href="#recent-posts">Recent</a></li>
+                            <li class="active"><a data-toggle="tab" href="#popular-posts">Popular</a></li>
+                            <li><a data-toggle="tab" href="#new-posts">New</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="recent-posts" class="tab-pane fade">
+
+                            </div>
+                            <div id="popular-posts" class="tab-pane fade in active">
+                                <div class="image-box style14">
+                                    <article class="box">
+                                        <figure><a href="#" title=""><img width="63" height="59" src="http://placehold.it/63x59" alt=""></a></figure>
+                                        <div class="details">
+                                            <h5 class="box-title"><a href="#">Half-Day Island Tour</a></h5>
+                                            <label class="price-wrapper"><span class="price-per-unit">$35</span>Family Package</label>
+                                        </div>
+                                    </article>
+                                    <article class="box">
+                                        <figure><a href="#" title=""><img width="63" height="59" src="http://placehold.it/63x59" alt=""></a></figure>
+                                        <div class="details">
+                                            <h5 class="box-title"><a href="#">Ocean Park Tour</a></h5>
+                                            <label class="price-wrapper"><span class="price-per-unit">$26</span>Per Person</label>
+                                        </div>
+                                    </article>
+                                    <article class="box">
+                                        <figure><a href="#" title=""><img width="63" height="59" src="http://placehold.it/63x59" alt=""></a></figure>
+                                        <div class="details">
+                                            <h5 class="box-title"><a href="#">Dream World Trip</a></h5>
+                                            <label class="price-wrapper"><span class="price-per-unit">$11</span>holiday offer</label>
+                                        </div>
+                                    </article>
+                                </div>
+                            </div>
+                            <div id="new-posts" class="tab-pane fade">
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                    [% INCLUDE layouts/needhelp.html.tt %] 
+                </div>
+            </div>
+        </div>
+    </section>
+
+    [% INCLUDE layouts/footer.html.tt %] 
+
+<!-- parallax -->
+<script type="text/javascript" src="js/jquery.stellar.min.js"></script>
+
+<!-- waypoint -->
+<script type="text/javascript" src="js/waypoints.min.js"></script>
+
+<!-- load page Javascript -->
+<script type="text/javascript" src="js/theme-scripts.js"></script>
+<script type="text/javascript" src="js/scripts.js"></script>
+
+</body>
+</html>
+

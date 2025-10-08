@@ -1,0 +1,314 @@
+[% INCLUDE layouts/header.html.tt %]
+
+<section id="content">
+    <div class="container">
+        <div class="row">
+            <div id="main" class="col-sm-8 col-md-9">
+                <div class="block">
+                    <div class="flexslider photo-gallery style2 block" data-fix-control-nav-pos="1">
+                        <ul class="slides image-box style9">
+                            <li>
+                                <article class="box"><!-- 1170x560 -->
+                                    <figure><img src="[% IMAGE %]/specials/solita/slide_solita.jpg" alt="1170x560"></figure>
+                                    <div class="details">
+                                        <h2 class="box-title"><span class="no-letter-spacing">[% solita.title %]</span>
+                                            <small class="skin-color"> </small>
+                                        </h2>[% solita.writeup %]
+                                    </div>
+                                </article>
+                            </li>
+                            <li>
+                                <article class="box">
+                                    <figure>
+                                        <img src="[% IMAGE %]/specials/solita/slide_captain-jim.jpg" alt="1170x560">
+                                    </figure>
+                                    <div class="details">
+                                        <h2 class="box-title"><span class="no-letter-spacing">[% welcome.title %]</span>
+                                            <small class="skin-color">  </small>
+                                        </h2>
+                                        [% welcome.writeup %] 
+                                    </div>
+                                </article>
+                            </li>
+                            <li>
+                                <article class="box">
+                                    <figure>
+                                        <img src="[% IMAGE %]/specials/solita/slide_guests.jpg" alt="Guest on board the Solita">
+                                    </figure>
+                                    <div class="details">
+                                        <h2 class="box-title"><span class="no-letter-spacing">[% easy_seating.title %]</span>
+                                            <small class="skin-color">  </small>
+                                        </h2>[% easy_seating.writeup %] 
+                                    </div>
+                                </article>
+                            </li>
+                            <li>
+                                <article class="box">
+                                    <figure>
+                                        <img src="[% IMAGE %]/specials/solita/slide_interior.jpg" alt="Interior of the Solita">
+                                    </figure>
+                                    <div class="details">
+                                        <h2 class="box-title"><span class="no-letter-spacing">[% interiors.title %]</span>
+                                            <small class="skin-color"></small>
+                                        </h2>[% interiors.writeup %]
+                                    </div>
+                                </article>
+                            </li>
+                            <li>
+                                <article class="box">
+                                    <figure>
+                                        <img src="[% IMAGE %]/specials/solita/slide_dolphin.jpg" alt="Dolphin cruise">
+                                    </figure>
+                                    <div class="details">
+                                        <h2 class="box-title"><span class="no-letter-spacing">[% dolphin.title %]</span>
+                                            <small class="skin-color"></small>
+                                        </h2>[% dolphin.writeup %]
+
+                                    </div>
+                                </article>
+                            </li>
+                            <li>
+                                <article class="box">
+                                    <figure>
+                                        <img src="[% IMAGE %]/specials/solita/slide_sunset.jpg" alt="Sunset Cruise">
+                                    </figure>
+                                    <div class="details">
+                                        <h2 class="box-title"><span class="no-letter-spacing">[% sunset.title %]</span>
+                                            <small class="skin-color"></small>
+                                        </h2>[% sunset.writeup %]
+                                    </div>
+                                </article>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="image-style style1 box">
+                        <h1>[% elegant.title %]</h1>
+                        [% elegant.writeup %]
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="block">
+                    <div class="row travelo-box solita">
+                        <h2> [% the_yacht.title %]</h2>
+                        <div class="col-sm-6 col-md-6">
+                            <img src="[% IMAGE %]/specials/solita/solita-side2.jpg" alt="luxury yacht for charter in Goa" class="full-width=">
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            [% the_yacht.writeup %]
+                        </div>
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="travelo-box solita">
+                        <div class="row">
+                            <h2>Cruise ideas &amp; Itineraries</h2>
+                            <div class="col-sm-6 col-md-6">
+                                <ul class="image-block column-3 pull-left clearfix">
+                                    <li>
+                                        <article class="box">
+                                            <figure>
+                                                <a href="[% request.uri_base %]/ajax/solita/slideshow-1.html" class="hover-effect popup-gallery">
+                                                    <img class="middle-item" src="[% IMAGE %]/specials/solita/1-slide.jpg" width="80" height="80" alt="Guest on the Solita" />
+                                                </a>
+                                            </figure>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="box">
+                                            <figure>
+                                                <a href="[% request.uri_base %]/ajax/solita/slideshow-2.html" class="hover-effect popup-gallery">
+                                                    <img class="middle-item" src="[% IMAGE %]/specials/solita/2-slide.jpg" width="80" height="80" alt="Sunset Cruise" />
+                                                </a>
+                                            </figure>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="box">
+                                            <figure>
+                                                <a href="[% request.uri_base %]/ajax/solita/slideshow-3.html" class="hover-effect popup-gallery">
+                                                    <img class="middle-item" src="[% IMAGE %]/specials/solita/3-slide.jpg" width="80" height="80" alt="Dolphin spotting" />
+                                                </a>
+                                            </figure>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="box">
+                                            <figure>
+                                                <a href="[% request.uri_base %]/ajax/solita/slideshow-4.html" class="hover-effect popup-gallery">
+                                                    <img class="middle-item" src="[% IMAGE %]/specials/solita/4-slide.jpg" width="80" height="80" alt="Steering wheel" />
+                                                </a>
+                                            </figure>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="box">
+                                            <figure>
+                                                <a href="[% request.uri_base %]/ajax/solita/slideshow-5.html" class="hover-effect popup-gallery">
+                                                    <img class="middle-item" src="[% IMAGE %]/specials/solita/5-slide.jpg" width="80" height="80" alt="Our crew" />
+                                                </a>
+                                            </figure>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="box">
+                                            <figure>
+                                                <a href="[% request.uri_base %]/ajax/solita/slideshow-6.html" class="hover-effect popup-gallery">
+                                                    <img class="middle-item" src="[% IMAGE %]/specials/solita/6-slide.jpg" width="80" height="80" alt="The fly bridge" />
+                                                </a>
+                                            </figure>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="box">
+                                            <figure>
+                                                <a href="[% request.uri_base %]/ajax/solita/slideshow-7.html" class="hover-effect popup-gallery">
+                                                    <img class="middle-item" src="[% IMAGE %]/specials/solita/7-slide.jpg" width="80" height="80" alt="Master bed room" />
+                                                </a>
+                                            </figure>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="box">
+                                            <figure>
+                                                <a href="[% request.uri_base %]/ajax/solita/slideshow-8.html" class="hover-effect popup-gallery">
+                                                    <img class="middle-item" src="[% IMAGE %]/specials/solita/8-slide.jpg" width="80" height="80" alt="Captain Jim" />
+                                                </a>
+                                            </figure>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="box">
+                                            <figure>
+                                                <a href="[% request.uri_base %]/ajax/solita/slideshow-9.html" class="hover-effect popup-gallery">
+                                                    <img class="middle-item" src="[% IMAGE %]/specials/solita/9-slide.jpg" width="80" height="80" alt="Backwaters of Goa" />
+                                                </a>
+                                            </figure>
+                                        </article>
+                                    </li>
+                                </ul>
+                                <div class="clearfix"></div>
+                                <hr>
+                                <img src="[% IMAGE %]/specials/solita/cruising.jpg" width="260" alt="Cruising the Mandovi river" />
+                            </div>
+                            <div class="col-sm-6 col-md-6">
+                                <h3>[% dolphin_discovery.title %]</h3>
+                                [% dolphin_discovery.writeup %]
+                                <h3>[% backwater_cruise.title %]</h3>
+                                [% backwater_cruise.writeup %]
+                                <h3>[% entertainment.title %]</h3>
+                                [% entertainment.writeup %]
+                                <h3>[% dinner_for_two.title %]</h3>
+                                [% dinner_for_two.writeup %]
+                                <h3>[% romantic_overnight.title %]</h3>
+                                [% romantic_overnight.writeup %]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="row travelo-box solita">
+                        <h2>[% the_story.title %]</h2>
+                        <div class="col-sm-6 col-md-6">
+                            <img src="[% IMAGE %]/specials/solita/solita.jpg" width="100%">
+                        </div>
+                        <div class="col-sm-6 col-md-6">            
+                            [% the_story.writeup %]
+                        </div>
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="row travelo-box solita">
+                        <h2 class="box-title">[% tribute.title %]</h2>
+                        <blockquote class="style1 border-color-blue quote-color-yellow">
+                            <span class="triangle"></span>[% tribute.writeup %]
+                        </blockquote>
+                        <p>Remo Fernandes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar col-sm-4 col-md-3">
+                <div class="travelo-box">
+                    <h5 class="box-title">[% recommended.title %]</h5>
+                    <div class="with-icon full-width">
+                        <ul class="chevron">
+                            [% recommended.writeup %]
+                        </ul>
+                    </div>
+                </div>
+                <div class="travelo-box contact-box">
+                    <h4 class="box-title">Contact Us</h4>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6">
+                            <div>Address:</div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div>
+                                Currently docked at a jetty in Britona on the Mandovi river near Penha de França church.
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <h5>Odyssey Tours &amp; Travels Pvt Ltd</h5>
+                    286 Boa Viagem Road<br>
+                    Naikavaddo, Calangute<br>
+                    Goa - 403 516</br>
+                    <br>
+                    <h5>Reservations</h5>
+                    <address class="contact-details">
+                        <span class="contact-phone">
+                            <i class="soap-icon-phone"></i>
+                            +91 98221 80826
+                        </span>
+                        <br>
+                        <span class="odc-contact-email">
+                            <i class="soap-icon-message"></i>
+                            <a href="mailto:solita@odyssey.co.in" class="contact-email">solita@odyssey.co.in</a><br>
+                        </span>
+                        <a href="http://www.solita.in" target="_new">www.solita.in</a>
+                    </address>
+                </div>
+                <div class="travelo-box book-with-us-box">
+                    <h4 class="box-title">[% the_crew.title %]</h4>
+                    <img src="[% IMAGE %]/specials/solita/sidebar_jim.jpg" alt="Captain Jim" width="230" height="130">
+                    <br><br>
+                    [% the_crew.writeup %]
+                </div>
+                <div class="travelo-box">
+                    <h4 class="box-title"> [% specifications.title %]</h4>
+                    <img src="[% IMAGE %]/specials/solita/sidebar_danny.jpg" alt="Engineer Danny" width="230" height="130">
+                    <br><br>
+                    [% specifications.writeup %]
+                </div>
+                <div class="travelo-box">
+                    <h4 class="box-title">[% facilities.title %]</h4>
+                    <img src="[% IMAGE %]/specials/solita/sidebar_interior.jpg" alt="Interiors" width="230" height="130">
+                    <br><br>
+                    [% facilities.writeup %]
+                </div>
+                <div class="travelo-box">
+                    <img src="[% IMAGE %]/specials/solita/sidebar_name-board.jpg" alt="Remo's song" width="230" height="130">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+[% INCLUDE layouts/footer.html.tt %]
+
+<!-- load BXSlider scripts -->
+<script type="text/javascript" src="[% request.uri_base %]/components/jquery.bxslider/jquery.bxslider.min.js"></script>
+
+<!-- load FlexSlider scripts -->
+<script type="text/javascript" src="[% request.uri_base %]/components/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- waypoint -->
+<script type="text/javascript" src="[% request.uri_base %]/js/waypoints.min.js"></script>
+
+<!-- load page Javascript -->
+<script type="text/javascript" src="[% request.uri_base %]/js/theme-scripts.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/scripts.js"></script>
+
+</body>
+</html>

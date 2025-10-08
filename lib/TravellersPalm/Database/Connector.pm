@@ -1,72 +1,58 @@
 package TravellersPalm::Database::Connector;
-
 use strict;
 use warnings;
-
 use Carp qw(croak);
-use DBI;  # For $DBI::err and friends
-use Dancer2::Plugin::Database ();
+use DBI;
+use Mojo::Base -base;
 
 #--------------------------------------------
-# Connection helpers
+# DB handle cache
 #--------------------------------------------
+my $DBH;
 
-warn "[DEBUG] Connector loaded\n";
-
+#--------------------------------------------
+# Get DB handle from Mojolicious config
+#--------------------------------------------
 sub dbh {
-    my ($conn) = @_;
-    warn "[DEBUG] dbh() called for $conn\n";
-    $conn //= 'sqlserver';
+    my ($class, $c) = @_;   # $c = Mojolicious controller or app
+    croak "Mojolicious object required" unless $c;
 
-    # Use overridden DB handle inside txn if present
-    if ($ENV{DB_CONN_OVERRIDE}) {
-        return $ENV{DB_CONN_OVERRIDE};
-    }
+    return $DBH if $DBH;
 
-    my $dbh = Dancer2::Plugin::Database::database($conn);
+    my $db_config = $c->app->config->{db} // croak "DB config missing in config.conf";
+    my $dsn      = $db_config->{dsn}      // croak "dsn missing in db config";
+    my $username = $db_config->{username} // '';
+    my $password = $db_config->{password} // '';
 
-    unless ($dbh) {
-        my $err     = $DBI::err     // 'N/A';
-        my $errstr  = $DBI::errstr  // 'Unknown DBI error';
-        my $state   = $DBI::state   // 'N/A';
+    $DBH = DBI->connect(
+        $dsn, $username, $password,
+        { RaiseError => 1, PrintError => 1, AutoCommit => 1, sqlite_unicode => 1 }
+    ) or croak "Cannot connect to database: $DBI::errstr";
 
-        croak "Cannot get DB handle for connection '$conn': "
-            . "DBI error $err ($state): $errstr";
-    }
-
-    # Optional: Ensure common DBI error behavior
-    $dbh->{RaiseError}  = 1;
-    $dbh->{PrintError}  = 1;
-    $dbh->{AutoCommit}  = 1;
-
-    return $dbh;
+    return $DBH;
 }
 
-
-sub database  { return dbh(@_) }
-sub main_dbh  { return dbh('sqlserver') }
-sub users_dbh { return dbh('users') }
+#--------------------------------------------
+# Convenience aliases
+#--------------------------------------------
+sub database  { shift->dbh(@_) }
+sub main_dbh  { shift->dbh(@_) }
 
 #--------------------------------------------
-# Fetch helpers (transaction-safe)
+# Fetch helpers
 #--------------------------------------------
 sub fetch_all {
-    my ($sql, $bind, $conn) = @_;
-    $conn //= 'sqlserver';
+    my ($class, $sql, $bind, $c) = @_;
     $bind //= [];
-
-    my $dbh = dbh($conn);
-    return $dbh->selectall_arrayref($sql, { Slice => {} }, @$bind);
+    return $class->dbh($c)->selectall_arrayref($sql, { Slice => {} }, @$bind);
 }
 
 sub fetch_row {
-    my ($sql, $bind, $conn, $key_case) = @_;
-    $conn     //= 'sqlserver';
+    my ($class, $sql, $bind, $c, $key_case) = @_;
     $bind     //= [];
     $key_case //= 'NAME';
 
-    my $dbh = dbh($conn);
-    my $row = $dbh->selectrow_hashref($sql, undef, @$bind);
+    my $row = $class->dbh($c)->selectrow_hashref($sql, undef, @$bind);
 
     if ($key_case eq 'NAME_lc' && $row) {
         my %lc = map { lc($_) => $row->{$_} } keys %$row;
@@ -75,30 +61,22 @@ sub fetch_row {
     return $row;
 }
 
-#--------------------------------------------
-# Execute SQL (transaction-safe)
-#--------------------------------------------
 sub do_sql {
-    my ($sql, $bind, $conn) = @_;
-    $conn //= 'sqlserver';
+    my ($class, $sql, $bind, $c) = @_;
     $bind //= [];
-
-    my $dbh = dbh($conn);
-    return $dbh->do($sql, undef, @$bind);
+    return $class->dbh($c)->do($sql, undef, @$bind);
 }
 
 #--------------------------------------------
 # Transaction wrapper
 #--------------------------------------------
 sub txn {
-    my ($code, $conn) = @_;
-    $conn //= 'sqlserver';
-    my $dbh = dbh($conn);
+    my ($class, $c, $code) = @_;
+    my $dbh = $class->dbh($c);
 
     my $ok = eval {
-        local $ENV{DB_CONN_OVERRIDE} = $dbh;  # override dbh() inside transaction
         $dbh->begin_work;
-        $code->($dbh);  # inside here, fetch_all/fetch_row/do_sql use the same $dbh
+        $code->($dbh);
         $dbh->commit;
         1;
     };
@@ -113,11 +91,10 @@ sub txn {
 }
 
 #--------------------------------------------
-# DML helpers using do_sql (transaction-safe)
+# DML helpers
 #--------------------------------------------
 sub insert {
-    my ($table, $data, $conn) = @_;
-    $conn //= 'sqlserver';
+    my ($class, $table, $data, $c) = @_;
     croak "insert() requires a table name" unless $table;
     croak "insert() requires a hashref of data" unless ref $data eq 'HASH';
 
@@ -132,12 +109,11 @@ sub insert {
         join(', ', @place)
     );
 
-    return do_sql($sql, \@bind, $conn);
+    return $class->do_sql($sql, \@bind, $c);
 }
 
 sub update {
-    my ($table, $data, $where, $conn) = @_;
-    $conn //= 'sqlserver';
+    my ($class, $table, $data, $where, $c) = @_;
     croak "update() requires a table name" unless $table;
     croak "update() requires a hashref of data" unless ref $data eq 'HASH';
     croak "update() requires a where condition" unless ref $where eq 'HASH';
@@ -157,12 +133,11 @@ sub update {
         join(' AND ', @where_parts)
     );
 
-    return do_sql($sql, [ @set_bind, @where_bind ], $conn);
+    return $class->do_sql($sql, [ @set_bind, @where_bind ], $c);
 }
 
 sub delete {
-    my ($table, $where, $conn) = @_;
-    $conn //= 'sqlserver';
+    my ($class, $table, $where, $c) = @_;
     croak "delete() requires a table name" unless $table;
     croak "delete() requires a where condition" unless ref $where eq 'HASH';
 
@@ -176,7 +151,7 @@ sub delete {
         join(' AND ', @where_parts)
     );
 
-    return do_sql($sql, \@where_bind, $conn);
+    return $class->do_sql($sql, \@where_bind, $c);
 }
 
 1;

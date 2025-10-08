@@ -1,130 +1,124 @@
 package TravellersPalm;
+use Mojo::Base 'Mojolicious', -signatures;
 
-warn "[DEBUG] TravellersPalm loaded, config views = " . (config->{views} // '(no views)') . "\n";
+use File::Spec;
+use TravellersPalm::Constants qw(:all);
 
-use strict;
-use warnings;
+# ----------------------
+# Startup
+# ----------------------
+sub startup ($self) {
 
-use Dancer2;
+    # ----------------------
+    # TT Renderer
+    # ----------------------
+    $self->plugin('TtRenderer' => {
+        template           => { INTERPOLATE => 1 },
+        template_extension => '.tt',
+        template_options   => {
+            ENCODING     => 'utf8',
+            INCLUDE_PATH => File::Spec->catdir($self->home, 'templates'),
+        },
+    });
+    $self->renderer->default_handler('tt');
 
-# --- Load all controllers ---
-use TravellersPalm::Controller::Destinations;
-use TravellersPalm::Controller::Home;
-use TravellersPalm::Controller::Hotels;
-use TravellersPalm::Controller::Images;
-use TravellersPalm::Controller::MyAccount;
+    # ----------------------
+    # Config
+    # ----------------------
+    my $config = $self->plugin('yaml_config' => {
+        file      => 'config.yml',
+        stash_key => 'conf',
+        class     => 'YAML::XS',
+    });
+    $self->secrets($config->{secrets});
+    $self->{config} = $config;
+    $self->log->level('debug');
 
-use TravellersPalm::Constants;
+    # ----------------------
+    # Hooks
+    # ----------------------
+    $self->hook(before => sub ($c) {
+        # Default session values
+        $c->session(currency => $c->session('currency') // 'EUR');
+        $c->session(country  => $c->session('country')  // 'IN');
+    });
 
-our $VERSION 	= '2.0';
-our $TAILOR   	= 'ready-tours', 
-our $THEMES   	= 'explore-by-interest';
-our $STATES   	= 'explore-by-state';
-our $REGIONS  	= 'explore-by-region';
-our $IDEAS    	= 'trip-ideas';
-our $tokens;
-our $session_currency ;
-our $session_country  ;
+    $self->hook(before_render => sub ($c, $args) {
+        my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
+        $year += 1900;
 
-# Set the time
-my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
-$year = $year+1900;
+        # Inject template tokens
+        $c->stash(
+            PHONE1   => '+91 88051 22221',
+            PHONE2   => '+91 90111 55551',
+            TAILOR   => $TAILOR,
+            THEMES   => $THEMES,
+            STATES   => $STATES,
+            REGIONS  => $REGIONS,
+            IDEAS    => $IDEAS,
+            COUNTRY  => $c->session('country'),
+            currency => $c->session('currency'),
+            IMAGE    => 'http://images.travellers-palm.com',
+            year     => $year,
+            domain   => 'www.travellers-palm.com',
+        );
+    });
 
-# --- You can put general hooks, plugins, or configuration here ---
-# code that runs before each request
-# sessions need to be set to YAML in config for it to work
-hook before => sub {
-    $session_currency = session('currency') // 'EUR';
-    session currency => $session_currency; # ensure it's saved in the session
-};
+    # ----------------------
+    # Router
+    # ----------------------
+    my $r = $self->routes;
 
-# hook after_template_render => sub { };
+    # Home
+    $r->get('/')->to('home#index');
+    $r->get('/before-you-go')->to('home#before_you_go');
+    $r->any('/contact-us')->to('home#contact_us');
+    $r->get('/enquiry')->to('home#get_enquiry');
+    $r->post('/enquiry')->to('home#post_enquiry');
+    $r->get('/faq')->to('home#faq');
+    $r->get('/policies')->to('home#policies');
+    $r->get('/search-results')->to('home#search_results');
+    $r->get('/site-map')->to('home#site_map');
+    $r->get('/state/:state')->to('home#state');
+    $r->get('/sustainable-tourism')->to('home#sustainable_tourism');
+    $r->get('/testimonials')->to('home#testimonials');
+    $r->get('/travel-ideas')->to('home#travel_ideas');
+    $r->get('/what-to-expect')->to('home#what_to_expect');
+    $r->get('/why-travel_with_us')->to('home#why_travel_with_us');
 
-hook before_template_render => sub {
-    $tokens = shift;   
-    $tokens->{PHONE1}     	= '+91 88051 22221';
-    $tokens->{PHONE2}     	= '+91 90111 55551';
-    # $tokens->{currencies} 	= TravellersPalm::Database::Currencies::currencies();
-    $tokens->{TAILOR}     	= $TAILOR;
-    $tokens->{THEMES}     	= $THEMES;
-    $tokens->{STATES}     	= $STATES;
-    $tokens->{REGIONS}    	= $REGIONS;
-    $tokens->{IDEAS}      	= 'trip-ideas';
-    $tokens->{LEARNMORE}  	= 'Learn More';
-    $tokens->{COUNTRY}    	= $session_country;
-    $tokens->{currency}    	= $session_currency;
-    $tokens->{IMAGE}      	= 'http://images.travellers-palm.com';
-    $tokens->{year}         = $year;
-    $tokens->{domain}       = "www.travellers-palm.com";
-};
+    # Hotels
+    $r->get('/hotel-categories')->to('hotels#show_hotel_categories');
+    $r->get('/hand-picked-hotels')->to('hotels#show_hand_picked_hotels');
 
-# destinations
-get '/destinations/:destination' => \&TravellersPalm::Controller::Destinations::show_destination;
+    # Destinations
+    $r->get('/destinations/:destination')->to('destinations#show_destination');
+    $r->any(['GET','POST'],'/destinations/*/*')->to('destinations#show_tailor');
+    $r->get('/destinations/*/'.$REGIONS)->to('destinations#show_region_list');
+    $r->get('/destinations/*/'.$REGIONS.'/*')->to('destinations#show_region_detail');
+    $r->get('/destinations/*/'.$STATES)->to('destinations#show_state_list');
+    $r->get('/destinations/*/'.$STATES.'/*')->to('destinations#show_state_detail');
+    $r->get('/destinations/*/'.$THEMES)->to('destinations#show_theme_list');
+    $r->get('/destinations/*/'.$THEMES.'/*')->to('destinations#show_theme_detail');
+    $r->any('/plan-your-trip')->to('destinations#plan_your_trip');
 
-any [ 'get', 'post' ] => "/destinations/*/$TAILOR/**" => \&TravellersPalm::Controller::Destinations::show_tailor;
+    # My Account
+    $r->get('/my-account')->to('my_account#login');
+    $r->post('/my-account/register')->to('my_account#register');
+    $r->post('/my-account/mail-password')->to('my_account#mail_password');
 
-get "/destinations/*/$REGIONS" => \&TravellersPalm::Controller::Destinations::show_region_list;
-get "/destinations/*/$REGIONS/**" => \&TravellersPalm::Controller::Destinations::show_region_detail;
+    # Currency switcher
+    $r->get('/currency/:currency' => sub ($c) {
+        $c->session(currency => $c->param('currency'));
+        $c->redirect_to($c->req->headers->referrer // '/');
+    });
 
-get "/destinations/*/$STATES" => \&TravellersPalm::Controller::Destinations::show_state_list;
-get "/destinations/*/$STATES/**" => \&TravellersPalm::Controller::Destinations::show_state_detail;
+    # Images
+    $r->get('/images/*path')->to('images#serve_image');
 
-get "/destinations/*/$THEMES" => \&TravellersPalm::Controller::Destinations::show_theme_list;
-get "/destinations/*/$THEMES/**" => \&TravellersPalm::Controller::Destinations::show_theme_detail;
+    # Catch-all 404
+    $r->any('/*whatever')->to(cb => sub ($c) {
+        $c->render(template => '404', status => 404);
+    });
+}
 
-any [ 'get', 'post' ] => '/plan-your-trip' => \&plan_your_trip;
-
-# Home
-get '/'                     => \&TravellersPalm::Controller::Home::index;
-get '/before-you-go'        => \&TravellersPalm::Controller::Home::before_you_go;
-any '/contact-us'           => \&TravellersPalm::Controller::Home::contact_us;
-get '/enquiry'              => \&TravellersPalm::Controller::Home::get_enquiry;
-post '/enquiry'             => \&TravellersPalm::Controller::Home::post_enquiry;
-get '/faq'                  => \&TravellersPalm::Controller::Home::faq;
-get '/policies'             => \&TravellersPalm::Controller::Home::policies;
-get '/search-results'       => \&TravellersPalm::Controller::Home::search_results;
-get '/site-map'             => \&TravellersPalm::Controller::Home::site_map;
-get '/state/:state'         => \&TravellersPalm::Controller::Home::state;
-get '/sustainable-tourism'  => \&TravellersPalm::Controller::Home::sustainable_tourism;
-get '/testimonials'         => \&TravellersPalm::Controller::Home::testimonials;
-get '/travel-ideas'         => \&TravellersPalm::Controller::Home::travel_ideas;
-get '/what-to-expect'       => \&TravellersPalm::Controller::Home::what_to_expect;
-get '/why-travel_with_us'   => \&TravellersPalm::Controller::Home::why_travel_with_us;
-
-get '/currency/:currency' => sub {
-    session currency => currency( params->{currency} );
-    redirect request->referer;
-};
-
-# Hotels
-get '/hotel-categories'    => \&TravellersPalm::Controller::Hotels::show_hotel_categories;
-get '/hand-picked-hotels'  => \&TravellersPalm::Controller::Hotels::show_hand_picked_hotels;
-
-# Images - Catch all image requests under / (like /home/sucheta.jpg)
-get qr{^/([^/]+/.+)} => sub {
-    my $path = $1;  # e.g., home/sucheta.jpg
-    my $file = File::Spec->catfile(config->{public_dir}, 'images', $path);
-
-    if (-f $file) {
-        return send_file $file;
-    }
-    status 'not_found';
-    return "File not found";
-};
-
-# MyAccount
-get  '/my-account'               => \&TravellersPalm::Controller::MyAccount::login;
-post '/my-account/register'      => \&TravellersPalm::Controller::MyAccount::register;
-post '/my-account/mail-password' => \&TravellersPalm::Controller::MyAccount::mail_password;
-
-# Catch-all 404
-
-# template('404') => { page => request->path };
-
-any qr{.*} => sub {
-    status 'not_found';
-    template '404';
-};
-
-
-true;   
+1;

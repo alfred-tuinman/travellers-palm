@@ -1,0 +1,232 @@
+[% INCLUDE layouts/header.html.tt %] 
+
+<section id="content" class="no-padding">
+  <div class="banner imagebg-container" style="height: 350px; background-image: url([% IMAGE %]/what-to-expect/banner.jpg);">
+    <div class="container">
+      <h1 class="big-caption">Explore India with <em>Traveller's Palm</em>!</h1>
+      <h2 class="med-caption">We’ll enable you to travel safely and securely
+        </ br>
+        to exciting corners of the Indian subcontinent</h2>
+      </div>
+    </div>
+    <div class="tab-wrapper">
+      <div class="tab-container container trans-style">
+        <ul class="tabs no-padding">
+          <li class="active">
+            <a data-toggle="tab" href="#special-hotels">
+              <i class="soap-icon-hotel-2"></i>
+              [% special_hotels.title %]
+            </a>
+          </li>
+          <li>
+            <a data-toggle="tab" href="#eat-drink">
+              <i class="soap-icon-breakfast"></i>
+              [% eat_drink.title %]
+            </a>
+          </li>
+          <li>
+            <a data-toggle="tab" href="#private-car">
+              <i class="soap-icon-car"></i>
+              [% private_car.title %]
+            </a>
+          </li>
+          <li>
+            <a data-toggle="tab" href="#travel-by-train">
+              <i class="soap-icon-passenger"></i>
+              [% travel_by_train.title %]
+            </a>
+          </li>
+          <li>
+            <a data-toggle="tab" href="#fly-in-comfort">
+              <i class="soap-icon-plane"></i>
+              [% fly_in_comfort.title %]
+            </a>
+          </li>
+          <li>
+            <a data-toggle="tab" href="#delays">
+              <i class="soap-icon-trunk-3"></i>
+              [% delays.title %]
+            </a>
+          </li>
+          <li>
+            <a data-toggle="tab" href="#before-you-go">
+              <i class="soap-icon-trunk-1"></i>
+              [% before_you_go.title %]
+            </a>
+          </li>
+        </ul>
+        <div class="tab-content">
+
+          <div id="special-hotels" class="tab-pane fade in active">
+           <div class="sm-section clearfix">
+             <div class="table-wrapper hidden-table-sm">
+               <div class="table-cell" style="padding: 0 15px;">
+                 <div class="block">
+                   <div class="row">
+                     <div class="col-xs-12 col-sm-2 col-md-2">
+                       <i class="soap-icon-hotel-2 circle white-color skin-bg no-border pull-left" style="font-size: 54px; margin-right: 15px;"></i>
+                     </div>
+                     <div class="col-xs-12 col-sm-5 col-md-5">
+                       [% special_hotels.writeup %]
+                     </div>
+                     <div class="col-xs-12 col-sm-5 col-md-5">
+                       <img src="[% IMAGE %]/what-to-expect/hotel.jpg" width="100%" alt="[% special_hotels.title %]" />
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+
+         <div id="eat-drink" class="tab-pane fade">
+          <div class="sm-section">
+            <div class="table-wrapper hidden-table-sm">
+              <div class="table-cell" style="padding: 0 15px;">
+                <div class="block">
+                  <div class="row">
+                   <div class="col-xs-12 col-sm-2 col-md-2">
+                    <i class="soap-icon-breakfast circle white-color skin-bg no-border pull-left" style="font-size: 54px; margin-right: 15px;"></i>
+                  </div>
+                  <div class="col-xs-12 col-sm-5 col-md-5">
+                   [% eat_drink.writeup %]
+                 </div>
+                 <div class="col-xs-12 col-sm-5 col-md-5">
+                  <img src="[% IMAGE %]/what-to-expect/eat-drink.jpg" width="100%" alt="[% eat_drink.title %]" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="private-car" class="tab-pane fade">
+      <div class="sm-section">
+        <div class="table-wrapper hidden-table-sm">
+          <div class="table-cell" style="padding: 0 15px;">
+            <div class="block">
+              <div class="row">
+               <div class="col-xs-12 col-sm-2 col-md-2">
+                <i class="soap-icon-car circle white-color skin-bg no-border pull-left" style="font-size: 54px; margin-right: 15px;"></i>
+              </div>
+              <div class="col-xs-12 col-sm-5 col-md-5">
+               [% private_car.writeup %]
+             </div>
+             <div class="col-xs-12 col-sm-5 col-md-5">
+              <img src="[% IMAGE %]/what-to-expect/private-car.jpg" width="100%" alt=" [% private_car.title %]" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="travel-by-train" class="tab-pane fade">
+  <div class="sm-section">
+    <div class="table-wrapper hidden-table-sm">
+      <div class="table-cell" style="padding: 0 15px;">
+        <div class="block">
+          <div class="row">
+           <div class="col-xs-12 col-sm-2 col-md-2">
+            <i class="soap-icon-passenger circle white-color skin-bg no-border pull-left" style="font-size: 54px; margin-right: 15px;"></i>
+          </div>
+          <div class="col-xs-12 col-sm-5 col-md-5">
+            [% travel_by_train.writeup %]
+          </div>
+          <div class="col-xs-12 col-sm-5 col-md-5">
+            <img src="[% IMAGE %]/what-to-expect/travel-by-train.jpg" width="100%" alt=" [% travel_by_train.title %]" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="fly-in-comfort" class="tab-pane fade">
+  <div class="sm-section">
+    <div class="table-wrapper hidden-table-sm">
+      <div class="table-cell" style="padding: 0 15px;">
+        <div class="block">
+          <div class="row">
+           <div class="col-xs-12 col-sm-2 col-md-2">
+             <i class="soap-icon-plane circle white-color skin-bg no-border pull-left" style="font-size: 54px; margin-right: 15px;"></i>
+           </div>
+           <div class="col-xs-12 col-sm-5 col-md-5">
+            [% fly_in_comfort.writeup %]
+          </div>
+          <div class="col-xs-12 col-sm-5 col-md-5">
+            <img src="[% IMAGE %]/what-to-expect/fly-in-comfort.jpg" alt="[% fly_in_comfort.title %]" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="delays" class="tab-pane fade">
+  <div class="sm-section">
+    <div class="table-wrapper hidden-table-sm">
+      <div class="table-cell" style="padding: 0 15px;">
+        <div class="block">
+          <div class="row">
+            <i class="soap-icon-trunk-3 circle white-color skin-bg no-border pull-left" style="font-size: 54px; margin-right: 15px;"></i>
+            <div class="col-xs-12 col-sm-2 col-md-2">
+            </div>
+            <div class="col-xs-12 col-sm-5 col-md-5">
+              [% delays.writeup %]
+            </div>
+            <div class="col-xs-12 col-sm-5 col-md-5">
+              <img src="[% IMAGE %]/what-to-expect/delays.jpg" width="100%" alt="[% delays.title %]" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="before-you-go" class="tab-pane fade">
+  <div class="sm-section">
+    <div class="table-wrapper hidden-table-sm">
+      <div class="table-cell" style="padding: 0 15px;">
+        <div class="block">
+          <div class="row">
+           <div class="col-xs-12 col-sm-2 col-md-2">
+            <i class="soap-icon-trunk-1 circle white-color skin-bg no-border pull-left" style="font-size: 54px; margin-right: 15px;"></i>
+          </div>
+          <div class="col-xs-12 col-sm-5 col-md-5">
+            <h2 class="skin-color">[% getting_ready.title %]</h2>
+            [% getting_ready.writeup %]
+            <h2 class="skin-color">[% right_attitude.title %]</h2>
+            [% right_attitude.writeup %]
+          </div>
+          <div class="col-xs-12 col-sm-5 col-md-5">
+            <img src="[% IMAGE %]/what-to-expect/before-you-go.jpg"  alt="[% before_you_go.title %]" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+
+[% INCLUDE layouts/footer.html.tt %] 
+
+<script type="text/javascript" src="js/waypoints.min.js"></script>
+
+<!-- load page Javascript -->
+<script type="text/javascript" src="js/theme-scripts.js"></script>
+<script type="text/javascript" src="js/scripts.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,299 @@
+[% INCLUDE layouts/header.html.tt %]   
+
+<section id="content" class="no-padding">
+  <div class="banner imagebg-container policies" >
+    <div class="container">
+      <h2 class="big-caption policies">While we believe in acting in a transparent way, we cannot avoid the legal requirements to put this in writing.</h2>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="main" class="col-md-8">
+      <div class="tab-container trans-style">
+        <ul class="tabs no-padding">
+          <li class="active"><a data-toggle="tab" href="#booking-conditions"><i class="soap-icon-insurance"></i>[% conditions.title %]</a></li>
+          <li><a data-toggle="tab" href="#privacy-policy"><i class="soap-icon-stories"></i>[% privacy.title %]</a></li>
+          <li><a data-toggle="tab" href="#cookie-statement"><i class="soap-icon-stories"></i>Cookie Statement</a></li>
+          <li><a data-toggle="tab" href="#terms-and-conditions"><i class="soap-icon-card"></i>[% terms.title %]</a></li>
+        </ul>
+        <div class="tab-content">
+         <div id="booking-conditions" class="tab-pane fade in active">
+          <form class="clearfix" action="[% request.uri_base %]/Booking conditions.pdf" method="GET" >
+           <div class="row">
+             <div class="col-xs-8">
+               &nbsp;
+             </div>
+             <div class="col-xs-4">
+               <button class="full-width icon-download">Download PDF</button>
+             </div>
+           </div>
+         </form>
+         [% conditions.writeup %]
+         <div class="toggle-container with-image box" id="accordion1" data-image-animation-type="fadeIn" data-image-animation-duration="1.5">
+          [% FOREACH field in fields %]  
+          <div class="panel style1">
+            <h5 class="panel-title">
+              <a href="#acc[% loop.count %]" data-toggle="collapse" data-parent="#accordion1">[% loop.count %]. [% field.title %]</a>
+            </h5>
+            <div class="panel-collapse collapse" id="acc[% loop.count %]">
+              <div class="panel-content">
+                [% field.writeup %]
+              </div><!-- end content -->
+            </div>
+          </div>
+          [% END %]
+        </div>
+      </div>
+      <div id="privacy-policy" class="tab-pane fade ">
+        <h1 class="midheader">Privacy Policy</h1>
+              <p>
+                We know that you are concerned with how your personal information is dealt with. This privacy statement sets out our current policies and demonstrates our commitment to your privacy.
+              </p>
+
+              <h2 class="center">Log files</h2> 
+              <p>
+                Like virtually all web sites, [% domain %] ("Travellers-Palm") makes use of log files. The information inside the log files includes internet protocol, IP addresses, type of browser, Internet Service Provider ( ISP ), date/time stamp, referring/exit pages, and number of clicks to analyze trends, administer the site, track users movement around the site, and gather demographic information. IP addresses, and other such information are not linked to any information that is personally identifiable. 
+              </p>
+              <p>
+                We do collect and store personal data in our server logs for the limited and legitimate purpose of detecting and preventing fraud and unauthorized system access, and ensuring the security of our systems.
+              </p>
+
+              <h2 class="center">Public Areas</h2>
+              <p>
+                When using the public portion of the site you are not required to provide us with any personal information if you do not wish to do so and we do not monitor or collect any personally identifiable information from you on your use of the public portions of the site other than the logfiles mentioned before. 
+              </p>
+
+              <h2 class="center">Personal Information</h2>
+              <p>
+                Only in the "Contact Us" page do we collect personal information from you such as name and email address or any other information you opt to provide in the message field. 
+              </p>
+
+              <h2 class="center">Who is collecting the data?</h2>
+              <p>
+                <b>System Logs.</b> Our servers are hosted by Amazon in the USA. We do collect the data either directly (log files and Contact Us page) or through the use of Google Tag Manager and Google Analytics.
+              </p>
+              <p>
+                <b>Analytics.</b> We collect data through Google Analytics, which use cookies and technologies to collect and analyze data about use of the Services. These services collect data regarding the use of other websites, apps and online resources. You can learn about Google’s practices by going to www.google.com/policies/privacy/‌partners/ Open in a different browser tab and opt out by downloading the Google Analytics opt out browser add-on, available at https://tools.google.com/dlpage/gaoptout Open in a different browser tab.
+              </p>
+              <p>
+                <b>Your IP Address.</b> We collect your IP address, a number that is automatically assigned to the computer that you are using by your Internet Service Provider (ISP).  An IP address is identified and logged automatically in our server log files when a user accesses the Online Services, along with the time of the visit and the pages that were visited. We use IP addresses to calculate usage levels, diagnose server problems and administer the Online Services. We also may derive your approximate location from your IP address.
+              </p>
+              <p>
+                <b>Aggregated Data.</b> We may aggregate data that we collected and this aggregated data will not personally identify you or any other user.
+              </p>
+              <p> </p>
+
+              <h2 class="center">What data is being collected?</h2>
+              <h4>automatically by the server</h4>
+              <ul class="chevron">
+                <li>IP addresss</li>
+                <li>Web browser type and version </li>
+                <li>Operating system </li>
+                <li>A list of URLs starting with a referring site, your activity on this Website, and the site you exit to </li>
+              </ul>
+<br>
+              <h4>only if supplied on our contact page</h4>
+              <ul class="chevron">
+                <li>Name</li>
+                <li>Email address</li>
+              </ul>
+    <br>
+              <h4>only if you make booking</h4>
+              <ul class="chevron">
+                <li>Gender</li>
+                <li>First Name</li>
+                <li>Last Name</li>
+                <li>Email address</li>
+                <li>Phone number</li>
+              </ul>
+              <p>
+                in each case in accordance with this privacy policy.
+              </p>
+
+              <h2 class="center">What is the legal basis for processing the data?</h2>
+              <p>
+                There are several aspects which form the legal basis for us to process personal data:
+              </p>
+              <ul class="chevron">
+                <li>Consent – the data subject, i.e. you, whom the personal data is about has consented to the processing.</li>
+                <li>Contractual – processing is necessary for the performance of a contract with the data subject or to take steps to enter into a contract</li>
+                <li>Legal obligation – once you have made a booking processing is necessary for compliance with a legal obligation. </li>
+                <li>Vital interests – processing is necessary to protect the vital interests of the data subject or another person. This would be in the case of contact details in case of emergency. However it also covers system logs to prevent intrusion detection.</li>
+                <li>Legitimate interests – processing is necessary for purposes of legitimate interests pursued by the business or a third party, except where such interests are overridden by the interests, rights or freedoms of the data subject. If we book your travels we feel we have this legitimate interest.</li>
+              </ul>
+              <p></p>
+              <p>
+                We use Personal Data and Other Data to provide you with Services, to develop new offerings and to protect our company as detailed below. In some instances, we will request that you provide Personal Data or Other Data to us directly. If you do not provide the data that we request, or prohibit us from collecting such data, we may not be able to provide the requested Services.
+              </p>
+              <p>
+                We use Personal Data and Other Data for our legitimate business interests, including the following:
+              </p>
+              <p>
+                Provide the Services you request. We use Personal Data and Other Data to provide Services you request, including:
+              </p>
+              <p>
+                To facilitate reservations, payment, send administrative information, confirmations or pre-arrival messages, to assist you with meetings and events and to provide you with other information about the area and the property at which you are scheduled to visit
+              </p>
+              <p>
+                To complete your reservation and stay, for example, to process your payment, ensure that your rooms are available and provide you with related customer service.
+              </p>
+              <p>
+                When you provide an email address in making a reservation, we use that email address to send you a copy of your bill. If you make a reservation for another person using your email address, that person's bill will be emailed to you, as well. 
+              </p>
+              <p>
+                We will use Personal Data and Other Data to manage our contractual relationship with you, because we have a legitimate interest to do so and/or to comply with a legal obligation.
+              </p>
+              <p> </p>
+
+              <p>
+                <b>Business Purposes. </b>We use Personal Data and Other Data for data analysis, audits, security and fraud monitoring and prevention (including with the use of closed circuit television, card keys, and other security systems), developing new goods and services, enhancing, improving or modifying our Services, identifying usage trends, determining the effectiveness of our promotional campaigns and operating and expanding our business activities.
+              </p>
+              <p>
+                We use Personal Data and Other Data in this way to manage our contractual relationship with you, comply with a legal obligation and/or because we have a legitimate interest to do so.
+              </p>
+
+              <h2 class="center">Travellers-Palm is the "data controller"</h2>
+              <p>
+                A 'data controller' means the legal person which, alone or jointly with others, determines the purposes and means of the processing of personal data.
+              </p>
+
+              <h2 class="center">Will the data be shared with any third parties?</h2>
+              <p>
+                We will only share your personal data for so called ‘Systematic’ data sharing: routine sharing of data between us and our suppliers (such as hotels, guides, airlines, trains and other transporters) for the explicit purpose of booking your holiday. We share anonymised data with Google for analytical purposes.
+              </p>
+              <p>
+                This Privacy Statement does not address, and we are not responsible for the privacy, data or other practices of any entities outside of our company, including Owners, Strategic Business Partners or any third party operating any site or service to which we may link. The inclusion of a link on the Online Services does not imply endorsement of the linked site or service by us. We have no control over, and are not responsible for, any third party’s collection, use and disclosure of your Personal Data. In addition, we are not responsible for the data collection, use, disclosure or security policies or practices of other organizations, such as Amazon, Facebook, Google, Microsoft, or any other social media platform provider.
+              </p> 
+
+              <h2 class="center">How will the information be used?</h2>
+              <p>
+                Systematic data will be shared on a need to know basis with our suppliers (such as hotels, guides, airlines, trains and other transporters) for the explicit purpose of booking your holiday. We share anonymised data with Google for analytical purposes.
+              </p>
+
+              <h2 class="center">How long will the data be stored for?</h2>
+              <p>
+                We will retain any data you submitted for 6 months except personal data that leads to a booking. Data directly related to a booking will be kept for 8 years as per the legal requirement to maintain accounting records by the Government of India.
+              </p>
+
+              <h2 class="center">What rights do you have?</h2>
+              <p>
+                You have the right to be confident that we handle your personal information responsibly and in line with good practice. 
+              </p>
+              <p>
+                If you have a concern about the way we handle your information; should we:
+              </p>
+              <ul class="chevron">
+                <li>  not keep your information secure</li>
+                <li> hold inaccurate information about you</li>
+                <li>  have disclosed information about you</li>
+                <li>   keep information about you for longer than is necessary or</li>
+                <li>  have collected information for one reason and is using it for something else</li>
+              </ul>
+              <p> </p>
+              <p>
+                We will take your concern seriously and work with you to try to resolve it.
+              </p>
+
+              <h2 class="center">How can the data subject raise a complaint?</h2>
+              <p>
+                We seek to use reasonable organisational, technical and administrative measures to protect Personal Data. Unfortunately, no data transmission or storage system can be guaranteed to be 100% secure. If you have reason to believe that your interaction with us is no longer secure (for example, if you feel that the security of your account has been compromised), please immediately notify us in accordance with the “Contact Us” section or send an email to dpo@travellers-palm.com.  
+              </p>
+     </div>
+      <div id="cookie-statement" class="tab-pane fade ">
+         <h1 class="midheader">Cookie Statement</h1>
+               <p>
+                To make this site work properly, we sometimes place small data files called cookies on your device. Most big websites do this too.
+              </p>
+              <h2 class="center">What are cookies?</h2>
+              <p>
+                A cookie is a small text file that a website saves on your computer or mobile device when you visit the site. It enables the website to remember your actions and preferences (such as login, language, font size and other display preferences) over a period of time, so you don’t have to keep re-entering them whenever you come back to the site or browse from one page to another. 
+              </p>
+              <h2 class="center">How do we use cookies?</h2>
+              <p>
+                The specific types of first and third party cookies served through our Websites and the purposes they perform are described in further detail below:
+              </p>
+              <h4>Required Cookies</h4>
+              <p>
+                These cookies enable the website to perform core functions necessary for providing the information requested by the user. 
+                <ul class="chevron">
+                  <li>dancer.session</li>
+                  <li>cookieconsent.status</li>
+                </ul>
+              </p>
+              <h4>Functional Cookies</h4>
+              <p>
+                These cookies enable improved website performance and an enhanced experience, as well as core functions. These cookies collect information that is used either in aggregate form to help us understand how our websites are being used or how effective our marketing campaigns are, or to help us customize our websites and application for you in order to enhance your experience.<br>
+                Google gathers information allowing us to understand interactions with our websites and ultimately refine that experience to better serve you. 
+                <ul class="chevron">
+                  <li>Google Tag manager</li>
+                  <li>Google Analytics</li>
+                </ul>
+              </p>
+              <h4>Advertising Cookies</h4>
+              <p>
+                These cookies enable the website to promote content tailored to you, as well as improved performance, an enhanced experience, and core functions. We do not use these.
+              </p>
+              <h2 class="center">How to control cookies</h2>
+              <p>
+                You can <b>control and/or delete cookies</b> as you wish – for details, see <a href="http://aboutcookies.org">aboutcookies.org</a>. You can delete all cookies that are already on your computer and you can set most browsers to prevent them from being placed. If you do this, however, you may have to manually adjust some preferences every time you visit a site and some services and functionalities may not work.
+                <br>
+                You can easily accept or reject the cookies on this site by clicking on the words "Cookie Policy" in the footer of a web page and choosing one of the following links: Allow cookies / Reject.
+              </p>
+     </div>
+     <div id="terms-and-conditions" class="tab-pane fade">
+       [% terms.writeup %]
+     </div>
+   </div>
+ </div>
+</div>
+
+<div id="sidebar" class="col-md-4">
+
+  <div class="testimonial style1 box">
+    <div class="border-box">
+      <blockquote class="style1">I must go down to the seas again, to the lonely sea and the sky,</br>
+        And all I ask is a tall ship, and a star to steer her by;</br>
+        And the wheel's kick and the wind's song and the white sails shaking,</br>
+        And the grey mist on the sea's face and a grey dawn breaking.</p>
+      </blockquote>
+      <p class="name">&nbsp;&nbsp;&nbsp;From "Sea Fever" by John Masefield</p>
+    </div>
+
+    <div>            
+      <br>
+      <h2>[% about.title %]</h2>
+      [% about.writeup %]      
+      <br />
+      <address class="contact-details">
+        <span class="contact-phone"><i class="soap-icon-phone"></i> +91-832-2276941</span>
+        <br />
+        <a href="#" class="contact-email">info@travellers-palm.com</a>
+      </address>
+      <ul class="social-icons clearfix">
+        <li class="twitter"><a title="twitter" href="http://twitter.com/travellers_palm" target="_new" data-toggle="tooltip"><i class="soap-icon-twitter"></i></a></li>
+        <li class="googleplus"><a title="googleplus" href="[% request.uri_base %]/#" target="_new" data-toggle="tooltip"><i class="soap-icon-googleplus"></i></a></li>
+        <li class="facebook"><a title="facebook" href="http://www.facebook.com/#!/pages/Travellers-Palm/152821658071605?ref=ts" target="_new" data-toggle="tooltip"><i class="soap-icon-facebook"></i></a></li>
+        <li class="flickr"><a title="flickr" href="http://www.flickr.com/photos/travellers-palm/sets/" target="_new" data-toggle="tooltip"><i class="soap-icon-flickr"></i></a></li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+</section>
+
+[% INCLUDE layouts/footer.html.tt %]   
+
+<!-- parallax -->
+<script type="text/javascript" src="js/jquery.stellar.min.js"></script>
+
+<!-- waypoint -->
+<script type="text/javascript" src="js/waypoints.min.js"></script>
+
+<!-- load page Javascript -->
+<script type="text/javascript" src="js/theme-scripts.js"></script>
+<script type="text/javascript" src="js/scripts.js"></script>
+
+</body>
+</html>
+

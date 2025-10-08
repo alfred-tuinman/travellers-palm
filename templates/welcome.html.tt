@@ -1,0 +1,5 @@
+[% WRAPPER 'layouts/main.html.tt' %]
+<h1>Welcome [% user.name %]</h1>
+<p>This is the PERFECT TT TravellersPalm homepage.</p>
+<p>Enjoy exploring your new app!</p>
+[% END %]

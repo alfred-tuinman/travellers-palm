@@ -20,555 +20,425 @@ our @EXPORT_OK = qw(
     totalitineraries 
     toursinstate 
     youraccommodation
-    );
+);
 
-
+# -----------------------------
+# Check if itinerary is quoted
+# -----------------------------
 sub isquoted {
-
-    my ( $user, $id ) = @_;
-
-    my $sql = "
-        select count(*) from quotes where username = ? and id = ?";
-
-    return TravellersPalm::Database::Connector::fetch_row( $sql, [$user ]);
+    my ($user, $id) = @_;
+    my $sql = "SELECT COUNT(*) FROM quotes WHERE username = ? AND id = ?";
+    return fetch_row($sql, [$user, $id]);
 }
 
+# -----------------------------
+# Get itinerary cost
+# -----------------------------
 sub itincost {
+    my ($itinid, $currency) = @_;
+    my $sql = qq/
+        SELECT cost
+        FROM fixeditincosts fc
+        JOIN currencies c ON fc.currencies_id = c.currencies_id
+        WHERE fixeditin_id = ?
+          AND principalagents_id = 68
+          AND frompax = 2
+          AND topax = 2
+          AND c.currencycode = ?
+        ORDER BY wef DESC
+        LIMIT 1
+    /;
 
-    my ( $itinid, $currency ) = shift;
-
-    my $sql = "
-    SELECT   cost as cost
-    FROM     fixeditincosts, currencies 
-    WHERE    fixeditin_id = ? AND 
-             principalagents_id = 68 AND
-             frompax = 2 AND
-             topax = 2 AND
-             fixeditincosts.currencies_id = currencies.currencies_id AND
-             currencies.currencycode = ?
-    ORDER BY wef DESC ";
-
-    my cost = return TravellersPalm::Database::Connector::fetch_row( $sql, [$itinid, $currency] );
+    my $cost = fetch_row($sql, [$itinid, $currency]);
     return int($cost);
 }
 
+# -----------------------------
+# List itineraries
+# -----------------------------
 sub itineraries {
-
-    # pass itin, all, or '' for respectively tours, modules, or all
-
     my %args = (
         currency => 'USD',
         order    => 'popularity',
-        @_ ,
-        );
-
-    return 0 unless ( lc $args{option} eq 'itin' || lc $args{option} eq 'all' || $args{option} eq '' );
-
-    my $order_by;
-    $order_by = 'f.orderno' if ( $args{order} =~ m/popularity/i );
-    $order_by = 'cost'      if ( $args{order} =~ m/price/i );
-    $order_by = 'numdays'   if ( $args{order} =~ m/days/i );
-    $order_by = 'f.title'   if ( $args{order} =~ m/name/i );
-    $order_by = 'f.url'     if ( $args{order} =~ m/url/i );
-
-    if ( $args{order} =~ m/desc/i ) {
-        $order_by .= ' DESC';
-    }
-
-    my $condition = "WHERE (f.readytours=1 or r.url is not null) ";
-
-    if ( $args{option} ne 'all' ) {
-        if ( $args{option} eq 'itin' ) {
-            $condition = " WHERE f.readytours=1 ";
-        }
-        else {
-            $condition = " WHERE r.url like '$args{option}' ";
-        }
-    }
-
-    my $sql = "
-        SELECT  fixeditin_id            as tourname,
-                f.title                 as title, 
-                f.oneliner              as oneliner,
-                f.introduction          as introduction,
-                itinerary               as itinerary,
-                triphighlights          as triphighlights,
-                quotes                  as quotes,
-                adv                     as adv,
-                f.regions_id            as regions_id,
-                readytours              as readytours,
-                itindates               as itindates,
-                inclusions              as inclusions,
-                prices                  as prices,
-                f.orderno               as orderno,
-                f.meta_title            as meta_title, 
-                f.meta_descr            as meta_descr, 
-                f.meta_keywords         as meta_keywords, 
-                f.url                   as url,
-                (
-                    SELECT  CAST(MIN(fc.cost) as INT) 
-                    FROM    fixeditincosts fc 
-                    JOIN    currencies c ON fc.currencies_id = c.currencies_id
-                    WHERE   fc.fixeditin_id=f.fixeditin_id and
-                            principalagents_id = 68 and
-                            frompax = 2 and
-                            topax = 2 and
-                            wet IS NULL and 
-                            c.currencycode  like '". $args{currency}."'
-                ) as cost,
-                (
-                    SELECT count(fi.dayno) FROM CityDayFixedItin fi WHERE fi.FixedItin_id = f.FixedItin_id
-                ) as numdays,
-                (
-                    SELECT t.url FROM fixeditinthemes fit JOIN themes t ON t.themes_id = fit.themes_id
-                                 WHERE fit.fixeditin_id = f.fixeditin_id
-                ) as themes
-        FROM    fixeditin f 
-                LEFT JOIN regions r ON r.regions_id=f.regions_id ? AND 
-                inactivewef IS NULL
-        ORDER   BY " . $order_by;
-
-    return TravellersPalm::Database::Connector::fetch_row( $sql, [$condition ]);}
-
-
-sub itinerary {
-
-    my $tour = shift;
-
-    die('No tour name passed') unless $tour;
-
-    my $sql = q/
-            SELECT  f.fixeditin_id  as tourname,
-                    f.fixeditin_id  as fixeditin_id,
-                    f.title         as title, 
-                    f.oneliner      as oneliner, 
-                    f.introduction  as introduction, 
-                    itinerary       as itinerary, 
-                    triphighlights  as triphighlights,
-                    quotes          as quotes, 
-                    adv             as adv, 
-                    f.regions_id    as regions_id, 
-                    readytours      as readytours, 
-                    itindates       as itindates,  
-                    inclusions      as inclusions,
-                    prices          as prices, 
-                    f.orderno       as orderno, 
-                    days            as days, 
-                    duration        as duration, 
-                    inactivewef     as inactivewef,
-                    f.meta_title    as meta_title, 
-                    f.meta_descr    as meta_descr, 
-                    f.meta_keywords as meta_keywords, 
-                    f.url           as url,
-                    (
-                    SELECT  ec.cities_id as cities_id
-                    FROM    cities ec JOIN citydayfixeditin cde ON cde.cities_id=ec.cities_id
-                    WHERE   cde.fixeditin_id = f.fixeditin_id
-                    ORDER   BY dayno DESC
-                    LIMIT   1
-                    ) as endcity,
-                    (
-                    SELECT  sc.cities_id 
-                    FROM    cities sc JOIN citydayfixeditin cds ON cds.cities_id=sc.cities_id 
-                    WHERE   cds.fixeditin_id = f.fixeditin_id and 
-                            dayno=1
-                    ) as startcity
-            FROM    fixeditin f 
-            WHERE   f.url = ? /;
-            
-    return TravellersPalm::Database::Connector::fetch_row( $sql, [ ],,'NAME_lc');
-}
-
-
-sub itinerary_cost {
-
-    my $fixeditin_id  = shift // 0;
-    my $currencycode  = shift // 'USD';
-
-    my $sql = qq/
-            SELECT  CAST(MIN(fc.cost) AS INT) as cost, 
-                    c.currencycode, 
-                    c.symbol
-            FROM    fixeditincosts fc 
-            JOIN    currencies c ON fc.currencies_id = c.currencies_id
-            WHERE   principalagents_id = 68 and
-                    frompax = 2 and
-                    topax = 2 and
-                    wet IS NULL and 
-                    fixeditin_id = ? and
-                    c.currencycode  like ?
-            GROUP BY c.currencycode, symbol/;
-
-    return TravellersPalm::Database::Connector::fetch_row( $sql, [$fixeditin_id, $currencycode,,'NAME_lc');
-}
-
-
-sub itinerary_exist {
-
-    my $tour = shift ;
-
-            my $sql = "SELECT f.fixeditin_id FROM  fixeditin f WHERE f.url = ? ";
-
-            my $row = TravellersPalm::Database::Connector::fetch_row( $sql, [$tour],,'NAME_lc');
-
-            my $exist->{exist} = (ref $row eq ref {} ) ? $row->{fixeditin_id} : 0 ;
-
-            return $exist;
-}
-
-
-sub itinerary_id {
-
-    my $id = shift // 0;
-
-    my $sql = "
-            SELECT  title           as title,
-                    oneliner        as oneliner,
-                    introduction    as introduction,
-                    itinerary       as itinerary,
-                    triphighlights  as triphighlights,
-                    quotes          as quotes,
-                    adv             as adv,
-                    regions_id      as regions_id,
-                    readytours      as readytours,
-                    url             as url,
-                    itindates       as itindates,
-                    inclusions      as inclusions,
-                    prices          as prices,
-                    orderno         as orderno,
-                    days            as days,
-                    duration        as duration,
-                    (SELECT cast(min(c.cost) as INT) from fixeditincosts c where c.fixeditin_id=f.fixeditin_id) as cost
-            FROM    fixeditin f 
-            WHERE   fixeditin_id = ? ";
-
-    return TravellersPalm::Database::Connector::fetch_row( $sql, [$id],,'NAME_lc');
-}
-
-
-sub placesyouwillvisit {
-
-    my $tour = shift;
-    my $sql  = "
-        SELECT  city        as city,
-                cities_id   as cities_id,
-                oneliner    as oneliner,
-                writeup     as writeup,
-                url         as url,
-                dayno       as dayno,
-                imagename   as imagename ,
-                latitude    as latitude,
-                longitude   as longitude
-        FROM    (  
-                SELECT  c.city, 
-                        c.cities_id, 
-                        c.oneliner, 
-                        writeup, 
-                        c.url, 
-                        cdf.dayno,
-                        c.latitude,
-                        c.longitude
-                FROM    fixeditin f 
-                        INNER JOIN CityDayFixedItin cdf on f.FixedItin_id = cdf.FixedItin_id
-                        INNER JOIN cities c on cdf.cities_id = c.cities_id
-                WHERE   f.url like ?
-                ORDER   BY c.city 
-                ) a  
-                JOIN images on cities_id = images.ImageObjectId
-        WHERE   ImageCategories_id=1 and 
-                ImageTypes_id = 4 and 
-                srno < 6 
-        ORDER   BY dayno";
-
-    return TravellersPalm::Database::Connector::fetch_all( $sql, [$tour]);}
-}
-
-sub similartours {
-
-    my $city     = shift // 0;
-    my $currency = shift;
-    my $sql      = "
-            SELECT  fixeditin_id        as tourname,
-                    f.title             as title,
-                    f.oneliner          as oneliner,
-                    f.introduction      as introduction,
-                    itinerary           as itinerary,
-                    f.regions_id        as regions_id,
-                    readytours          as readytours, 
-                    f.startcities_id    as scity, 
-                    prices              as prices,
-                    f.orderno           as orderno,
-                    days                as numdays,
-                    f.url               as url,
-                    (
-                        SELECT  CAST(MIN(fc.cost) as INT) 
-                        FROM    fixeditincosts fc,
-                                currencies c
-                        WHERE   fc.fixeditin_id=f.fixeditin_id and 
-                                principalagents_id = 68 and
-                                frompax = 2 and 
-                                topax = 2 and
-                                fc.currencies_id = c.currencies_id and
-                                c.currencycode like ?
-                    ) as cost                       
-            FROM    fixeditin f LEFT JOIN regions r ON r.regions_id=f.regions_id 
-            WHERE   (f.readytours=1 or r.url is not null) and 
-                    inactivewef is NULL and 
-                    f.startcities_id = ?
-            ORDER   BY RANDOM() 
-            LIMIT   3 ";
-                    
-    return TravellersPalm::Database::Connector::fetch_all( $sql, [$currency,$city]);
-}
-
-
-sub tripideas_trips {
-
-    my $tour     = shift;
-    my $currency = shift // 'USD';
-    my $exchrate = shift;
-    my $order    = shift // 'popularity';
-
-    $tour = lc($tour);
-
-    my $order_by;
-    $order_by = 'f.orderno' if ( $order eq 'popularity' );
-    $order_by = 'cost'      if ( $order eq 'price' );
-    $order_by = 'numdays'   if ( $order eq 'days' );
-
-    if ( $order =~ m/desc/i ) {
-        $order_by .= ' DESC';
-    }
-
-    my $sql = "
-            SELECT f.fixeditin_id   as tourname,
-                f.title             as title,
-                f.oneliner          as oneliner,
-                f.introduction      as introduction,
-                DATALENGTH(f.introduction) as lengthintro,
-                itinerary           as itinerary,
-                triphighlights      as triphighlights,
-                quotes              as quotes,
-                adv                 as adv,
-                f.regions_id        as regions_id,
-                readytours          as readytours,
-                itindates           as itindates,
-                inclusions          as inclusions,
-                prices              as prices,
-                f.orderno,days      as numdays,
-                duration            as duration,
-                inactivewef         as inactivewef,
-                f.meta_title        as meta_title, 
-                f.meta_descr        as meta_descr, 
-                f.meta_keywords     as meta_keywords, 
-                f.url,f.startcities_id as scity,
-                (
-                SELECT  cast(min(fc.cost/?) as INT) 
-                FROM    fixeditincosts fc,
-                        currencies c
-                WHERE   fc.fixeditin_id=f.fixeditin_id and 
-                        fc.principalagents_id = 68 and
-                        frompax = 2 and
-                        topax = 2 and
-                        fc.currencies_id = c.currencies_id and
-                        c.currencycode = 'INR' 
-                ) as cost,
-                (SELECT city FROM cities s WHERE s.cities_id=f.startcities_id) as startcity,
-                (SELECT city FROM cities e WHERE e.cities_id=f.endcities_id) as endcity                                  
-            FROM    fixeditin f 
-            WHERE   f.fixeditin_id IN 
-                    (
-                    SELECT  DISTINCT f.fixeditin_id                                      
-                    FROM    fixeditin f 
-                    INNER   JOIN FixedItinThemes fit ON fit.fixeditin_id = f.fixeditin_id
-                    INNER   JOIN themes th ON fit.themes_id = th.themes_id  
-                    INNER   JOIN fixeditincosts fc ON fc.fixeditin_id=f.fixeditin_id
-                    WHERE   inactivewef is NULL AND 
-                    fc.principalagents_id = 68 AND 
-                    th.url LIKE ?
-                    ) 
-            ORDER   BY $order_by ";
-
-    return TravellersPalm::Database::Connector::fetch_all( $sql, [$exchrate,$tour]);}
-}
-
-
-sub totalitineraries {
-
-    my $sql = "
-            SELECT  fixeditin_id                              
-            FROM    fixeditin f 
-                    LEFT JOIN regions r ON r.regions_id=f.regions_id 
-            WHERE   (f.readytours=1 or r.url is not null) and 
-                    inactivewef is NULL
-            ORDER   BY days ";
-
-        my $rows = TravellersPalm::Database::Connector::fetch_all( $sql, [ ]);
-        return ( 0 + @{$rows} );
-}
-
-
-
-sub toursinstate {
-
-    my %args = (
-        currency => 'USD',
-        order    => 'popularity',
-        @_ ,
+        option   => '',
+        @_,
     );
 
-    my $order_by;
-    $order_by = 'f.orderno' if ( $args{order} =~ m/popularity/i );
-    $order_by = 'cost'      if ( $args{order} =~ m/price/i );
-    $order_by = 'numdays'   if ( $args{order} =~ m/days/i );
-    $order_by = 'f.title'   if ( $args{order} =~ m/name/i );
-    $order_by = 'f.url'     if ( $args{order} =~ m/url/i );
+    return 0 unless ($args{option} eq '' || $args{option} eq 'all' || $args{option} eq 'itin');
 
-    if ( $args{order} =~ m/desc/i ) {
-        $order_by .= ' DESC';
+    my $order_by = 'f.orderno';
+    $order_by = 'cost'    if $args{order} =~ /price/i;
+    $order_by = 'numdays' if $args{order} =~ /days/i;
+    $order_by = 'f.title' if $args{order} =~ /name/i;
+    $order_by = 'f.url'   if $args{order} =~ /url/i;
+    $order_by .= ' DESC' if $args{order} =~ /desc/i;
+
+    my $condition = '(f.readytours = 1 OR r.url IS NOT NULL)';
+    if ($args{option} eq 'itin') {
+        $condition = 'f.readytours = 1';
+    } elsif ($args{option} && $args{option} ne 'all') {
+        $condition = 'r.url LIKE ?';
     }
 
-    # in the addressbook Odyssey is 68 which is linked as principalagents_id in fixeditincosts
+    my $sql = qq/
+        SELECT f.fixeditin_id AS tourname,
+               f.title, f.oneliner, f.introduction, itinerary,
+               triphighlights, quotes, adv, f.regions_id, readytours,
+               itindates, inclusions, prices, f.orderno,
+               f.meta_title, f.meta_descr, f.meta_keywords, f.url,
+               (
+                   SELECT CAST(MIN(fc.cost) AS INT)
+                   FROM fixeditincosts fc
+                   JOIN currencies c ON fc.currencies_id = c.currencies_id
+                   WHERE fc.fixeditin_id = f.fixeditin_id
+                     AND principalagents_id = 68
+                     AND frompax = 2
+                     AND topax = 2
+                     AND wet IS NULL
+                     AND c.currencycode LIKE ?
+               ) AS cost,
+               (
+                   SELECT COUNT(fi.dayno)
+                   FROM CityDayFixedItin fi
+                   WHERE fi.fixeditin_id = f.fixeditin_id
+               ) AS numdays,
+               (
+                   SELECT t.url
+                   FROM fixeditinthemes fit
+                   JOIN themes t ON t.themes_id = fit.themes_id
+                   WHERE fit.fixeditin_id = f.fixeditin_id
+               ) AS themes
+        FROM fixeditin f
+        LEFT JOIN regions r ON r.regions_id = f.regions_id
+        WHERE $condition
+        ORDER BY $order_by
+    /;
 
-    my $sql = "
-        SELECT  f.fixeditin_id  as tourname,
-                f.title         as title,
-                f.oneliner      as oneliner,
-                SUBSTR(f.introduction,0,400) as introduction,
-                itinerary       as itinerary,
-                triphighlights  as triphighlights,
-                quotes          as quotes,
-                adv             as adv,
-                f.regions_id    as regions_id,
-                readytours      as readytours,
-                itindates       as itindates,
-                inclusions      as inclusions,
-                prices          as prices,
-                f.orderno       as orderno,
-                days            as numdays,
-                duration        as duration,
-                f.inactivewef   as inactivewef,
-                f.meta_title    as meta_title, 
-                f.meta_descr    as meta_descr, 
-                f.meta_keywords as meta_keywords, 
-                f.url,
-                f.startcities_id as scity,
-                (
-                SELECT  CAST(MIN(fc.cost) AS INT) 
-                FROM    fixeditincosts fc 
-                JOIN    currencies c ON fc.currencies_id = c.currencies_id
-                WHERE   fc.fixeditin_id=f.fixeditin_id and
-                        principalagents_id = 68 and
-                        frompax = 2 and
-                        topax = 2 and
-                        wet IS NULL and 
-                        c.currencycode  like '" . $args{currency} . "'
-                )               as cost,
-                s.city          as startcity,
-                (
-                SELECT  city 
-                from    cities e 
-                where e.cities_id=f.endcities_id
-                )               as endcity,
-                s.latitude      as latitude,
-                s.longitude     as longitude                         
-        FROM    fixeditin f INNER JOIN cities s ON s.cities_id=f.startcities_id
-        WHERE   f.fixeditin_id IN 
-                (
-                SELECT      DISTINCT f.fixeditin_id 
-                FROM        fixeditin f INNER JOIN CityDayFixedItin cd ON cd.fixeditin_id=f.fixeditin_id 
-                INNER JOIN  cities c on cd.cities_id = c.cities_id 
-                INNER JOIN  states s ON s.states_id = c.states_id 
-                INNER JOIN  fixeditincosts fc ON fc.fixeditin_id=f.fixeditin_id
-                WHERE       fc.principalagents_id = 68 AND
-                            f.inactivewef is NULL AND
-                            s.url LIKE '" . $args{state} . "'
-                ) 
-        ORDER BY $order_by";
+    my @params = ($args{currency});
+    push @params, $args{option} if $args{option} && $args{option} ne 'all' && $args{option} ne 'itin';
+    return fetch_all($sql, \@params);
+}
 
-    return TravellersPalm::Database::Connector::fetch_all( $sql, [ ]);
+# -----------------------------
+# Single itinerary by URL
+# -----------------------------
+sub itinerary {
+    my $tour = shift or die('No tour name passed');
+
+    my $sql = qq/
+        SELECT f.fixeditin_id AS tourname,
+               f.fixeditin_id,
+               f.title, f.oneliner, f.introduction, itinerary,
+               triphighlights, quotes, adv, f.regions_id, readytours,
+               itindates, inclusions, prices, f.orderno, days, duration,
+               inactivewef, f.meta_title, f.meta_descr, f.meta_keywords, f.url,
+               (SELECT ec.cities_id
+                FROM cities ec
+                JOIN citydayfixeditin cde ON cde.cities_id = ec.cities_id
+                WHERE cde.fixeditin_id = f.fixeditin_id
+                ORDER BY dayno DESC LIMIT 1) AS endcity,
+               (SELECT sc.cities_id
+                FROM cities sc
+                JOIN citydayfixeditin cds ON cds.cities_id = sc.cities_id
+                WHERE cds.fixeditin_id = f.fixeditin_id AND dayno = 1) AS startcity
+        FROM fixeditin f
+        WHERE f.url = ?
+    /;
+
+    return fetch_row($sql, [$tour], '', 'NAME_lc');
+}
+
+# -----------------------------
+# Itinerary cost
+# -----------------------------
+sub itinerary_cost {
+    my ($fixeditin_id, $currencycode) = @_;
+    $fixeditin_id  //= 0;
+    $currencycode  //= 'USD';
+
+    my $sql = qq/
+        SELECT CAST(MIN(fc.cost) AS INT) AS cost,
+               c.currencycode,
+               c.symbol
+        FROM fixeditincosts fc
+        JOIN currencies c ON fc.currencies_id = c.currencies_id
+        WHERE principalagents_id = 68
+          AND frompax = 2
+          AND topax = 2
+          AND wet IS NULL
+          AND fixeditin_id = ?
+          AND c.currencycode LIKE ?
+        GROUP BY c.currencycode, c.symbol
+    /;
+
+    return fetch_row($sql, [$fixeditin_id, $currencycode], '', 'NAME_lc');
+}
+
+# -----------------------------
+# Check itinerary existence
+# -----------------------------
+sub itinerary_exist {
+    my $tour = shift;
+
+    my $sql = "SELECT f.fixeditin_id FROM fixeditin f WHERE f.url = ?";
+    my $row = fetch_row($sql, [$tour], '', 'NAME_lc');
+    return { exist => $row ? $row->{fixeditin_id} : 0 };
+}
+
+# -----------------------------
+# Itinerary by ID
+# -----------------------------
+sub itinerary_id {
+    my $id = shift // 0;
+
+    my $sql = qq/
+        SELECT title, oneliner, introduction, itinerary,
+               triphighlights, quotes, adv, regions_id,
+               readytours, url, itindates, inclusions, prices,
+               orderno, days, duration,
+               (SELECT CAST(MIN(c.cost) AS INT) FROM fixeditincosts c WHERE c.fixeditin_id = f.fixeditin_id) AS cost
+        FROM fixeditin f
+        WHERE fixeditin_id = ?
+    /;
+
+    return fetch_row($sql, [$id], '', 'NAME_lc');
+}
+
+# -----------------------------
+# Places you will visit
+# -----------------------------
+sub placesyouwillvisit {
+    my $tour = shift;
+    my $sql = qq/
+        SELECT city, cities_id, oneliner, writeup, url, dayno, imagename, latitude, longitude
+        FROM (
+            SELECT c.city, c.cities_id, c.oneliner, c.writeup, c.url,
+                   cdf.dayno, c.latitude, c.longitude
+            FROM fixeditin f
+            INNER JOIN CityDayFixedItin cdf ON f.fixeditin_id = cdf.fixeditin_id
+            INNER JOIN cities c ON cdf.cities_id = c.cities_id
+            WHERE f.url LIKE ?
+            ORDER BY c.city
+        ) a
+        JOIN images i ON a.cities_id = i.ImageObjectId
+        WHERE ImageCategories_id = 1 AND ImageTypes_id = 4 AND srno < 6
+        ORDER BY dayno
+    /;
+
+    return fetch_all($sql, [$tour]);
+}
+
+# -----------------------------
+# Similar tours
+# -----------------------------
+sub similartours {
+    my ($city, $currency) = @_;
+    $city     //= 0;
+    $currency //= 'USD';
+
+    my $sql = qq/
+        SELECT f.fixeditin_id AS tourname, f.title, f.oneliner, f.introduction,
+               itinerary, f.regions_id, readytours, f.startcities_id AS scity,
+               prices, f.orderno, days AS numdays, f.url,
+               (SELECT CAST(MIN(fc.cost) AS INT)
+                FROM fixeditincosts fc
+                JOIN currencies c ON fc.currencies_id = c.currencies_id
+                WHERE fc.fixeditin_id = f.fixeditin_id
+                  AND principalagents_id = 68
+                  AND frompax = 2
+                  AND topax = 2
+                  AND c.currencycode LIKE ?) AS cost
+        FROM fixeditin f
+        LEFT JOIN regions r ON r.regions_id = f.regions_id
+        WHERE (f.readytours = 1 OR r.url IS NOT NULL)
+          AND inactivewef IS NULL
+          AND f.startcities_id = ?
+        ORDER BY RANDOM()
+        LIMIT 3
+    /;
+
+    return fetch_all($sql, [$currency, $city]);
+}
+
+# -----------------------------
+# Trip ideas
+# -----------------------------
+sub tripideas_trips {
+    my ($tour, $currency, $exchrate, $order) = @_;
+    $tour     = lc($tour);
+    $currency //= 'USD';
+    $order    //= 'popularity';
+
+    my $order_by = 'f.orderno';
+    $order_by = 'cost'    if $order eq 'price';
+    $order_by = 'numdays' if $order eq 'days';
+    $order_by .= ' DESC'  if $order =~ /desc/i;
+
+    # prepare tour for LIKE
+    $tour = "%$tour%";
+
+    my $sql = <<'SQL';
+SELECT f.fixeditin_id AS tourname,
+       f.title,
+       f.oneliner,
+       f.introduction,
+       CHAR_LENGTH(f.introduction) AS lengthintro,
+       itinerary,
+       triphighlights,
+       quotes,
+       adv,
+       f.regions_id,
+       readytours,
+       itindates,
+       inclusions,
+       prices,
+       f.orderno,
+       days AS numdays,
+       duration,
+       inactivewef,
+       f.meta_title,
+       f.meta_descr,
+       f.meta_keywords,
+       f.url,
+       f.startcities_id AS scity,
+       (
+           SELECT CAST(MIN(fc.cost / ?) AS INT)
+           FROM fixeditincosts fc
+           JOIN currencies c ON fc.currencies_id = c.currencies_id
+           WHERE fc.fixeditin_id = f.fixeditin_id
+             AND fc.principalagents_id = 68
+             AND frompax = 2
+             AND topax = 2
+             AND c.currencycode = 'INR'
+       ) AS cost,
+       (SELECT city FROM cities s WHERE s.cities_id = f.startcities_id) AS startcity,
+       (SELECT city FROM cities e WHERE e.cities_id = f.endcities_id) AS endcity
+FROM fixeditin f
+WHERE f.fixeditin_id IN (
+    SELECT DISTINCT f.fixeditin_id
+    FROM fixeditin f
+    INNER JOIN FixedItinThemes fit ON fit.fixeditin_id = f.fixeditin_id
+    INNER JOIN themes th ON fit.themes_id = th.themes_id
+    INNER JOIN fixeditincosts fc ON fc.fixeditin_id = f.fixeditin_id
+    WHERE f.inactivewef IS NULL
+      AND fc.principalagents_id = 68
+      AND th.url LIKE ?
+)
+SQL
+
+    # append validated ORDER BY outside the heredoc
+    $sql .= "\nORDER BY $order_by";
+
+    return TravellersPalm::Database::Connector::fetch_all($sql, [$exchrate, $tour]);
 }
 
 
-sub youraccommodation {
+# -----------------------------
+# Total itineraries
+# -----------------------------
+sub totalitineraries {
+    my $sql = qq/
+        SELECT fixeditin_id
+        FROM fixeditin f
+        LEFT JOIN regions r ON r.regions_id = f.regions_id
+        WHERE (f.readytours = 1 OR r.url IS NOT NULL)
+          AND inactivewef IS NULL
+        ORDER BY days
+    /;
 
+    my $rows = fetch_all($sql, []);
+    return scalar @$rows;
+}
+
+# -----------------------------
+# Tours in a state
+# -----------------------------
+sub toursinstate {
+    my %args = (
+        currency => 'USD',
+        order    => 'popularity',
+        state    => '',
+        @_,
+    );
+
+    my $order_by = 'f.orderno';
+    $order_by = 'cost'    if $args{order} =~ /price/i;
+    $order_by = 'numdays' if $args{order} =~ /days/i;
+    $order_by = 'f.title' if $args{order} =~ /name/i;
+    $order_by = 'f.url'   if $args{order} =~ /url/i;
+    $order_by .= ' DESC' if $args{order} =~ /desc/i;
+
+    my $sql = qq/
+        SELECT f.fixeditin_id AS tourname, f.title, f.oneliner,
+               SUBSTR(f.introduction,0,400) AS introduction, itinerary,
+               triphighlights, quotes, adv, f.regions_id, readytours,
+               itindates, inclusions, prices, f.orderno, days AS numdays,
+               duration, f.inactivewef, f.meta_title, f.meta_descr, f.meta_keywords,
+               f.url, f.startcities_id AS scity,
+               (SELECT CAST(MIN(fc.cost) AS INT)
+                FROM fixeditincosts fc
+                JOIN currencies c ON fc.currencies_id = c.currencies_id
+                WHERE fc.fixeditin_id = f.fixeditin_id
+                  AND principalagents_id = 68
+                  AND frompax = 2
+                  AND topax = 2
+                  AND wet IS NULL
+                  AND c.currencycode LIKE ?) AS cost,
+               s.city AS startcity,
+               (SELECT city FROM cities e WHERE e.cities_id = f.endcities_id) AS endcity,
+               s.latitude, s.longitude
+        FROM fixeditin f
+        INNER JOIN cities s ON s.cities_id = f.startcities_id
+        WHERE f.fixeditin_id IN (
+            SELECT DISTINCT f.fixeditin_id
+            FROM fixeditin f
+            INNER JOIN CityDayFixedItin cd ON cd.fixeditin_id = f.fixeditin_id
+            INNER JOIN cities c ON cd.cities_id = c.cities_id
+            INNER JOIN states st ON st.states_id = c.states_id
+            INNER JOIN fixeditincosts fc ON fc.fixeditin_id = f.fixeditin_id
+            WHERE fc.principalagents_id = 68
+              AND f.inactivewef IS NULL
+              AND st.url LIKE ?
+        )
+        ORDER BY $order_by
+    /;
+
+    return fetch_all($sql, [$args{currency}, $args{state}]);
+}
+
+# -----------------------------
+# Your accommodation
+# -----------------------------
+sub youraccommodation {
     my $tour = shift;
 
-    my $sql = "
-                   SELECT DISTINCT 
-                            c.city              as city,
-                            h.addressbook_id    as hotel_id,
-                            h.organisation      as hotel,
-                            SUBSTR(h.description,1,80) as truncated_description,
-                            (
-                            case a.categories_id 
-                                    when 23 then 10 
-                                    when 36 then 20 
-                                    when 8 then 30  
-                                    end
-                            ) as category,
-                            (
-                            case a.categories_id 
-                                    when 23 then '\$' 
-                                    when 36 then '\$\$' 
-                                    when 8 then '\$\$\$' 
-                                    end
-                            ) as categoryname,
-                            c.oneliner  as oneliner, 
-                            c.writeup   as writeup
-                    FROM    fixeditin f 
-                            INNER JOIN CityDayFixedItin cdf ON f.FixedItin_id = cdf.FixedItin_id
-                            INNER JOIN vw_hoteldetails h ON h.cities_id=cdf.cities_id
-                            INNER JOIN cities c on c.cities_id = h.cities_id
-                            LEFT JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
-                    WHERE   cdf.EndOfTour <> 1 AND
-                            a.categories_id in (23, 36, 8) AND
-                            a.ranking = 1 AND
-                            f.url like ? 
-                            order by cdf.dayno, category ASC
-                    ";
+    my $sql = qq/
+        SELECT DISTINCT c.city, h.addressbook_id AS hotel_id, h.organisation AS hotel,
+               SUBSTR(h.description,1,80) AS truncated_description,
+               CASE a.categories_id
+                   WHEN 23 THEN 10
+                   WHEN 36 THEN 20
+                   WHEN 8  THEN 30
+               END AS category,
+               CASE a.categories_id
+                   WHEN 23 THEN '\$'
+                   WHEN 36 THEN '\$\$'
+                   WHEN 8  THEN '\$\$\$'
+               END AS categoryname,
+               c.oneliner, c.writeup
+        FROM fixeditin f
+        INNER JOIN CityDayFixedItin cdf ON f.fixeditin_id = cdf.fixeditin_id
+        INNER JOIN vw_hoteldetails h ON h.cities_id = cdf.cities_id
+        INNER JOIN cities c ON c.cities_id = h.cities_id
+        LEFT JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
+        WHERE cdf.EndOfTour <> 1
+          AND a.categories_id IN (23, 36, 8)
+          AND a.ranking = 1
+          AND f.url LIKE ?
+        ORDER BY cdf.dayno, category ASC
+    /;
 
-
-            my $original = "select  * 
-            from    (
-                    SELECT  h.city,
-                            ROW_NUMBER() OVER(PARTITION BY h.addressbook_id ORDER BY h.city DESC) rn,
-                            h.addressbook_id    as hotel_id,
-                            h.organisation      as hotel,
-                            SUBSTR(h.description,1,80) as truncated_description,
-                            (
-                            case a.categories_id 
-                                    when 23 then 10 
-                                    when 36 then 20 
-                                    when 8 then 30  
-                                    end
-                            ) as category,
-                            (
-                            case a.categories_id 
-                                    when 23 then '\$' 
-                                    when 36 then '\$\$' 
-                                    when 8 then '\$\$\$' 
-                                    end
-                            ) as categoryname,
-                            c.oneliner  as oneliner, 
-                            c.writeup   as writeup,
-                            cdf.dayno   as dayno
-                    FROM    fixeditin f 
-                            INNER JOIN CityDayFixedItin cdf ON f.FixedItin_id = cdf.FixedItin_id
-                            INNER JOIN vw_hoteldetails h ON h.cities_id=cdf.cities_id
-                            INNER JOIN cities c on c.cities_id = h.cities_id
-                            LEFT JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
-                    WHERE   cdf.EndOfTour <> 1 AND
-                            a.categories_id in (23, 36, 8) AND
-                            a.ranking = 1 AND
-                            f.url like ?
-                    ) a 
-            WHERE rn = 1
-            ORDER BY dayno, category ASC";
-
-    return TravellersPalm::Database::Connector::fetch_all( $sql, [$tour]);
+    return fetch_all($sql, [$tour]);
 }
 
 1;
-
-

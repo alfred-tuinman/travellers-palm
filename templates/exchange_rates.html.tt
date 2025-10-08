@@ -1,0 +1,100 @@
+[% INCLUDE layouts/header.html.tt %] 
+<style>
+#myChart{
+  background-color: wheat;
+  border-radius: 6px;
+  box-shadow: 0 3rem 5rem -2rem rgba(0, 0, 0, 0.6);
+}
+</style>
+<section id="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8 col-md-9">
+                <div>
+                    <canvas id="myChart" width="200" height="150"></canvas>
+                </div>
+            </div>
+            <div class="sidebar col-sm-4 col-md-3">
+                <div class="travelo-box">
+                    <div class="row">
+                        [% FOREACH rate in rates %]
+                        [% IF loop.index == 0 %]
+                        <div><h4 class="center">[% rate.date %]</h4></div>
+                        <div class="col-sm-6 col-md-6"><b>Currency</b></div>
+                        <div class="col-sm-6 col-md-6"><b>Rate</b></div>
+                        [% END %]
+                        <div class="col-sm-6 col-md-6">[% rate.currency %]</div>
+                        <div class="col-sm-6 col-md-6">[% rate.exchange_rate %]</div>
+                        [% END %]
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+[% INCLUDE layouts/footer.html.tt %]
+</div>
+
+<!-- Javascript -->
+<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="js/jquery.noconflict.js"></script>
+<script type="text/javascript" src="js/modernizr.2.7.1.min.js"></script>
+<script type="text/javascript" src="js/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="js/jquery.placeholder.js"></script>
+<script type="text/javascript" src="js/jquery-ui.1.10.4.min.js"></script>
+
+<!-- Twitter Bootstrap -->
+<script type="text/javascript" src="js/bootstrap.js"></script>
+
+<!-- load page Javascript -->
+<script type="text/javascript" src="js/theme-scripts.js"></script>
+<script type="text/javascript" src="js/scripts.js"></script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
+
+<script type="text/javascript">
+
+new Chart(document.getElementById("myChart"), {
+  type: 'line',
+  data: {
+    labels: [[% FOREACH data in aud %]"[% data.date %]",[% END %]],
+    datasets: [
+      { 
+        data: [[% FOREACH data in aud %][% data.exchange_rate %],[% END %]],
+        label: "AUD",
+        borderColor: "#3e95cd",
+        backgroundColor: "#3e95cd",
+        fill: false
+      }, { 
+        data: [[% FOREACH data in eur %][% data.exchange_rate %],[% END %]],
+        label: "EUR",
+        borderColor: "#8e5ea2",
+        backgroundColor: "#8e5ea2",
+        fill: false
+      }, { 
+        data: [[% FOREACH data in gbp %][% data.exchange_rate %],[% END %]],
+        label: "GBP",
+        borderColor: "#3cba9f",
+        backgroundColor: "#3cba9f",
+        fill: false
+      }, { 
+        data: [[% FOREACH data in usd %][% data.exchange_rate %],[% END %]],
+        label: "USD",
+        borderColor: "#e8c3b9",
+        backgroundColor: "#e8c3b9",
+        fill: false
+      }
+    ]
+  },
+  options: {
+    title: {
+      display: true,
+      text: 'Historical Values'
+    }
+  }
+});
+</script>
+
+</body>
+</html>
+

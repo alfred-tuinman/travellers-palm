@@ -1,0 +1,41 @@
+  [% INCLUDE layouts/header.html.tt %] 
+        <section id="content">
+            <div class="container">
+                <div id="main">
+                    <div class="col-md-6 col-sm-9 no-float no-padding center-block">
+                        <div class="error-message">The page <i>you were looking for</i> could not be found.</div>
+                    </div>
+                    <div class="error-message-404">
+                        404
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        [% INCLUDE layouts/footer.html.tt %] 
+    </div>
+
+    <!-- Javascript -->
+    <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery.noconflict.js"></script>
+    <script type="text/javascript" src="js/modernizr.2.7.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery.placeholder.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.1.10.4.min.js"></script>
+    
+    <!-- Twitter Bootstrap -->
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    
+    <!-- parallax -->
+    <script type="text/javascript" src="js/jquery.stellar.min.js"></script>
+    
+    <!-- waypoint -->
+    <script type="text/javascript" src="js/waypoints.min.js"></script>
+
+    <!-- load page Javascript -->
+    <script type="text/javascript" src="js/theme-scripts.js"></script>
+    <script type="text/javascript" src="js/scripts.js"></script>
+    
+</body>
+</html>
+

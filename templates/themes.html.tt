@@ -1,0 +1,327 @@
+<!-- [% template.name %] -->
+[% INCLUDE layouts/header.html.tt %]   
+
+<section id="content">  
+	<div class="banner imagebg-container" style="height: 350px; background-image: url([% IMAGE %]/themes/banner_[% themeinfo.themes_id %].jpg);">
+		<div class="container">
+			<h1 class="big-caption">[% themeinfo.title %] </h1>
+			<h2 class="med-caption">[% themeinfo.oneliner %]</h2> 
+		</div>
+	</div>    
+
+	<div class="tab-wrapper">
+		<div class="tab-container container trans-style">
+			<ul class="tabs no-padding">
+				[% FOREACH theme in themes %]
+				<li [% IF themeinfo.url == theme.url %]class="active"[% END %]>
+					<a  href="[% request.uri_base %]/destinations/[% country %]/[% option %]/[% theme.pagename %]">
+						<i class="soap-icon-error"></i> [% theme.pagename %]
+					</a>
+				</li>
+				[% END %]
+			</ul>
+		</div>
+	</div>
+
+	<div class="container">
+		<div id="main"> 
+			<div class="travelo-box">   
+				[% IF ideas == 1 %]
+				<div class="row">
+					<div class="col-sms-6 col-sm-6 col-md-6">	
+						<div id="themecitydesc"></div>
+						<div id="themedesc">
+							<h1>[% themeinfo.title %]</h1>
+							<p>[% introduction %]</p>
+						</div>
+
+					</div>
+					<div class="sidebar col-sms-6 col-sm-6 col-md-6">
+						<div class="travelo-box">
+							<img src="[% IMAGE %]/themes/themes_[% themeinfo.themes_id %].jpg" width="100%" alt="[% themeinfo.title %]">
+							<div><h4 class="title">[% themeinfo.oneliner %]</h4></div>
+						</div>
+					</div>
+				</div>
+				[% ELSE %]
+				<div class="row">
+					<div class="sidebar col-sms-6 col-sm-6 col-md-6">
+						<div id="maintheme" class="themes">
+							<h1>[% themeinfo.title %]</h1>
+							<p>[% themeinfo.introduction %]</p>
+						</div>
+						
+						<hr>
+						<fieldset>
+							<div class="some-class">
+								<form id="subthemelist" method="post" action="#">
+									<p>Select your [% themeinfo.title %] theme below</p>
+									<ul>
+										[% FOREACH subtheme in subthemes -%]
+										<li>
+											<label for="subtheme[% subtheme.subthemes_id %]">
+												<input class="radio" type="radio" name="subtheme" id="subtheme[% subtheme.subthemes_id %]" value="[% subtheme.subthemes_id %]">
+												&nbsp;[% subtheme.title %]
+											</label>
+										</li>
+										[% END %]
+									</ul>
+								</form>
+							</div>
+						</fieldset>
+						<div id="ajaxgif"></div>
+					</div>
+					<div id="main" class="col-sms-6 col-sm-6 col-md-6">
+						<div class="booking-section travelo-box">
+							<div id="thememap" style="width: 500px; height: 400px;"></div>
+							<h4>Where would you like to go?</h4>
+						</div>
+					</div>
+				</div>
+				[% END %]
+			</div>
+			<div class="travelo-box" id="listing">   
+				<div class="row">
+					<h1 class="center">[% sample.title %]</h1>
+					<h3 class="center">[% sample.writeup %]</h3>
+				</div>
+
+				<div class="row">
+
+			        [% INCLUDE filter.html.tt %]  
+
+			        <div class="col-sm-8 col-md-9">
+			          <div class="sort-by-section clearfix">
+			            <h4 class="sort-by-title block-sm">Sort results by:</h4>
+			            <ul class="sort-bar clearfix block-sm">
+			              <li class="sort-by-name [% IF order == 'popularity-desc' || order == 'popularity' %]active[% END %]">
+			                <a class="sort-by-container" href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% IF filter == 'regions' %][% regionname %]/[% END %][% IF filter == 'states' %][% state %]/[% END %][% display %]/[% IF order == 'popularity-desc' %]popularity[% ELSE %]popularity-desc[% END %]#listing">
+			                  <span>Popularity</span>
+			                </a>
+			              </li>
+			              <li class="sort-by-name [% IF order == 'days-desc' || order == 'days' %]active[% END %]">
+			                <a class="sort-by-container" href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% IF filter == 'regions' %][% regionname %]/[% END %][% IF filter == 'states' %][% state %]/[% END %][% display %]/[% IF order == 'days-desc' %]days[% ELSE %]days-desc[% END %]#listing">
+			                  <span>days</span>
+			                </a>
+			              </li>
+			              <li class="sort-by-price [% IF order == 'price-desc' || order == 'price' %]active[% END %]">
+			                <a class="sort-by-container" href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% IF filter == 'regions' %][% regionname %]/[% END %][% IF filter == 'states' %][% state %]/[% END %][% display %]/[% IF order == 'price-desc' %]price[% ELSE %]price-desc[% END %]#listing">
+			                  <span>price</span>
+			                </a>
+			              </li>
+			              <li class="clearer visible-sms"></li>
+			            </ul>
+			            <ul class="swap-tiles clearfix block-sm">
+			              <li class="swap-list [% IF display == 'list'  %]active[% END %]">
+			                <a href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/list#listing"><i class="soap-icon-list"></i></a>
+			              </li>
+			              <li class="swap-grid [% IF display == 'grid'  %]active[% END %]">
+			                <a href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/grid#listing"><i class="soap-icon-grid"></i></a>
+			              </li>
+			              <li class="swap-block [% IF display == 'block'  %]active[% END %]">
+			                <a href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/block#listing"><i class="soap-icon-block"></i></a>
+			              </li>
+			            </ul>
+			          </div>
+			          <div id='itineraries'>
+			            [% IF display == 'list'  %][% INCLUDE viewlist.html.tt  %][% END %]
+			            [% IF display == 'grid'  %][% INCLUDE viewgrid.html.tt  %][% END %]
+			            [% IF display == 'block' %][% INCLUDE viewblock.html.tt %][% END %]
+			          </div>
+		        	</div>
+        		</div>
+      		</div>
+		</div>
+	</div>
+</section>
+
+[% INCLUDE layouts/footer.html.tt %]
+
+<script src="https://maps.googleapis.com/maps/api/js?key=[% sleutel %]&callback=initMap" async defer></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/theme-scripts.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/scripts.js"></script>
+
+<script type="text/javascript">
+
+
+var text = [
+[% FOREACH subtheme in subthemes -%]
+[ [% subtheme.subthemes_id %],"<h1>[% subtheme.title %]</h1><p>[% subtheme.introduction %]</p>"],
+[% END %]
+];
+
+var locations = [
+[% FOREACH marker in markers -%]
+[ [% marker.subthemes_id %], '[% marker.colour %]', '[% marker.name %]', [% marker.lat %], [% marker.lng %] ],
+[% END %]
+];
+
+
+function initMap() {
+	var myLatLng = {lat: 23.268764,lng: 81.474609};
+
+  	var mapOptions = new google.maps.Map(document.getElementById('thememap'), {
+  		zoom: 4,
+		center: new google.maps.LatLng( myLatLng ),
+		mapTypeId: google.maps.MapTypeId.TERRAIN,
+		mapTypeControl: false,
+		streetViewControl: false,
+		panControl: false,
+		zoomControlOptions: {
+			position: google.maps.ControlPosition.LEFT_BOTTOM
+		}
+	});
+
+	var gmarkers = new Array();
+
+	for (var i = 0; i < locations.length; i++) { 
+
+		var marker = new google.maps.Marker({
+			position: new google.maps.LatLng(locations[i][3], locations[i][4]),
+			map: mapOptions,
+			icon: 'http://maps.google.com/mapfiles/ms/icons/' + locations[i][1]
+		});
+
+		gmarkers.push(marker);
+
+		google.maps.event.addListener(marker, 'click', (function(marker, i) {
+			return function() {
+				infowindow.setContent(locations[i][2]);
+				infowindow.open(map, marker);
+			}
+		})(marker, i));
+	} 
+
+	for (var i = 0; i < locations.length; i++) { 
+		gmarkers[i].setMap(null);
+	}
+
+	var infowindow = new google.maps.InfoWindow({
+		maxWidth: 200
+	});
+
+	$('a[href="#thememap"]').on('shown.bs.tab', function(e){
+    	initialise();
+	});
+
+
+
+	$("form#subthemelist input").click(function() {
+		$('div#ajaxgif').html('<p>Loading ... </p><img src="[% IMAGE %]/theme/ajax-loader.gif">');
+		var subthemeid = $(this).attr('value');
+		[% FOREACH subtheme in subthemes -%]
+		if (text[[% loop.index %]][0] == subthemeid) $('div#maintheme').html(text[[% loop.index %]][1]);
+		[% END %]
+
+		for (i = 0; i<gmarkers.length; i++){
+			if(locations[i][0] != subthemeid) gmarkers[i].setMap(null)
+				else gmarkers[i].setMap(map);
+		}
+		$('div#ajaxgif').html('&nbsp;');
+
+	});
+};
+</script>
+
+<script type="text/javascript">
+
+tjq(document).ready(function() {
+
+  function runCheck() {
+    var $count=0;
+    var $tours=0;
+    var $cost=0;
+    var $duration=0;
+    var $show = 0;
+
+    [% IF filter == 'tailor' %]
+    [% FOREACH trip in tripideas -%] 
+    if (document.getElementById("[% trip.url %]").checked){
+      $count++;
+    }; 
+    [% END %] 
+    
+    if ($count == 0){
+      [% FOREACH trip in tripideas -%] 
+      document.getElementById("[% trip.url %]").checked = true;
+      [% END %] 
+    };
+    [% END %]
+    $count = 0;
+
+    var $pmin = document.getElementById("pmin").innerHTML;
+    $pmin = parseInt($pmin.replace(/\D/g,''));
+    var $pmax = document.getElementById("pmax").innerHTML;
+    $pmax = parseInt($pmax.replace(/\D/g,''));
+    var $dmin = document.getElementById("dmin").innerHTML;
+    $dmin = parseInt($dmin.replace(/\D/g,''));
+    var $dmax = document.getElementById("dmax").innerHTML;
+    $dmax = parseInt($dmax.replace(/\D/g,''));
+
+    $("article").each(function(){
+
+      $cost     = parseInt($(this).attr('cost'));
+      $duration = parseInt($(this).attr('duration'));
+      $option   = $(this).attr('class');
+      $show     = 0;
+      $tours++;
+
+      if (($cost >= $pmin) && ($cost <= $pmax) && ($duration >= $dmin) && ($duration <= $dmax)){
+      
+        $(this).show();
+        $count++;
+     }
+     else 
+     {
+      $(this).hide();
+    };
+  });
+    document.getElementById("counter").innerHTML=$count + ' of ' + $tours + ' tours showing' ;
+    if($count < $tours){
+      document.getElementById("showAll").innerHTML='<a href="[% request.uri %]">Show All</a>' ; 
+    }
+  };
+
+
+  tjq("#price-range").slider({
+   range: true,
+   min: [% min_cost %],
+   max: [% max_cost %],
+   values: [ [% min_cost %], [% max_cost %] ],
+   slide: function( event, ui ) {
+     tjq(".min-price-label").html( "[% currency %] " + ui.values[ 0 ]);
+     tjq(".max-price-label").html( "[% currency %] " + ui.values[ 1 ]);
+   },
+   change: runCheck
+ });
+
+  tjq(".min-price-label").html( "[% currency %] " + tjq("#price-range").slider( "values", 0 ));
+  tjq(".max-price-label").html( "[% currency %] " + tjq("#price-range").slider( "values", 1 ));
+
+  tjq("#duration-range").slider({
+    range: true,
+    min: [% min_duration %],
+    max: [% max_duration %],
+    values: [ [% min_duration %], [% max_duration %] ],
+    slide: function( event, ui ) {
+      tjq(".min-duration-label").html(  ui.values[ 0 ] + " days");
+      tjq(".max-duration-label").html(  ui.values[ 1 ] + " days");
+    },
+    change: runCheck
+  });
+
+  tjq(".min-duration-label").html( tjq("#duration-range").slider( "values", 0 ) + " days");
+  tjq(".max-duration-label").html( tjq("#duration-range").slider( "values", 1 ) + " days");
+
+
+  $("#ideas :checkbox").click(function() {
+   runCheck();
+ });
+
+});
+
+</script>
+
+</body>
+</html>
+

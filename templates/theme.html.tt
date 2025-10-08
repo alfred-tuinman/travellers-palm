@@ -1,0 +1,38 @@
+<!-- [% template.name %] -->
+[% INCLUDE layouts/header.html.tt %] 
+
+<section id="content">
+    <div class="container">
+        <div id="main" class="faqs">
+         <div class="block">
+           [% i = 0 %]
+           [% FOREACH theme in themes %]
+           [% i = i + 1 %]
+           [% IF i == 1 %]<div class="row image-box style11">[% END %] 
+           <div class="col-sm-4">
+              <article class="box">
+                  <figure>
+                      <a href="[% request.uri_base %]/destinations/[% country %]/[% pathname %]/[% theme.url %]" title="[% theme.pagename %]">
+                        <img src="[% IMAGE %]/themes/themes_[% theme.themes_id %].jpg" alt="[% theme.pagename %]" width="310" height="160" /></a>
+                      <figcaption>
+                          <h3 class="caption-title">[% theme.pagename %]</h3>
+                         
+                      </figcaption>
+                  </figure>
+              </article>
+          </div>
+          [% IF i == 3 %]</div>[% i = 0 %][% END %]
+          [% END %]
+      </div>
+  </div>
+</div>
+</section>
+
+[% INCLUDE layouts/footer.html.tt %] 
+
+<script type="text/javascript" src="[% request.uri_base %]/js/jquery.stellar.min.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/theme-scripts.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,303 @@
+[% INCLUDE layouts/header.html.tt %]  
+
+<section id="content">
+	<div class="container">
+		<div class="row">
+			<div id="main" class="col-sm-8 col-md-9">
+				<div class="travelo-box booking-section">
+					[% IF errors && errors.size %]
+					<div class="form-group row">
+						<div class="col-md-10">
+							<div class="odc-error">
+								<h2>Oops, you made some mistakes? </h2>
+								<ul class="arrow-square box">
+									[% FOR error in errors %]
+									<li>[% error %]</li>
+									[% END %]
+								</ul>
+							</div>
+						</div>
+					</div>
+					[% END %]
+					<form class="booking-form" action="[% request.uri %]" method="post">
+						<div class="person-information">
+							<h2>Contact Details</h2>
+							<div class="form-group row">
+								
+								<div class="col-sm-6 col-md-5">
+									<div class="row">
+										<div class="col-xs-4 col-md-4">
+											<label>Mr/Ms <i class="soap-icon-star yellow-color"></i></label>
+											<div class="selector">
+												<select name='salutation'>
+													[% FOR salutation in ['Select', 'Mr','Ms'] %]
+													<option [% IF params.salutation == salutation %]selected[% END %] value="[% salutation %]">[% salutation %]</option>
+													[% END %]
+												</select>
+											</div>
+										</div>
+										<div class="col-xs-8 col-md-8">
+											<label>First Name <i class="soap-icon-star yellow-color"></i></label>
+											<input type="text" class="input-text full-width" name="firstname" value="[% params.firstname %]"  />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-6 col-md-5">
+									<label>Last Name <i class="soap-icon-star yellow-color"></i></label>
+									<input type="text" class="input-text full-width" name="lastname" value="[% params.lastname %]" placeholder="" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<div class="col-sm-6 col-md-5">
+									<label>Email Address <i class="soap-icon-star yellow-color"></i></label>
+									<input type="text" class="input-text full-width" name="email" value="[% params.email %]" placeholder="" />
+								</div>
+								<div class="col-sm-6 col-md-5">
+									<label>Verify E-mail Address <i class="soap-icon-star yellow-color"></i></label>
+									<input type="text" class="input-text full-width" name="emailv" value="[% params.emailv %]" placeholder="" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<div class="col-sm-6 col-md-5">
+									<label>ISD Country Code</label>
+									<input type="text" class="input-text full-width" name="isd" value="[% params.isd %]" placeholder="+" />
+								</div>
+								<div class="col-sm-6 col-md-5">
+									<label>Phone number</label>
+									<input type="text" class="input-text full-width" name="phone" value="[% params.phone %]" placeholder="" />
+								</div>
+							</div>
+						</div>
+						<div class="booking-hotel">
+							<h2>Tour details in [% country %]</h2>
+							<div class="form-group row">
+								<div class="col-sm-6 col-md-5">
+									<label>Departure Date <i class="soap-icon-star yellow-color"></i></label>
+									<div class="datepicker-wrap">
+										<input type="text" name="depdate" value="[% params.depdate %]" class="input-text full-width" placeholder="mm/dd/yy" />
+									</div>
+								</div>
+								<div class="col-sm-6 col-md-5">
+									<label>Return Date <i class="soap-icon-star yellow-color"></i></label>
+									<div class="datepicker-wrap">
+										<input type="text" name="returndate" value="[% params.returndate %]" class="input-text full-width" placeholder="mm/dd/yy" />
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="booking-flight">
+							<h5>Flight details to [% country %] (only if known)</h5>
+							<div class="form-group row">
+								<div class="col-xs-12 col-md-5 constant-column-3">
+									<div>
+										<label>Arrival City</label>
+										<div class="selector">
+											<select name='arrcity'>
+												[% FOR i in airports -%]
+												<option [% IF params.arrcity == i.citycode %]selected[% ELSIF i.citycode == startcity.citycode %]selected[% END %] value="[% i.citycode %]">[% i.city %] - [% i.citycode %]</option>
+												[% END %]
+											</select>
+										</div>
+									</div>
+									<div>
+										<label>Flight No</label>
+										<div>
+											<input type="text" name="arrflight" class="input-text full-width" value="[% params.arrflight %]"/>
+										</div>
+									</div>
+									<div>
+										<label>ETA</label>
+										<div>
+											<input type="text" name="eta" class="input-text full-width" value="[% params.eta %]" placeholder="hh:mm"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-12 col-md-5 constant-column-3">
+									<div>
+										<label>Departure City</label>
+										<div class="selector">
+											<select name='depcity'>
+												[% FOR i in airports -%]
+												<option [% IF params.depcity == i.citycode %]selected[% ELSIF i.citycode == endcity.citycode %]selected[% END %] value="[% i.citycode %]">[% i.city %] - [% i.citycode %]</option>
+												[% END %]
+											</select>
+										</div>
+									</div>
+									<div>
+										<label>Flight No</label>
+										<div>
+											<input type="text" name="depflight" class="input-text full-width" value="[% params.depflight %]" />
+										</div>
+									</div>
+									<div>
+										<label>ETD</label>
+										<div>
+											<input type="text" name="etd" value="[% params.etd %]" class="input-text full-width" placeholder="hh:mm"/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="booking-hotel">
+							<h2>Preferred hotel category</h2>
+							<div class="form-group row">
+								<div class="col-xs-12 col-md-5">
+									<label>Hotel Standard</label>
+									<div class="selector">
+										<select class="full-width" name="category">
+											[% FOR cat in categories %]
+											<option value="[% cat.description %]" [% IF cat.description == params.category %]selected[% END %]>[% cat.description %] &nbsp;&nbsp;&nbsp;&nbsp;[% cat.hotelcategory %]</option>
+											[% END %]
+										</select>
+									</div>
+								</div>
+								<div class="col-xs-12 col-md-5 constant-column-4">
+									<div>
+										<label>Double</label>
+										<div class="selector">
+											<select name="doubles" class="full-width">
+												[% FOREACH i in [0,1,2,3,4,5] %]
+												<option value="[% i %]" [% IF i == params.doubles %]selected[% END %]>[% i %]</option>
+												[% END %]
+											</select>
+										</div>
+									</div>
+									<div>
+										<label>Twin</label>
+										<div class="selector">
+											<select name="twins">
+												[% FOREACH i in [0,1,2,3,4,5] %]
+												<option value="[% i %]" [% IF i == params.twins %]selected[% END %]>[% i %]</option>
+												[% END %]
+											</select>
+										</div>
+									</div>
+									<div>
+										<label>Single</label>
+										<div class="selector">
+											<select name="singles">
+												[% FOREACH i in [0,1,2,3,4,5] %]
+												<option value="[% i %]" [% IF i == params.singles %]selected[% END %]>[% i %]</option>
+												[% END %]
+											</select>
+										</div>
+									</div>
+									<div>
+										<label>Extra Bed</label>
+										<div class="selector">
+											<select name="extrabeds">
+												[% FOREACH i in [0,1,2,3,4,5] %]
+												<option value="[% i %]" [% IF i == params.extrabeds %]selected[% END %]>[% i %]</option>
+												[% END %]
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<div class="col-md-10">
+									<label>Additional Information</label>
+									<textarea name="info" class="full-width" rows="10" placeholder="Please provide any additional information regarding your tour requirements.">[% params.info %]</textarea>
+								</div>
+							</div>
+							<div class="form-group row">
+								<div class="col-md-10">
+									We do not request you for your card details as yet. We will first verify the request and only when <u><b>you</b></u> are fully satisfied with the final offer will we forward you a payment request form.
+								</div>
+							</div>
+							<div class="form-group row">
+								<div class="col-sm-6 col-md-5">
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" name="accepted" value="1" [% IF params.accepted == 1 %]checked[% END %]>By continuing, you agree to the <a href="[% request.uri_base %]/policies" onclick="window.open('[% request.uri_base %]/policies', 'Terms & Conditions', 'scrollbars=yes, width=900, height=750'); return false;"><span class="skin-color">Terms & Conditions</span></a>.
+										</label>
+									</div>
+								</div>
+								<div class="col-sm-6 col-md-5">
+									<button type="submit" class="full-width sky-blue1 btn-large">CONFIRM REQUEST</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div class="sidebar col-sm-4 col-md-3">
+				<div class="booking-details travelo-box">
+					<h4>Booking Details</h4>
+					<article class="image-box hotel listing-style1">
+						<figure class="clearfix">
+							<a href="[% request.uri_base %]/destinations/[% country %]/best-selling-tours/[% tourdata.url %]" class="hover-effect middle-block">
+								[% FOREACH i = imageitems -%] 
+								[% if loop.first %]
+								<img class="middle-item" width="270" height="160" src="[% IMAGE %]/[% IF tourdata.readytours %]tour[% ELSE %]module[% END %]/[% i.imagename %]" alt="[% i.alttag %]">
+								[% END %]
+								[% END %]
+							</a>
+							<div class="travel-title">
+								<h5 class="box-title">[% tourdata.title %]<small>[% tourdata.oneliner %]</small></h5>
+								<a href="[% request.uri_base %]/destinations/[% country %]/best-selling-tours/[% tourdata.url %]" class="button">Edit</a>
+							</div>
+						</figure>
+						<div class="details">
+                    <!--
+                    <div class="feedback">
+                        <div data-placement="bottom" data-toggle="tooltip" class="five-stars-container" title="4 stars"><span style="width: 80%;" class="five-stars"></span></div>
+                        <span class="review">270 reviews</span>
+                    </div>
+                -->
+                <div class="constant-column-3 timing clearfix">
+                	<div class="check-in">
+                		<label>Starts in</label>
+                		<span>[% startcity.city %]<br />12 noon</span>
+                	</div>
+                	<div class="duration text-center">
+                		<i class="soap-icon-clock"></i>
+                		<span>[% tourdata.days %] days</span>
+                	</div>
+                	<div class="check-out">
+                		<label>Ends in</label>
+                		<span>[% endcity.city %]<br />12 noon</span>
+                	</div>
+                </div>
+                <div class="guest">
+                	<small class="uppercase"><span class="skin-color">When to go </span></small>
+                	<br>
+                	<small>[% tourdata.itindates %] </small>
+                </div>
+            </div>
+        </article>
+<!--
+        <h4>Other Details</h4>
+        <dl class="other-details">
+        	<dt class="feature">Room Type:</dt><dd class="value">Double</dd>
+        	<dt class="feature">per Room price:</dt><dd class="value">from [% currency %] [% tourdata.cost %]</dd>
+        	<dt class="total-price">Total Price</dt><dd class="total-price-value"> [% currency %] xyz</dd>
+        </dl>
+    -->
+</div>
+
+[% INCLUDE layouts/needhelp.html.tt %]  
+
+[% INCLUDE layouts/why_book_with_us.html.tt %]  
+</div>
+</div>
+</div>
+</section>
+
+[% INCLUDE layouts/footer.html.tt %]  
+
+<!-- parallax -->
+<script type="text/javascript" src="[% request.uri_base %]/js/jquery.stellar.min.js"></script>
+
+<!-- waypoint -->
+<script type="text/javascript" src="[% request.uri_base %]/js/waypoints.min.js"></script>
+
+<!-- load page Javascript -->
+<script type="text/javascript" src="[% request.uri_base %]/js/theme-scripts.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/scripts.js"></script>
+
+</body>
+</html>
+

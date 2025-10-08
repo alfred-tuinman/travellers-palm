@@ -1,0 +1,15 @@
+[% INCLUDE layouts/header.html.tt %] 
+<section id="content">
+    <div class="container">
+        <br>
+        <h1>System Error (500)</h1>
+        <br>
+        <p class="center"><b>Our apologies. The system has encountered an error.</b></p>
+        <br>    
+        <p class="center"><a href="javascript:history.back()" >
+            <i class="fa fa-hand-o-left"></i>
+            GO BACK</a>
+        </p>
+    </div>
+</section>
+[% INCLUDE layouts/footer.html.tt %] 

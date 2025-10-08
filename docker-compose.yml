@@ -1,23 +1,22 @@
 services:
-  app:
+  travellers_palm_app:
     build: .
-    working_dir: /usr/src/app
-    container_name: travellers-palm-app
+    command: morbo -l http://*:3000 script/travellers_palm
     ports:
-      - "5000:5000"
+      - "3000:3000"
+    container_name: travellers_palm_app
     volumes:
-      - ./db:/usr/src/app/db
-      - ./views:/usr/src/app/views
-    restart: unless-stopped
+      - ./data:/usr/src/app/data       # <— host:container
+    expose:
+      - "3000"
 
   nginx:
     image: nginx:alpine
-    container_name: travellers-palm-nginx
-    depends_on:
-      - app
+    container_name: travellers_palm_nginx
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./public:/usr/src/app/public:ro
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-    restart: unless-stopped
+    depends_on:
+      - travellers_palm_app
