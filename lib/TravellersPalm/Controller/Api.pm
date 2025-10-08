@@ -1,25 +1,33 @@
 package TravellersPalm::Controller::Api;
-
-use strict;
-use warnings;
+use Mojo::Base 'Mojolicious::Controller';
 
 use DBI;
-use JSON;
+use JSON ();
 
-use Dancer2::Plugin::Database; 
-
+# GET /api/ping
 sub ping {
-    return [200, ['Content-Type'=>'application/json'], [ encode_json({ status => 'ok' }) ]];
+    my $c = shift;
+    $c->render( json => { status => 'ok' } );
 }
 
+# GET /api/user/:id
 sub user_info {
-    my ($class, $env, $match) = @_;
-    my $id = $match->{id};
+    my $c  = shift;
+    my $id = $c->param('id');
 
-    my $dbh = DBI->connect("dbi:SQLite:dbname=db/users.db","","",{ RaiseError => 1 });
-    my $user = $dbh->selectrow_hashref("SELECT * FROM users WHERE id = ?", undef, $id);
+    # Example: using SQLite for demo
+    my $dbh = DBI->connect(
+        'dbi:SQLite:dbname=db/users.db', '', '',
+        { RaiseError => 1, AutoCommit => 1 }
+    );
 
-    return [200, ['Content-Type'=>'application/json'], [ encode_json($user || { error => 'not found' }) ]];
+    my $user = $dbh->selectrow_hashref(
+        'SELECT * FROM users WHERE id = ?', undef, $id
+    );
+
+    $c->render(
+        json => $user // { error => 'not found' }
+    );
 }
 
 1;

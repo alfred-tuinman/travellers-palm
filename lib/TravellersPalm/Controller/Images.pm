@@ -2,18 +2,19 @@ package TravellersPalm::Controller::Images;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
 use File::Spec;
 
-sub serve_image ($self) {
-    # Get the requested path from the wildcard
-    my ($path) = @{ $self->stash('splat') // [] };
-    return $self->render(text => 'No image specified', status => 400) unless $path;
+sub serve_image {
+    my $c = shift;
 
-    # Construct full file path under public/images
-    my $file = File::Spec->catfile($self->app->home, 'public', 'images', $path);
+    # Get the file path from the wildcard
+    my $filepath = $c->stash('filepath');
 
-    if (-f $file) {
-        return $self->reply->file($file);
+    # Now serve your image (example)
+    my $full_path = "/var/www/images/$filepath";
+
+    if (-e $full_path) {
+        $c->reply->file($full_path);
     } else {
-        $self->render(template => '404', status => 404);
+        $c->render(text => 'Not found', status => 404);
     }
 }
 

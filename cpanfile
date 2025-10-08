@@ -1,7 +1,6 @@
 requires 'Mojolicious';
 requires 'Mojolicious::Plugin::TtRenderer';
 requires 'Mojolicious::Plugin::YamlConfig';
-# requires 'Mojolicious::Plugin::TemplateToolkit';
 requires 'Template::Plugin::Comma';
 requires 'DBI';
 requires 'DBD::SQLite';
@@ -11,3 +10,5 @@ requires 'File::Spec';
 requires 'YAML::XS';
 requires 'Data::FormValidator';
 requires 'Data::Dumper';
+requires 'Geo::Location::TimeZone';
+requires 'Math::Polygon';
