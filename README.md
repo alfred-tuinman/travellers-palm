@@ -105,3 +105,12 @@ Provides has for attributes.
 Sets up object-oriented inheritance.
 
 Adds strict/warnings automatically (so you don’t need use strict; use warnings;).
+
+# Mojolicious
+In Mojolicious:
+
+Inside controllers (e.g., TravellersPalm::Controller::Something),
+the first argument is always the controller object, and by convention, it’s named $self.
+
+Inside plain modules (e.g., your TravellersPalm::Database::General),
+we don’t automatically have a controller object — we receive it as an argument, usually called $c for “context” or “controller”.

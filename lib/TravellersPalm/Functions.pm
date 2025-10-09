@@ -3,16 +3,21 @@ package TravellersPalm::Functions;
 use strict;
 use warnings FATAL => 'all';
 
-use Exporter 'import';
-use Email::Valid;
-use Geo::Location::TimeZone;
-use HTTP::BrowserDetect;
 use DateTime;
-use Time::Local;
 use Date::Calc qw/Delta_Days check_date check_time/;
-use Data::Dumper;
+use Date::Manip::Date;
+use Data::FormValidator;
+use Email::Valid;
+use Exporter 'import';
+use Geo::Location::TimeZone;
+use HTML::LinkExtor;
+use HTML::Strip;
+use HTTP::BrowserDetect;
+use LWP::UserAgent;
 use POSIX qw(strftime);
-use URI;
+use Time::Local;
+use TravellersPalm::Model::Cities;
+# use URI;
 
 our @EXPORT = qw{
     addptags
@@ -46,7 +51,6 @@ my $has_cities;
 my $cities_module;
 
 eval {
-    require TravellersPalm::Model::Cities;
     TravellersPalm::Model::Cities->import(qw(city web));
     $has_cities = 1;
     $cities_module = 'TravellersPalm::Model::Cities';
@@ -120,7 +124,6 @@ sub email_request {
 
 sub html_strip {
     my $html = shift;
-    require HTML::Strip;
     my $hs = HTML::Strip->new(emit_spaces => 0);
     my $text = $hs->parse($html);
     $hs->eof;
@@ -128,9 +131,6 @@ sub html_strip {
 }
 
 sub linkExtor {
-    require LWP::UserAgent;
-    require HTML::LinkExtor;
-
     my $urlfile = 'url-report.txt';
     return unless -f $urlfile;
 
@@ -207,7 +207,6 @@ sub trim {
 
 sub validate_date {
     my $d = shift;
-    require Date::Manip::Date;
     my $dd = Date::Manip::Date->new;
     my $err = $dd->parse($d);
     return !$err;

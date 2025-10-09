@@ -1,8 +1,6 @@
 package TravellersPalm::Controller::Hotels;
 
 use Mojo::Base 'Mojolicious::Controller', -signatures;
-use Data::FormValidator;
-use Date::Manip::Date;
 use Data::Dumper;
 
 # use TravellersPalm::Database::Connector qw(dbh);
@@ -29,7 +27,7 @@ sub show_hand_picked_hotels ($self) {
 
   $self->render(
     template => 'hand_picked_hotels',
-    metatags         => TravellersPalm::Database::General::metatags($c,$path_segment),
+    metatags         => TravellersPalm::Database::General::metatags($self, $path_segment),
     hotel_categories => webtext(18),
     heritage_hotels  => webtext(19),
     home_stays       => webtext(20),

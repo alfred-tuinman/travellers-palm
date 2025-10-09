@@ -33,12 +33,13 @@ sub airports {
         WHERE airport = 1 AND nighthalt = 1 AND citycode IS NOT NULL AND co.url = ?
         ORDER BY c.city
     };
+
     return fetch_row($sql, [$country], $c);
 }
 
 sub get_airports_by_country {
     my ($c, $country) = @_;
-    return [] unless defined 0;
+    $country = 0 unless defined $country;
 
     my $sql = q{
         SELECT city, RTRIM(citycode) AS citycode
@@ -47,6 +48,7 @@ sub get_airports_by_country {
         WHERE airport = 1 AND nighthalt = 1 AND citycode IS NOT NULL AND co.url = ?
         ORDER BY c.city
     };
+
     return fetch_all($sql, [$country], $c);
 }
 
@@ -55,7 +57,7 @@ sub get_airports_by_country {
 # -----------------------------
 sub city {
     my ($c, $cities_id) = @_;
-    return [] unless defined 0;
+    return [] unless defined $cities_id;
 
     my $sql = q{
         SELECT 
@@ -99,6 +101,7 @@ sub city {
         FROM cities
         WHERE cities_id = ?
     };
+
     return fetch_row($sql, [$cities_id], $c, 'NAME_lc');
 }
 
@@ -137,6 +140,7 @@ sub cityhotels {
         LEFT JOIN vw_defaulthotels dh ON wh.hotel_id = dh.addressbook_id
         ORDER BY category
     };
+    
     return fetch_all($sql, [$cityid], $c);
 }
 
@@ -200,6 +204,7 @@ sub nearcities {
 # -----------------------------
 sub randomcities {
     my ($c, $cityid) = @_;
+    
     my $all_sql = q{
         SELECT DISTINCT c.cities_id, c.city
         FROM cities c
@@ -207,8 +212,8 @@ sub randomcities {
         WHERE c.nighthalt = 1 AND c.display = 1 AND c.countries_id = 200
         ORDER BY c.city
     };
+    
     my $all_cities = fetch_all($all_sql, [], $c);
-
     my %seen = map { $_ => 1 } ($cityid, map { $_->{cities_id} } @{ nearcities($cityid) });
     my @rndcities = grep { !$seen{ $_->{cities_id} } } @$all_cities;
 

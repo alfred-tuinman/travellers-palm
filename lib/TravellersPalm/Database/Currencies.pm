@@ -21,7 +21,7 @@ our @EXPORT_OK = qw(
 # -----------------------------
 sub currencies {
     my ($c, $currencycode) = @_;
-    return [] unless defined '';
+    $currencycode = '' unless defined $currencycode;
 
     $currencycode = uc $currencycode;
 
@@ -87,12 +87,14 @@ sub exchangerate {
 # -----------------------------
 sub exchange_rates {
     my ($c) = @_;
+    
     my $sql = q{
         SELECT currency, exchange_rate, strftime('%d/%m/%Y', datetime(date, 'unixepoch')) AS date
         FROM exchange_rates
         WHERE strftime('%d/%m/%Y', datetime(date, 'unixepoch')) = strftime('%d/%m/%Y','now')
         ORDER BY currency DESC
     };
+    
     return fetch_all($sql,[], $c);
 }
 
@@ -101,6 +103,7 @@ sub exchange_rates {
 # -----------------------------
 sub exchange_rates_historical {
     my ($c) = @_;
+
     my $sql = q{
         SELECT currency, strftime('%d/%m/%Y', datetime(date, 'unixepoch')) AS date, exchange_rate
         FROM exchange_rates

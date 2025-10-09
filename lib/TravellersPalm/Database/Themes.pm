@@ -17,8 +17,9 @@ our @EXPORT_OK = qw(
 );
 
 sub subthemes {
-    my ($c, $themes) = @_;
- 
+    my ($c, $themes_id) = @_;
+    return [] unless defined $themes_id;
+
     my $sql = q{
         SELECT  subthemes_id,
                 themes_id,
@@ -36,8 +37,9 @@ sub subthemes {
 }
 
 sub subthemes_id {
-    my ($c, $themes_id) = @_;
-    
+    my ($c, $subthemes_id) = @_;
+    return [] unless defined $subthemes_id;
+
     my $sql = q{
         SELECT  subthemes_id,
                 themes_id,
@@ -85,7 +87,8 @@ sub themes {
 
 sub themes_subthemes {
     my ($c, $themes_id) = @_;
-    
+    return [] unless defined $themes_id;
+
     my $sql = q{
         SELECT  s.cities_id AS id,
                 c.city      AS name,
@@ -106,7 +109,8 @@ sub themes_subthemes {
 
 sub themes_url {
     my ($c, $theme) = @_;
-    
+    return [] unless defined $theme;
+
     my $sql = q{
         SELECT  pagename,
                 introduction,
@@ -201,7 +205,8 @@ sub themetrips {
 
 sub themeurl {
     my ($c, $url) = @_;
-    
+    return [] unless defined $url;
+
     my $sql = q{
         SELECT  title,
                 introduction,

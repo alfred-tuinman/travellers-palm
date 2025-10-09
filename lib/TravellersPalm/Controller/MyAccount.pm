@@ -10,13 +10,13 @@ sub login ($self) {
 
 sub register ($self) {
     my $params = $self->req->params->to_hash;
-    TravellersPalm::Database::Users::register_user($c,$params);
+    TravellersPalm::Database::Users::register_user($self, $params);
     $self->render(template => 'my_account_register_thankyou');
 }
 
 sub mail_password ($self) {
     my $params = $self->req->params->to_hash;
-    TravellersPalm::Database::Users::send_password($c,$params->{email});
+    TravellersPalm::Database::Users::send_password($self, $params->{email});
     $self->render(template => 'my_account_password_emailed');
 }
 

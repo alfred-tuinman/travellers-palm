@@ -11,13 +11,20 @@ use DateTime;
 
 our @EXPORT_OK = qw( 
     user_exist
-    user_insert
     user_ok
     user_update
     update_password
     generate_password
     register_email
+    register_user 
+    send_password
 );
+
+
+sub send_pasword {
+    my ($c, $length) = @_;
+    return;
+}
 
 #--------------------------------------------------
 # Generate a random password
@@ -67,7 +74,7 @@ sub user_exist {
 #--------------------------------------------------
 # Insert new user with email
 #--------------------------------------------------
-sub user_insert {
+sub register_user {
      my ($c, $emailid) = @_;
     return [] unless defined $emailid;
 

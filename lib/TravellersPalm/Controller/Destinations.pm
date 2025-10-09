@@ -18,7 +18,7 @@ sub show_destination ($self) {
 
     $self->render(
         template    => 'destination',
-        metatags    => TravellersPalm::Database::General::metatags($c,$destination),
+        metatags    => TravellersPalm::Database::General::metatags($self, $destination),
         destination => $destination,
         crumb       => $crumb,
         page_title  => url2text($destination),
@@ -34,9 +34,9 @@ sub show_tailor ($self) {
     my $order = $arg[1] // 'popularity';
 
     if ($view =~ /^(grid|block|list)$/) {
-        TravellersPalm::FunctionsRouter::route_listing($destination, $TAILOR, $view, $order);
+        TravellersPalm::FunctionsRouter::route_listing($destination, TAILOR(), $view, $order);
     } else {
-        TravellersPalm::FunctionsRouter::route_itinerary($destination, $view, $TAILOR);
+        TravellersPalm::FunctionsRouter::route_itinerary($destination, $view, TAILOR());
     }
 }
 
@@ -48,16 +48,16 @@ sub show_region_list ($self) {
     my $crumb = "<li>Destinations</li>"
         . "<li><a href='" . $self->req->url->base . "/destinations/$destination'>"
         . url2text($destination) . "</a></li>"
-        . "<li class='active'>" . url2text($REGIONS) . "</li>";
+        . "<li class='active'>" . url2text(REGIONS()) . "</li>";
 
     $self->render(
         template   => 'regions',
-        metatags   => TravellersPalm::Database::General::metatags($c,REGION()),
+        metatags   => TravellersPalm::Database::General::metatags($self,REGION()),
         writeup    => boldify($content->{writeup}),
         page_title => url2text(REGIONS()),
         regions    => regions(),
         crumb      => $crumb,
-        pathname   => REGIONS,
+        pathname   => REGIONS(),
         country    => $destination,
     );
 }
@@ -72,16 +72,16 @@ sub show_region_detail ($self) {
     my $order  = $arg[2] // 'popularity';
 
     if ($view =~ /^(grid|block|list)$/) {
-        TravellersPalm::FunctionsRouter::route_listing($destination, $REGIONS, $view, $order, $region);
+        TravellersPalm::FunctionsRouter::route_listing($destination, REGIONS(), $view, $order, $region);
     } else {
-        TravellersPalm::FunctionsRouter::route_itinerary($destination, $view, $REGIONS, $region);
+        TravellersPalm::FunctionsRouter::route_itinerary($destination, $view, REGIONS(), $region);
     }
 }
 
 # → state overview
 sub show_state_list ($self) {
     my ($destination) = @{ $self->stash('splat') // [] };
-    my $states = TravellersPalm::Database::States::states($c,$destination);
+    my $states = TravellersPalm::Database::States::states($self,$destination);
     my @filtered = grep { $_->{state} } @$states;
 
     my $crumb = "<li>Destinations</li>"
@@ -91,7 +91,7 @@ sub show_state_list ($self) {
 
     $self->render(
         template   => 'state',
-        metatags   => TravellersPalm::Database::General::metatags($c,STATES()),
+        metatags   => TravellersPalm::Database::General::metatags($self,STATES()),
         writeup    => boldify(webtext(122)),
         states     => \@filtered,
         country    => $destination,
@@ -112,9 +112,9 @@ sub show_state_detail ($self) {
     my $order = $arg[2] // 'popularity';
 
     if ($view =~ /^(grid|block|list)$/) {
-        TravellersPalm::FunctionsRouter::route_listing($destination, $STATES, $view, $order, $state);
+        TravellersPalm::FunctionsRouter::route_listing($destination, STATES(), $view, $order, $state);
     } else {
-        TravellersPalm::FunctionsRouter::route_itinerary($destination, $view, $STATES, $state);
+        TravellersPalm::FunctionsRouter::route_itinerary($destination, $view, STATES(), $state);
     }
 }
 
@@ -124,15 +124,15 @@ sub show_theme_list ($self) {
     my $crumb = "<li>Destinations</li>"
         . "<li><a href='" . $self->req->url->base . "/destinations/$destination'>"
         . url2text($destination) . "</a></li>"
-        . "<li class='active'>" . url2text($THEMES) . "</li>";
+        . "<li class='active'>" . url2text(THEMES()) . "</li>";
 
     $self->render(
         template   => 'theme',
-        metatags   => TravellersPalm::Database::General::metatags($c,THEMES()),
-        themes     => TravellersPalm::Database::Themes::themes($c),
+        metatags   => TravellersPalm::Database::General::metatags($self,THEMES()),
+        themes     => TravellersPalm::Database::Themes::themes($self),
         crumb      => $crumb,
-        pathname   => $THEMES,
-        page_title => url2text($THEMES),
+        pathname   => THEMES(),
+        page_title => url2text(THEMES()),
         country    => $destination,
     );
 }
@@ -147,9 +147,9 @@ sub show_theme_detail ($self) {
     my $order = $arg[2] // 'popularity';
 
     if ($view =~ /^(grid|block|list)$/) {
-        TravellersPalm::FunctionsRouter::route_listing($destination, $THEMES, $view, $order, $theme);
+        TravellersPalm::FunctionsRouter::route_listing($destination, THEMES(), $view, $order, $theme);
     } else {
-        TravellersPalm::FunctionsRouter::route_itinerary($destination, $view, $THEMES, $theme);
+        TravellersPalm::FunctionsRouter::route_itinerary($destination, $view, THEMES(), $theme);
     }
 }
 
@@ -171,7 +171,7 @@ sub plan_your_trip ($self) {
 
     $self->render(
         template   => $template,
-        metatags   => TravellersPalm::Database::General::metatags($c,(split '/', $self->req->url->path->to_string)[-1]),
+        metatags   => TravellersPalm::Database::General::metatags($self,(split '/', $self->req->url->path->to_string)[-1]),
         plan_your_trip   => $plan,
         get_inspired     => webtext(173),
         quote            => webtext(174),

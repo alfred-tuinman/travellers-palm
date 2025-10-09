@@ -13,8 +13,8 @@ our @EXPORT_OK = qw(
 );
 
 sub state {
-    my ($c, $id) = @_;
-    $id = 0 unless defined $id;
+    my ($c, $states_id) = @_;
+    return [] unless defined $states_id;
 
     my $sql = q{
         SELECT  states_id,
@@ -76,12 +76,12 @@ sub states {
         ORDER BY $order
     };
 
-    # Add wildcard for LIKE
     return TravellersPalm::Database::Connector::fetch_all($sql, [$category_hotel, "$country%"], $c);
 }
 
 sub statesurl {
     my ($c, $url) = @_;
+    return [] unless defined $url;
 
     my $sql = q{
         SELECT  states_id,
