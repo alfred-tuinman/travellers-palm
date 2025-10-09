@@ -13,7 +13,8 @@ our @EXPORT_OK = qw(
 );
 
 sub state {
-    my $states_id = shift // 0;
+    my ($c, $id) = @_;
+    $id = 0 unless defined $id;
 
     my $sql = q{
         SELECT  states_id,
@@ -38,7 +39,7 @@ sub state {
 }
 
 sub states {
-    my ($country, $order) = @_;
+    my ($c, $country, $order) = @_;
     $order //= 'state';
 
     # sanitize order column
@@ -80,7 +81,7 @@ sub states {
 }
 
 sub statesurl {
-    my $url = shift;
+    my ($c, $url) = @_;
 
     my $sql = q{
         SELECT  states_id,

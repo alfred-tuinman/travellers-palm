@@ -1,6 +1,6 @@
 package TravellersPalm::Controller::Home;
-use Mojo::Base 'Mojolicious::Controller', -signatures;
 
+use Mojo::Base 'Mojolicious::Controller', -signatures;
 use TravellersPalm::Functions qw(email_request webtext);
 # use TravellersPalm::Database::General;
 

@@ -1,11 +1,14 @@
 package TravellersPalm::Database::Connector;
+
 use strict;
 use warnings;
+
 use Carp qw(croak);
 use DBI;
-use Mojo::Base -base;
+use Exporter 'import';
+#use Mojo::Base -base; 
 
-our @EXPORT_OK = qw{
+our @EXPORT_OK = qw(
                   dbh 
                   database 
                   main_dbh 
@@ -16,7 +19,7 @@ our @EXPORT_OK = qw{
                   insert 
                   update 
                   delete
-                  };
+                  );
 
 #--------------------------------------------
 # DB handle cache

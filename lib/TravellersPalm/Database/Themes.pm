@@ -17,7 +17,8 @@ our @EXPORT_OK = qw(
 );
 
 sub subthemes {
-    my $themes_id = shift;
+    my ($c, $themes) = @_;
+ 
     my $sql = q{
         SELECT  subthemes_id,
                 themes_id,
@@ -30,11 +31,13 @@ sub subthemes {
         WHERE   themes_id = ?
         ORDER BY title
     };
+    
     return TravellersPalm::Database::Connector::fetch_all($sql, [$themes_id], $c);
 }
 
 sub subthemes_id {
-    my $subthemes_id = shift;
+    my ($c, $themes_id) = @_;
+    
     my $sql = q{
         SELECT  subthemes_id,
                 themes_id,
@@ -46,13 +49,14 @@ sub subthemes_id {
         FROM    subthemes
         WHERE   subthemes_id = ?
     };
+    
     return TravellersPalm::Database::Connector::fetch_row($sql, [$subthemes_id], $c, 'NAME_lc');
 }
 
 sub themes {
-    my ($parameter, $order) = @_;
+    my ($c, $parameter, $order) = @_;
     $order //= 'title';
-
+    
     my $condition = '';
     if (defined $parameter) {
         $condition = (uc($parameter) eq 'LIMIT')
@@ -80,7 +84,8 @@ sub themes {
 }
 
 sub themes_subthemes {
-    my $themes_id = shift;
+    my ($c, $themes_id) = @_;
+    
     my $sql = q{
         SELECT  s.cities_id AS id,
                 c.city      AS name,
@@ -95,11 +100,13 @@ sub themes_subthemes {
           AND   c.latitude IS NOT NULL
         ORDER BY s.subthemes_id
     };
+
     return TravellersPalm::Database::Connector::fetch_all($sql, [$themes_id], $c);
 }
 
 sub themes_url {
-    my $theme = shift;
+    my ($c, $theme) = @_;
+    
     my $sql = q{
         SELECT  pagename,
                 introduction,
@@ -112,11 +119,12 @@ sub themes_url {
         FROM    themes
         WHERE   url LIKE ?
     };
+
     return TravellersPalm::Database::Connector::fetch_row($sql, [$theme], $c, 'NAME_lc');
 }
 
 sub themetrips {
-    my ($tour, $currency, $order) = @_;
+    my ($c, $tour, $currency, $order) = @_;
     $currency //= 'USD';
     $order    //= 'popularity';
 
@@ -192,7 +200,8 @@ sub themetrips {
 }
 
 sub themeurl {
-    my $url = shift;
+    my ($c, $url) = @_;
+    
     my $sql = q{
         SELECT  title,
                 introduction,
@@ -204,6 +213,7 @@ sub themeurl {
         FROM    themes
         WHERE   url LIKE ?
     };
+    
     return TravellersPalm::Database::Connector::fetch_row($sql, [$url], $c, 'NAME_lc');
 }
 

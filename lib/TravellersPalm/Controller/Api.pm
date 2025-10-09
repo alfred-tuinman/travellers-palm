@@ -1,6 +1,6 @@
 package TravellersPalm::Controller::Api;
-use Mojo::Base 'Mojolicious::Controller';
 
+use Mojo::Base 'Mojolicious::Controller';
 use DBI;
 use JSON ();
 

@@ -94,3 +94,14 @@ Quick commands you can run in the project folder to help find problems:
 
 # show unmatched quotes roughly (not perfect):
 ```perl -nle 'print "$.: $_" if /"/' lib/TravellersPalm/Functions.pm | wc -l ```
+
+## Database
+Best practice: pass $c explicitly. That way Generate.pm doesn’t rely on any hidden global and can even be used outside a request if you mock a $c with a DB handle.
+
+use Mojo::Base 'Mojolicious::Controller'; is only needed in modules or classes that you want to behave like a Mojolicious object or controller subclass. It does a few things:
+
+Provides has for attributes.
+
+Sets up object-oriented inheritance.
+
+Adds strict/warnings automatically (so you don’t need use strict; use warnings;).

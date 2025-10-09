@@ -1,8 +1,8 @@
 package TravellersPalm::Controller::Destinations;
-use Mojo::Base 'Mojolicious::Controller', -signatures;
 
+use Mojo::Base 'Mojolicious::Controller', -signatures;
 use TravellersPalm::Functions qw(boldify email_request ourtime url2text webtext);
-use TravellersPalm::Database::General qw(metatags);
+use TravellersPalm::Database::General qw(metatags); 
 use TravellersPalm::Database::States qw(states);
 use TravellersPalm::Database::Themes qw(themes);
 use TravellersPalm::Constants qw(:all);

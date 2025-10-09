@@ -23,7 +23,9 @@ our @EXPORT_OK = qw(
 # Airports
 # -----------------------------
 sub airports {
-    my $country = shift // 0;
+    my ($c, $country) = @_;
+    return [] unless defined 0;
+
     my $sql = q{
         SELECT city, RTRIM(citycode) AS citycode
         FROM cities c
@@ -35,7 +37,9 @@ sub airports {
 }
 
 sub get_airports_by_country {
-    my $country = shift // 0;
+    my ($c, $country) = @_;
+    return [] unless defined 0;
+
     my $sql = q{
         SELECT city, RTRIM(citycode) AS citycode
         FROM cities c
@@ -50,7 +54,9 @@ sub get_airports_by_country {
 # City Details
 # -----------------------------
 sub city {
-    my $cities_id = shift // 0;
+    my ($c, $cities_id) = @_;
+    return [] unless defined 0;
+
     my $sql = q{
         SELECT 
             cities_id,
@@ -100,7 +106,8 @@ sub city {
 # Hotels in a city
 # -----------------------------
 sub cityhotels {
-    my $cityid = shift;
+    my ($c, $cityid) = @_;
+
     my $sql = q{
         SELECT wh.hotel_id, wh.hotel, wh.description, wh.category, wh.categoryname, dh.addressbook_id AS isdefault
         FROM (
@@ -137,7 +144,7 @@ sub cityhotels {
 # City ID lookup
 # -----------------------------
 sub cityid {
-    my $city = shift;
+    my ($c, $city) = @_;
     my $sql = q{SELECT cities_id FROM cities WHERE city = ?};
     return fetch_row($sql, [$city], $c);
 }
@@ -146,7 +153,7 @@ sub cityid {
 # Themes in a city
 # -----------------------------
 sub citythemes {
-    my $subthemes_id = shift;
+    my ($c, $subthemes_id) = @_;
     my $sql = q{
         SELECT s.cities_id AS id,
                c.city AS name,
@@ -164,7 +171,7 @@ sub citythemes {
 # Ideas in a city
 # -----------------------------
 sub cityidea {
-    my $cities_id = shift;
+    my ($c, $cities_id) = @_;
     my $sql = q{
         SELECT idea_id, title, description, pic1, pic2
         FROM cityideas
@@ -178,7 +185,7 @@ sub cityidea {
 # Nearby cities
 # -----------------------------
 sub nearcities {
-    my $cityid = shift;
+    my ($c, $cityid) = @_;
     my $sql = q{
         SELECT c.cities_id, c.city, c.oneliner, c.writeup, c.latitude, c.longitude
         FROM cities c
@@ -192,7 +199,7 @@ sub nearcities {
 # Random cities (excluding main and nearby)
 # -----------------------------
 sub randomcities {
-    my $cityid = shift;
+    my ($c, $cityid) = @_;
     my $all_sql = q{
         SELECT DISTINCT c.cities_id, c.city
         FROM cities c
@@ -212,6 +219,7 @@ sub randomcities {
 # Total cities count
 # -----------------------------
 sub totalcities {
+    my ($c) = @_;
     my $sql = q{
         SELECT DISTINCT c.cities_id
         FROM cities c

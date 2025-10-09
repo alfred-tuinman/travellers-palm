@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row do_sql);
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row do_sql); 
 
 our @EXPORT_OK = qw( 
     categories   
@@ -208,7 +208,7 @@ sub regionnames {
 # -----------------------------
 sub regions {
     my ($c, $order) = @_;
-    return 'orderno' unless defined $id;
+    return 'orderno' unless defined $order;
 
     $order = 'title' if $order =~ /name/i;
     $order = 'url'   if $order =~ /url/i;

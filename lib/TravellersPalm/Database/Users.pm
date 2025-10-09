@@ -23,7 +23,8 @@ our @EXPORT_OK = qw(
 # Generate a random password
 #--------------------------------------------------
 sub generate_password {
-    my $length = shift // 10;
+    my ($c, $length) = @_;
+    $length = 10 unless defined $length;
     my @chars = ('A'..'Z', 'a'..'z', 0..9);
     return join '', map { $chars[rand @chars] } 1..$length;
 }
@@ -32,8 +33,8 @@ sub generate_password {
 # Update password for a user (hashed)
 #--------------------------------------------------
 sub update_password {
-    my ($userid, $newpass) = @_;
-    return unless $userid && $newpass;
+    my ($c, $userid, $newpass) = @_;
+    return unless defined $userid && $newpass;
 
     my $hash = md5_hex($newpass);
     my $sql  = "UPDATE users SET password = ? WHERE rowid = ?";
@@ -46,8 +47,8 @@ sub update_password {
 # Register an email (creates a new user)
 #--------------------------------------------------
 sub register_email {
-    my ($email) = @_;
-    return unless $email;
+    my ($c, $email) = @_;
+    return unless defined $email;
 
     user_insert($email);
     return 1;
@@ -57,8 +58,8 @@ sub register_email {
 # Check if user exists
 #--------------------------------------------------
 sub user_exist {
-    my $user = shift;
-
+    my ($c, $user) = @_;
+    return [] unless defined $user;
     my $sql = "SELECT rowid, username FROM users WHERE username LIKE ?";
     return TravellersPalm::Database::Connector::fetch_row($sql, [$user], $c);
 }
@@ -67,7 +68,8 @@ sub user_exist {
 # Insert new user with email
 #--------------------------------------------------
 sub user_insert {
-    my $emailid = shift;
+     my ($c, $emailid) = @_;
+    return [] unless defined $emailid;
 
     my $now = DateTime->now->datetime;
     $now =~ y/T/ /;   # Convert ISO format to space-separated datetime
@@ -84,7 +86,7 @@ sub user_insert {
 # Validate user login
 #--------------------------------------------------
 sub user_ok {
-    my ($username, $password) = @_;
+    my ($c, $username, $password) = @_;
     return 0 unless $username && $password;
 
     my $hash = md5_hex($password);
@@ -99,7 +101,7 @@ sub user_ok {
 # Update user's password directly by rowid
 #--------------------------------------------------
 sub user_update {
-    my ($userid, $password) = @_;
+    my ($c, $userid, $password) = @_;
     return 0 unless $userid && $password;
 
     my $hash = md5_hex($password);

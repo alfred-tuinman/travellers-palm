@@ -1,6 +1,6 @@
 package TravellersPalm::Controller::Hotels;
-use Mojo::Base 'Mojolicious::Controller', -signatures;
 
+use Mojo::Base 'Mojolicious::Controller', -signatures;
 use Data::FormValidator;
 use Date::Manip::Date;
 use Data::Dumper;

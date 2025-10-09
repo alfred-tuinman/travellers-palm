@@ -20,7 +20,9 @@ our @EXPORT_OK = qw(
 # List currencies
 # -----------------------------
 sub currencies {
-    my $currencycode = shift // '';
+    my ($c, $currencycode) = @_;
+    return [] unless defined '';
+
     $currencycode = uc $currencycode;
 
     my @bind;
@@ -49,7 +51,7 @@ sub currencies {
 # Get or default currency
 # -----------------------------
 sub currency {
-    my $newcurrency = shift;
+    my ($c, $newcurrency) = @_;
     my $currency = 'USD';
 
     if (defined $newcurrency) {
@@ -64,7 +66,7 @@ sub currency {
 # Latest exchange rate for a currency
 # -----------------------------
 sub exchangerate {
-    my $currencycode = shift;
+    my ($c, $currencycode) = @_;
     return 0 unless $currencycode;
 
     my $sql = q{
@@ -84,6 +86,7 @@ sub exchangerate {
 # Today's exchange rates
 # -----------------------------
 sub exchange_rates {
+    my ($c) = @_;
     my $sql = q{
         SELECT currency, exchange_rate, strftime('%d/%m/%Y', datetime(date, 'unixepoch')) AS date
         FROM exchange_rates
@@ -97,6 +100,7 @@ sub exchange_rates {
 # Historical exchange rates for key currencies
 # -----------------------------
 sub exchange_rates_historical {
+    my ($c) = @_;
     my $sql = q{
         SELECT currency, strftime('%d/%m/%Y', datetime(date, 'unixepoch')) AS date, exchange_rate
         FROM exchange_rates
@@ -118,7 +122,7 @@ sub exchange_rates_historical {
 # Insert new exchange rates
 # -----------------------------
 sub exchange_rates_update {
-    my $rates = shift;
+    my ($c, $rates) = @_;
 
     my $sql = q{
         INSERT INTO exchange_rates (currency, date, exchange_rate)

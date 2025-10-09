@@ -26,7 +26,7 @@ our @EXPORT_OK = qw(
 # Check if itinerary is quoted
 # -----------------------------
 sub isquoted {
-    my ($user, $id) = @_;
+    my ($c, $user, $id) = @_;
     my $sql = "SELECT COUNT(*) FROM quotes WHERE username = ? AND id = ?";
     return fetch_row($sql, [$user, $id], $c);
 }
@@ -35,7 +35,7 @@ sub isquoted {
 # Get itinerary cost
 # -----------------------------
 sub itincost {
-    my ($itinid, $currency) = @_;
+    my ($c, $itinid, $currency) = @_;
     my $sql = qq/
         SELECT cost
         FROM fixeditincosts fc
@@ -57,6 +57,7 @@ sub itincost {
 # List itineraries
 # -----------------------------
 sub itineraries {
+    my ($c) = @_;
     my %args = (
         currency => 'USD',
         order    => 'popularity',
@@ -123,7 +124,9 @@ sub itineraries {
 # Single itinerary by URL
 # -----------------------------
 sub itinerary {
-    my $tour = shift or die('No tour name passed');
+    my ($c, $tour) = @_;
+    # Return empty arrayref if $tour is undefined or empty
+    return [] unless defined $tour && length $tour;
 
     my $sql = qq/
         SELECT f.fixeditin_id AS tourname,
@@ -152,7 +155,7 @@ sub itinerary {
 # Itinerary cost
 # -----------------------------
 sub itinerary_cost {
-    my ($fixeditin_id, $currencycode) = @_;
+    my ($c, $fixeditin_id, $currencycode) = @_;
     $fixeditin_id  //= 0;
     $currencycode  //= 'USD';
 
@@ -178,7 +181,9 @@ sub itinerary_cost {
 # Check itinerary existence
 # -----------------------------
 sub itinerary_exist {
-    my $tour = shift;
+    my ($c, $tour) = @_;
+  # Return empty arrayref if $tour is undefined or empty
+    return [] unless defined $tour && length $tour;
 
     my $sql = "SELECT f.fixeditin_id FROM fixeditin f WHERE f.url = ?";
     my $row = fetch_row($sql, [$tour], $c, 'NAME_lc');
@@ -189,8 +194,9 @@ sub itinerary_exist {
 # Itinerary by ID
 # -----------------------------
 sub itinerary_id {
-    my $id = shift // 0;
-
+    my ($c, $id) = @_;
+    return [] unless defined $id;
+    
     my $sql = qq/
         SELECT title, oneliner, introduction, itinerary,
                triphighlights, quotes, adv, regions_id,
@@ -208,7 +214,9 @@ sub itinerary_id {
 # Places you will visit
 # -----------------------------
 sub placesyouwillvisit {
-    my $tour = shift;
+    my ($c, $tour) = @_;
+    return [] unless defined $tour && length $tour;
+    
     my $sql = qq/
         SELECT city, cities_id, oneliner, writeup, url, dayno, imagename, latitude, longitude
         FROM (
@@ -232,7 +240,7 @@ sub placesyouwillvisit {
 # Similar tours
 # -----------------------------
 sub similartours {
-    my ($city, $currency) = @_;
+    my ($c, $city, $currency) = @_;
     $city     //= 0;
     $currency //= 'USD';
 
@@ -264,7 +272,7 @@ sub similartours {
 # Trip ideas
 # -----------------------------
 sub tripideas_trips {
-    my ($tour, $currency, $exchrate, $order) = @_;
+    my ($c, $tour, $currency, $exchrate, $order) = @_;
     $tour     = lc($tour);
     $currency //= 'USD';
     $order    //= 'popularity';
@@ -337,6 +345,7 @@ SQL
 # Total itineraries
 # -----------------------------
 sub totalitineraries {
+    my ($c) = @_;
     my $sql = qq/
         SELECT fixeditin_id
         FROM fixeditin f
@@ -354,6 +363,7 @@ sub totalitineraries {
 # Tours in a state
 # -----------------------------
 sub toursinstate {
+    my ($c) = @_;
     my %args = (
         currency => 'USD',
         order    => 'popularity',
@@ -410,7 +420,8 @@ sub toursinstate {
 # Your accommodation
 # -----------------------------
 sub youraccommodation {
-    my $tour = shift;
+    my ($c, $tour) = @_;
+    return [] unless defined $tour && length $tour;
 
     my $sql = qq/
         SELECT DISTINCT c.city, h.addressbook_id AS hotel_id, h.organisation AS hotel,

@@ -22,7 +22,7 @@ our @EXPORT_OK = qw(
 # Get image properties by category and type
 # -----------------------------
 sub imageproperties {
-    my ($imgcat, $imgtype) = @_;
+    my ($c, $imgcat, $imgtype) = @_;
     return 0 unless defined $imgcat && defined $imgtype;
 
     my $sql = q{
@@ -42,7 +42,8 @@ sub imageproperties {
 # Get image properties by ID
 # -----------------------------
 sub imageproperties_id {
-    my $id = shift // 0;
+    my ($c, $id) = @_;
+    return 0 unless defined $id;
 
     my $sql = q{
         SELECT imageproperties_id AS imagecategories_id,
@@ -61,7 +62,8 @@ sub imageproperties_id {
 # Get single image by name
 # -----------------------------
 sub image {
-    my $imagename = shift or return 0;
+    my ($c, $image_name) = @_;
+    return [] unless defined 0;
 
     my $sql = q{
         SELECT images_id,
@@ -87,7 +89,7 @@ sub image {
 # Get multiple images by object/category/type
 # -----------------------------
 sub images {
-    my ($id, $category, $type) = @_;
+    my ($c, $id, $category, $type) = @_;
     $id       //= 0;
     $category //= 0;
     $type     //= 0;
@@ -120,7 +122,9 @@ sub images {
 # Get all images in a category
 # -----------------------------
 sub imagesall {
-    my $id = shift // 0;
+    my ($c, $id) = @_;
+    return 0 unless defined $id;
+
     my $sql = qq{
         SELECT imagename AS imagename, ImageName2 AS imagename2
         FROM images
@@ -134,7 +138,8 @@ sub imagesall {
 # Delete image by name
 # -----------------------------
 sub images_delete {
-    my $image_name = shift or return;
+    my ($c, $image_name) = @_;
+    return unless defined $image_name;
     my $sql = q{DELETE FROM images WHERE imagename LIKE ?};
     delete($sql, [$image_name], $c);
 }
@@ -143,6 +148,8 @@ sub images_delete {
 # Get images for dropdown
 # -----------------------------
 sub images_dropdown {
+    my ($c) = @_;
+
     my $sql = q{
         SELECT imagefolder,
                (SELECT imagetype FROM imagetypes WHERE imagetypes_id = p.imagetypes_id) AS imagetype,
@@ -161,6 +168,8 @@ sub images_dropdown {
 # Insert or update image
 # -----------------------------
 sub images_update {
+    my ($c) = @_;
+
     my %args = (
         alttag             => '',
         filesize           => 0,
@@ -230,8 +239,8 @@ sub images_update {
 # Get image upload types for a category
 # -----------------------------
 sub imgupload_type {
-    my ($imgcat) = @_;
-    $imgcat //= 0;
+    my ($c, $imgcat) = @_;
+    return 0 unless defined $imgcat;
 
     my $sql = "SELECT t.imagetypes_id, t.imagetype FROM imagetypes t";
     $sql .= " INNER JOIN imageproperties p ON t.imagetypes_id = p.imagetypes_id WHERE p.imagecategories_id = ?" if $imgcat > 0;

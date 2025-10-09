@@ -1,4 +1,5 @@
 package TravellersPalm::Controller::Images;
+
 use Mojo::Base 'Mojolicious::Controller', -signatures;
 use File::Spec;
 
