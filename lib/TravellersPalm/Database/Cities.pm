@@ -31,7 +31,7 @@ sub airports {
         WHERE airport = 1 AND nighthalt = 1 AND citycode IS NOT NULL AND co.url = ?
         ORDER BY c.city
     };
-    return fetch_row($sql, [$country]);
+    return fetch_row($sql, [$country], $c);
 }
 
 sub get_airports_by_country {
@@ -43,7 +43,7 @@ sub get_airports_by_country {
         WHERE airport = 1 AND nighthalt = 1 AND citycode IS NOT NULL AND co.url = ?
         ORDER BY c.city
     };
-    return fetch_all($sql, [$country]);
+    return fetch_all($sql, [$country], $c);
 }
 
 # -----------------------------
@@ -93,7 +93,7 @@ sub city {
         FROM cities
         WHERE cities_id = ?
     };
-    return fetch_row($sql, [$cities_id], 'NAME_lc');
+    return fetch_row($sql, [$cities_id], $c, 'NAME_lc');
 }
 
 # -----------------------------
@@ -130,7 +130,7 @@ sub cityhotels {
         LEFT JOIN vw_defaulthotels dh ON wh.hotel_id = dh.addressbook_id
         ORDER BY category
     };
-    return fetch_all($sql, [$cityid]);
+    return fetch_all($sql, [$cityid], $c);
 }
 
 # -----------------------------
@@ -139,7 +139,7 @@ sub cityhotels {
 sub cityid {
     my $city = shift;
     my $sql = q{SELECT cities_id FROM cities WHERE city = ?};
-    return fetch_row($sql, [$city]);
+    return fetch_row($sql, [$city], $c);
 }
 
 # -----------------------------
@@ -157,7 +157,7 @@ sub citythemes {
         JOIN cities c ON c.cities_id = s.cities_id
         WHERE s.subthemes_id = ?
     };
-    return fetch_all($sql, [$subthemes_id]);
+    return fetch_all($sql, [$subthemes_id], $c);
 }
 
 # -----------------------------
@@ -171,7 +171,7 @@ sub cityidea {
         WHERE cities_id = ?
         ORDER BY title
     };
-    return fetch_all($sql, [$cities_id]);
+    return fetch_all($sql, [$cities_id], $c);
 }
 
 # -----------------------------
@@ -185,7 +185,7 @@ sub nearcities {
         JOIN nearcities n ON c.cities_id = n.cities_id
         WHERE c.display = 1 AND n.maincities_id = ?
     };
-    return fetch_all($sql, [$cityid]);
+    return fetch_all($sql, [$cityid], $c);
 }
 
 # -----------------------------
@@ -200,7 +200,7 @@ sub randomcities {
         WHERE c.nighthalt = 1 AND c.display = 1 AND c.countries_id = 200
         ORDER BY c.city
     };
-    my $all_cities = fetch_all($all_sql);
+    my $all_cities = fetch_all($all_sql, [], $c);
 
     my %seen = map { $_ => 1 } ($cityid, map { $_->{cities_id} } @{ nearcities($cityid) });
     my @rndcities = grep { !$seen{ $_->{cities_id} } } @$all_cities;
@@ -218,7 +218,7 @@ sub totalcities {
         JOIN defaulthotels dh ON dh.cities_id = c.cities_id
         WHERE c.nighthalt = 1 AND c.display = 1 AND c.countries_id = 200
     };
-    my $rows = fetch_all($sql);
+    my $rows = fetch_all($sql, [], $c);
     return scalar @$rows;
 }
 

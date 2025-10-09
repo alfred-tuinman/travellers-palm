@@ -1,8 +1,8 @@
 package TravellersPalm::Controller::Home;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
 
-use TravellersPalm::Functions qw(webtext);
-use TravellersPalm::Database::General;
+use TravellersPalm::Functions qw(email_request webtext);
+# use TravellersPalm::Database::General;
 
 sub index ($self) {
     $self->render(template => 'home');

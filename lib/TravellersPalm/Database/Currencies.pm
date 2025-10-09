@@ -5,6 +5,7 @@ use warnings;
 
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row insert);
+use TravellersPalm::Functions qw(currencies);
 
 our @EXPORT_OK = qw(
     currencies
@@ -41,7 +42,7 @@ sub currencies {
 
     $sql .= ' ORDER BY currencycode';
 
-    return fetch_all($sql, \@bind);
+    return fetch_all($sql, \@bind, $c);
 }
 
 # -----------------------------
@@ -75,7 +76,7 @@ sub exchangerate {
         LIMIT 1
     };
 
-    my $row = fetch_row($sql, [$currencycode]);
+    my $row = fetch_row($sql, [$currencycode], $c);
     return $row ? $row->{exchangerate} : 0;
 }
 
@@ -89,7 +90,7 @@ sub exchange_rates {
         WHERE strftime('%d/%m/%Y', datetime(date, 'unixepoch')) = strftime('%d/%m/%Y','now')
         ORDER BY currency DESC
     };
-    return fetch_all($sql);
+    return fetch_all($sql,[], $c);
 }
 
 # -----------------------------
@@ -107,7 +108,7 @@ sub exchange_rates_historical {
     my %data;
 
     foreach my $cur (@currencies) {
-        $data{$cur} = fetch_all($sql, [$cur]);
+        $data{$cur} = fetch_all($sql, [$cur], $c);
     }
 
     return \%data;
@@ -125,7 +126,7 @@ sub exchange_rates_update {
     };
 
     foreach my $cur (qw(AUD EUR GBP USD)) {
-        insert($sql, [$cur, $rates->{$cur}]);
+        insert($sql, [$cur, $rates->{$cur}], $c);
     }
 
     return exchange_rates();

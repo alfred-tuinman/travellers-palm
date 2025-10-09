@@ -30,7 +30,7 @@ sub subthemes {
         WHERE   themes_id = ?
         ORDER BY title
     };
-    return TravellersPalm::Database::Connector::fetch_all($sql, [$themes_id]);
+    return TravellersPalm::Database::Connector::fetch_all($sql, [$themes_id], $c);
 }
 
 sub subthemes_id {
@@ -46,7 +46,7 @@ sub subthemes_id {
         FROM    subthemes
         WHERE   subthemes_id = ?
     };
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$subthemes_id], '', 'NAME_lc');
+    return TravellersPalm::Database::Connector::fetch_row($sql, [$subthemes_id], $c, 'NAME_lc');
 }
 
 sub themes {
@@ -76,7 +76,7 @@ sub themes {
         ORDER BY $order_by
     };
 
-    return TravellersPalm::Database::Connector::fetch_all($sql);
+    return TravellersPalm::Database::Connector::fetch_all($sql, [], $c);
 }
 
 sub themes_subthemes {
@@ -95,7 +95,7 @@ sub themes_subthemes {
           AND   c.latitude IS NOT NULL
         ORDER BY s.subthemes_id
     };
-    return TravellersPalm::Database::Connector::fetch_all($sql, [$themes_id]);
+    return TravellersPalm::Database::Connector::fetch_all($sql, [$themes_id], $c);
 }
 
 sub themes_url {
@@ -112,7 +112,7 @@ sub themes_url {
         FROM    themes
         WHERE   url LIKE ?
     };
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$theme], '', 'NAME_lc');
+    return TravellersPalm::Database::Connector::fetch_row($sql, [$theme], $c, 'NAME_lc');
 }
 
 sub themetrips {
@@ -188,7 +188,7 @@ sub themetrips {
         ORDER BY $order_by
     };
 
-    return TravellersPalm::Database::Connector::fetch_all($sql, [$currency, $tour]);
+    return TravellersPalm::Database::Connector::fetch_all($sql, [$currency, $tour], $c);
 }
 
 sub themeurl {
@@ -204,7 +204,7 @@ sub themeurl {
         FROM    themes
         WHERE   url LIKE ?
     };
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$url], '', 'NAME_lc');
+    return TravellersPalm::Database::Connector::fetch_row($sql, [$url], $c, 'NAME_lc');
 }
 
 1;

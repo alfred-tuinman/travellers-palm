@@ -35,7 +35,7 @@ sub imageproperties {
         FROM imageproperties
         WHERE imagecategories_id = ? AND imagetypes_id = ?
     };
-    return fetch_row($sql, [$imgcat, $imgtype], '', 'NAME_lc');
+    return fetch_row($sql, [$imgcat, $imgtype], $c, 'NAME_lc');
 }
 
 # -----------------------------
@@ -54,7 +54,7 @@ sub imageproperties_id {
         FROM imageproperties
         WHERE imageproperties_id = ?
     };
-    return fetch_row($sql, [$id], '', 'NAME_lc');
+    return fetch_row($sql, [$id], $c, 'NAME_lc');
 }
 
 # -----------------------------
@@ -80,7 +80,7 @@ sub image {
         FROM images
         WHERE imagename LIKE ?
     };
-    return fetch_row($sql, [$imagename], '', 'NAME_lc');
+    return fetch_row($sql, [$imagename], $c, 'NAME_lc');
 }
 
 # -----------------------------
@@ -113,7 +113,7 @@ sub images {
         ORDER BY imagename
         LIMIT 10
     };
-    return fetch_all($sql, [$id, $category, $type]);
+    return fetch_all($sql, [$id, $category, $type], $c);
 }
 
 # -----------------------------
@@ -127,7 +127,7 @@ sub imagesall {
         WHERE ImageCategories_id = ?
         ORDER BY imagename
     };
-    return fetch_all($sql, [$id]);
+    return fetch_all($sql, [$id], $c);
 }
 
 # -----------------------------
@@ -136,7 +136,7 @@ sub imagesall {
 sub images_delete {
     my $image_name = shift or return;
     my $sql = q{DELETE FROM images WHERE imagename LIKE ?};
-    delete($sql, [$image_name]);
+    delete($sql, [$image_name], $c);
 }
 
 # -----------------------------
@@ -154,7 +154,7 @@ sub images_dropdown {
         FROM ImageProperties p
         ORDER BY imagefolder
     };
-    return fetch_all($sql);
+    return fetch_all($sql, $c);
 }
 
 # -----------------------------
@@ -197,7 +197,7 @@ sub images_update {
         my $sql = "UPDATE images SET " . join(", ", @fields) . " WHERE images_id = ?";
         push @values, $onfile->{images_id};
 
-        update($sql, @values);
+        update($sql, @values, $c);
 
         return { status => 1, message => lc $args{imagename} . ' updated' };
     }
@@ -218,7 +218,7 @@ sub images_update {
         }
 
         my $sql = sprintf("INSERT INTO images (%s) VALUES (%s)", join(',', @cols), join(',', @placeholders));
-        insert($sql, @values);
+        insert($sql, @values, $c);
 
         return { status => 1, message => lc $args{imagename} . ' inserted' };
     }
@@ -236,7 +236,7 @@ sub imgupload_type {
     my $sql = "SELECT t.imagetypes_id, t.imagetype FROM imagetypes t";
     $sql .= " INNER JOIN imageproperties p ON t.imagetypes_id = p.imagetypes_id WHERE p.imagecategories_id = ?" if $imgcat > 0;
 
-    return fetch_all($sql, $imgcat > 0 ? [$imgcat] : []);
+    return fetch_all($sql, $imgcat > 0 ? [$imgcat] : [], $c);
 }
 
 1;

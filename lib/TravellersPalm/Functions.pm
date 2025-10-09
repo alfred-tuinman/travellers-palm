@@ -59,16 +59,16 @@ if ($@) {
 # -----------------------------
 # Text Utilities
 # -----------------------------
-sub addptags {
+sub addptags { 
     my $str = shift or return '<p></p>';
-    my @lines = split m{ (?:\x0D\x0A|\x0A|\x0D|\x0C|\x{2028}|\x{2029}) }x, $str;
+    my @lines = split /\R/, $str;
     return '<p>' . join('</p><p>', @lines) . '</p>';
 }
 
 sub boldify {
     my $str = shift;
-    $str =~ s/\{/<strong>/gm;
-    $str =~ s/\}/<\/strong>/gm;
+    $str =~ s/\{/<strong>/g;
+    $str =~ s/\}/<\/strong>/g;
     return $str;
 }
 
@@ -84,11 +84,13 @@ sub cutpara {
 }
 
 sub domain {
-    my $url = URI->new(request->url_base);
-    my $domain = $url->host;
-    $domain =~ s!^(?:www\.)?!!i;
-    return $domain;
+    my $c = shift;
+    my $url = $c->req->url->base;
+    my $host = $url->host;
+    $host =~ s!^(?:www\.)?!!i;
+    return $host;
 }
+
 
 sub elog {
     my $log = '/var/log/nginx/travellers-palm/error.log';
@@ -99,11 +101,11 @@ sub elog {
             if ( $line =~ /failed/i ) {
                 # Option A: split using q{} so editors don't get confused
                 # my @parts = split q{"}, $line;
-                # push @entries, { message => $parts[1] // $line };
+                # push @imgnames, { message => $parts[1] // $line };
 
                 # -- or Prefer Option B (recommended) --
                 if ( $line =~ /"([^"]+)"/ ) {
-                  push @entries, { message => $1 };
+                  push @imgnames, { message => $1 };
                 }
         }
     }
@@ -155,23 +157,23 @@ sub linkExtor {
 # Linkify with safe city lookup
 # -----------------------------
 sub linkify {
-    my $str = shift;
-    my $lstr = '';
-    my $cities;
+    my ($c, $str) = @_;
+    my $lstr   = '';
+    my $cities = [];
 
     while ($str =~ /(.*?)\[(.*?)\](.*)/sm) {
         my ($name, $id) = split /-/, $2;
 
-        my $city;
-        if ($has_cities) {
-            $city = $cities_module->city($id);
-        } else {
-            $city = { id => $id, name => $name, url => "#" };
-        }
-
+        # Safe call: stub if Cities module not available
+        my $city = eval { TravellersPalm::Database::Cities::city($id) } || {
+            id   => $id,
+            name => $name,
+            url  => "#",
+        };
         push @$cities, $city;
-        my $url = $city->{url} // '#';
-        $lstr .= $1 . ' <a class="writeup popup-gallery" href="' . request->url_base . $url . '">' . $name . '</a>';
+
+        my $url = $city->{url} // "#";
+        $lstr .= $1 . qq{ <a class="writeup popup-gallery" href="$url">$name</a>};
         $str = $3;
     }
     $lstr .= $str;
@@ -179,7 +181,10 @@ sub linkify {
 }
 
 sub moneyfy { return; }
-sub ourtime { return DateTime->now(time_zone => 'Asia/Kolkata'); }
+
+sub ourtime { 
+    return DateTime->now(time_zone => 'Asia/Kolkata'); 
+}
 
 # -----------------------------
 # SEO helper
@@ -220,9 +225,21 @@ sub url2text {
     return $text;
 }
 
-sub user_is_registered { return session('username') ? 1 : 0; }
-sub user_register { my $email = shift; return unless valid_email($email); session username => $email; }
-sub user_email { return session('username'); }
+sub user_is_registered {
+    my $c = shift;
+    return $c->session('username') ? 1 : 0;
+}
+
+sub user_register {
+    my ($c, $email) = @_;          # $c is the Mojolicious controller
+    return unless valid_email($email);
+    $c->session(username => $email);  # set session in Mojolicious
+}
+
+sub user_email {
+    my $c = shift;
+    return $c->session('username');
+}
 
 # -----------------------------
 # webtext using safe Model::Cities call

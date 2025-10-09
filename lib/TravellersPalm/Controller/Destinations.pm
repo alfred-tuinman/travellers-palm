@@ -2,9 +2,9 @@ package TravellersPalm::Controller::Destinations;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
 
 use TravellersPalm::Functions qw(boldify email_request ourtime url2text webtext);
-use TravellersPalm::Database::General;
-use TravellersPalm::Database::States;
-use TravellersPalm::Database::Themes;
+use TravellersPalm::Database::General qw(metatags);
+use TravellersPalm::Database::States qw(states);
+use TravellersPalm::Database::Themes qw(themes);
 use TravellersPalm::Constants qw(:all);
 
 # -------------------------------
@@ -18,7 +18,7 @@ sub show_destination ($self) {
 
     $self->render(
         template    => 'destination',
-        metatags    => TravellersPalm::Database::General::metatags($destination),
+        metatags    => TravellersPalm::Database::General::metatags($c,$destination),
         destination => $destination,
         crumb       => $crumb,
         page_title  => url2text($destination),
@@ -52,7 +52,7 @@ sub show_region_list ($self) {
 
     $self->render(
         template   => 'regions',
-        metatags   => TravellersPalm::Database::General::metatags(REGION()),
+        metatags   => TravellersPalm::Database::General::metatags($c,REGION()),
         writeup    => boldify($content->{writeup}),
         page_title => url2text(REGIONS()),
         regions    => regions(),
@@ -81,7 +81,7 @@ sub show_region_detail ($self) {
 # → state overview
 sub show_state_list ($self) {
     my ($destination) = @{ $self->stash('splat') // [] };
-    my $states = TravellersPalm::Database::States::states($destination);
+    my $states = TravellersPalm::Database::States::states($c,$destination);
     my @filtered = grep { $_->{state} } @$states;
 
     my $crumb = "<li>Destinations</li>"
@@ -91,7 +91,7 @@ sub show_state_list ($self) {
 
     $self->render(
         template   => 'state',
-        metatags   => TravellersPalm::Database::General::metatags(STATES()),
+        metatags   => TravellersPalm::Database::General::metatags($c,STATES()),
         writeup    => boldify(webtext(122)),
         states     => \@filtered,
         country    => $destination,
@@ -128,8 +128,8 @@ sub show_theme_list ($self) {
 
     $self->render(
         template   => 'theme',
-        metatags   => TravellersPalm::Database::General::metatags($THEMES),
-        themes     => TravellersPalm::Database::Themes::themes(),
+        metatags   => TravellersPalm::Database::General::metatags($c,THEMES()),
+        themes     => TravellersPalm::Database::Themes::themes($c),
         crumb      => $crumb,
         pathname   => $THEMES,
         page_title => url2text($THEMES),
@@ -171,7 +171,7 @@ sub plan_your_trip ($self) {
 
     $self->render(
         template   => $template,
-        metatags   => TravellersPalm::Database::General::metatags((split '/', $self->req->url->path->to_string)[-1]),
+        metatags   => TravellersPalm::Database::General::metatags($c,(split '/', $self->req->url->path->to_string)[-1]),
         plan_your_trip   => $plan,
         get_inspired     => webtext(173),
         quote            => webtext(174),

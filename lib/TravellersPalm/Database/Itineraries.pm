@@ -28,7 +28,7 @@ our @EXPORT_OK = qw(
 sub isquoted {
     my ($user, $id) = @_;
     my $sql = "SELECT COUNT(*) FROM quotes WHERE username = ? AND id = ?";
-    return fetch_row($sql, [$user, $id]);
+    return fetch_row($sql, [$user, $id], $c);
 }
 
 # -----------------------------
@@ -49,7 +49,7 @@ sub itincost {
         LIMIT 1
     /;
 
-    my $cost = fetch_row($sql, [$itinid, $currency]);
+    my $cost = fetch_row($sql, [$itinid, $currency], $c);
     return int($cost);
 }
 
@@ -116,7 +116,7 @@ sub itineraries {
 
     my @params = ($args{currency});
     push @params, $args{option} if $args{option} && $args{option} ne 'all' && $args{option} ne 'itin';
-    return fetch_all($sql, \@params);
+    return fetch_all($sql, \@params, $c);
 }
 
 # -----------------------------
@@ -145,7 +145,7 @@ sub itinerary {
         WHERE f.url = ?
     /;
 
-    return fetch_row($sql, [$tour], '', 'NAME_lc');
+    return fetch_row($sql, [$tour], $c, 'NAME_lc');
 }
 
 # -----------------------------
@@ -171,7 +171,7 @@ sub itinerary_cost {
         GROUP BY c.currencycode, c.symbol
     /;
 
-    return fetch_row($sql, [$fixeditin_id, $currencycode], '', 'NAME_lc');
+    return fetch_row($sql, [$fixeditin_id, $currencycode], $c, 'NAME_lc');
 }
 
 # -----------------------------
@@ -181,7 +181,7 @@ sub itinerary_exist {
     my $tour = shift;
 
     my $sql = "SELECT f.fixeditin_id FROM fixeditin f WHERE f.url = ?";
-    my $row = fetch_row($sql, [$tour], '', 'NAME_lc');
+    my $row = fetch_row($sql, [$tour], $c, 'NAME_lc');
     return { exist => $row ? $row->{fixeditin_id} : 0 };
 }
 
@@ -201,7 +201,7 @@ sub itinerary_id {
         WHERE fixeditin_id = ?
     /;
 
-    return fetch_row($sql, [$id], '', 'NAME_lc');
+    return fetch_row($sql, [$id], $c, 'NAME_lc');
 }
 
 # -----------------------------
@@ -225,7 +225,7 @@ sub placesyouwillvisit {
         ORDER BY dayno
     /;
 
-    return fetch_all($sql, [$tour]);
+    return fetch_all($sql, [$tour], $c);
 }
 
 # -----------------------------
@@ -257,7 +257,7 @@ sub similartours {
         LIMIT 3
     /;
 
-    return fetch_all($sql, [$currency, $city]);
+    return fetch_all($sql, [$currency, $city], $c);
 }
 
 # -----------------------------
@@ -329,7 +329,7 @@ SQL
     # append validated ORDER BY outside the heredoc
     $sql .= "\nORDER BY $order_by";
 
-    return TravellersPalm::Database::Connector::fetch_all($sql, [$exchrate, $tour]);
+    return TravellersPalm::Database::Connector::fetch_all($sql, [$exchrate, $tour], $c);
 }
 
 
@@ -346,7 +346,7 @@ sub totalitineraries {
         ORDER BY days
     /;
 
-    my $rows = fetch_all($sql, []);
+    my $rows = fetch_all($sql, [], $c);
     return scalar @$rows;
 }
 
@@ -403,7 +403,7 @@ sub toursinstate {
         ORDER BY $order_by
     /;
 
-    return fetch_all($sql, [$args{currency}, $args{state}]);
+    return fetch_all($sql, [$args{currency}, $args{state}], $c);
 }
 
 # -----------------------------
@@ -438,7 +438,7 @@ sub youraccommodation {
         ORDER BY cdf.dayno, category ASC
     /;
 
-    return fetch_all($sql, [$tour]);
+    return fetch_all($sql, [$tour], $c);
 }
 
 1;

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row do_sql);
 
 our @EXPORT_OK = qw( 
     categories   
@@ -25,6 +25,7 @@ our @EXPORT_OK = qw(
 # Categories
 # -----------------------------
 sub categories {
+    my ($c) = @_;
     my $sql = q{
         SELECT DISTINCT c.description,
                a2.categories_id,
@@ -41,14 +42,14 @@ sub categories {
           AND a2.categories_id IN (23,36,8)
         ORDER BY 3
     };
-    return fetch_all($sql);
+    return fetch_all($sql, [], $c);
 }
 
 # -----------------------------
 # Get country by column (like URL, id)
 # -----------------------------
 sub countries_url {
-    my ($column, $country) = @_;
+    my ($c, $column, $country) = @_;
     return unless $column && $country;
 
     my $sql = qq{
@@ -56,14 +57,16 @@ sub countries_url {
         FROM countries
         WHERE $column = ?
     };
-    return fetch_row($sql, [$country], 'NAME_lc');
+    return fetch_row($sql, [$country], $c, 'NAME_lc');
 }
 
 # -----------------------------
 # Day-by-day itinerary for tour
 # -----------------------------
 sub daybyday {
-    my $tour = shift or return [];
+    my ($c, $tour) = @_;
+    return [] unless defined $tour;
+    
     my $sql = q{
         SELECT c.dayno,
                c.dayitinerary,
@@ -75,14 +78,16 @@ sub daybyday {
         WHERE f.url LIKE ?
         ORDER BY c.dayno
     };
-    return fetch_all($sql, [$tour]);
+    return fetch_all($sql, [$tour], $c);
 }
 
 # -----------------------------
 # Hotel info
 # -----------------------------
 sub hotel {
-    my $hotel_id = shift or return {};
+    my ($c, $hotel_id) = @_;
+    return [] unless defined $hotel_id;
+    
     my $sql = q{
         SELECT h.addressbook_id AS hotel_id,
                h.organisation AS hotel,
@@ -105,26 +110,31 @@ sub hotel {
         WHERE a.addressbook_id = ?
           AND a.categories_id IN (23,36,8)
     };
-    return fetch_row($sql, [$hotel_id], 'NAME_lc');
+    
+    return fetch_row($sql, [$hotel_id], $c, 'NAME_lc');
 }
 
 # -----------------------------
 # Meta tags
 # -----------------------------
 sub metatags {
-    my $url = shift // 'index';
+    my ($c, $url) = @_;
+    return [] unless defined $url;
+
     my $sql = q{
         SELECT meta_title, meta_descr, meta_keywords
         FROM webpages
         WHERE url = ?
     };
-    return fetch_row($sql, [$url], 'NAME_lc');
+    
+    return fetch_row($sql, [$url], $c, 'NAME_lc');
 }
 
 # -----------------------------
 # Modules / tours list
 # -----------------------------
 sub modules {
+    my ($c) = @_;
     my %args = (
         currency => 'USD',
         order    => 'popularity',
@@ -175,26 +185,31 @@ sub modules {
           AND inactivewef IS NULL
         ORDER BY $order_by
     };
-    return fetch_all($sql, [$args{currency}, $args{region}]);
+    return fetch_all($sql, [$args{currency}, $args{region}], $c);
 }
 
 # -----------------------------
 # Region names
 # -----------------------------
 sub regionnames {
+    my ($c) = @_;
+
     my $sql = q{
         SELECT title
         FROM regions
         ORDER BY orderno
     };
-    return fetch_all($sql);
+    
+    return fetch_all($sql,[], $c);
 }
 
 # -----------------------------
 # Regions
 # -----------------------------
 sub regions {
-    my $order = shift // 'orderno';
+    my ($c, $order) = @_;
+    return 'orderno' unless defined $id;
+
     $order = 'title' if $order =~ /name/i;
     $order = 'url'   if $order =~ /url/i;
 
@@ -203,28 +218,34 @@ sub regions {
         FROM regions
         ORDER BY $order
     };
-    return fetch_all($sql);
+    return fetch_all($sql, [], $c);
 }
 
 # -----------------------------
 # Region by URL
 # -----------------------------
 sub regionsurl {
-    my $url = shift or return {};
+    my ($c, $url) = @_;
+    return [] unless defined $url;
+
     my $sql = q{
         SELECT regions_id, title, oneliner, introduction, region, url
         FROM regions
         WHERE url = ?
     };
-    return fetch_row($sql, [$url], 'NAME_lc');
+
+    return fetch_row($sql, [$url], $c, 'NAME_lc');
 }
 
 # -----------------------------
 # Total trains
 # -----------------------------
 sub totaltrains {
+    my ($c) = @_;
+
     my $sql = q{ SELECT startname FROM zz_trains };
-    my $rows = fetch_all($sql);
+    my $rows = fetch_all($sql, [], $c);
+    
     return scalar @$rows;
 }
 
@@ -232,31 +253,36 @@ sub totaltrains {
 # Webpages
 # -----------------------------
 sub webpages {
-    my $id = shift or return {};
+    my ($c, $id) = @_;
+    return [] unless defined $id;
+
     my $sql = q{
         SELECT pagename, url, meta_title, meta_descr, meta_keywords
         FROM webpages
         WHERE webpages_id = ?
     };
-    return fetch_row($sql, [$id], 'NAME_lc');
+    return fetch_row($sql, [$id], $c, 'NAME_lc');
 }
 
 # -----------------------------
 # Web entry
 # -----------------------------
 sub web {
-    my $id = shift or return {};
+    my ($c, $id) = @_;
+    return [] unless defined $id;
+
     my $sql = q{
         SELECT srno, title, pagename, writeup, webpages_id
         FROM Web
         WHERE Web_id = ?
     };
-    my $text = fetch_row($sql, [$id], 'NAME_lc');
+    my $text = fetch_row($sql, [$id], $c, 'NAME_lc');
 
     my $data = {
         rows => $text ? 1 : 0,
         data => $text,
     };
+
     return $data;
 }
 

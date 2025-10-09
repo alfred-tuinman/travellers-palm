@@ -37,7 +37,7 @@ sub update_password {
 
     my $hash = md5_hex($newpass);
     my $sql  = "UPDATE users SET password = ? WHERE rowid = ?";
-    TravellersPalm::Database::Connector::update($sql, [$hash, $userid]);
+    TravellersPalm::Database::Connector::update($sql, [$hash, $userid],$c);
 
     return 1;
 }
@@ -60,7 +60,7 @@ sub user_exist {
     my $user = shift;
 
     my $sql = "SELECT rowid, username FROM users WHERE username LIKE ?";
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$user]);
+    return TravellersPalm::Database::Connector::fetch_row($sql, [$user], $c);
 }
 
 #--------------------------------------------------
@@ -76,7 +76,7 @@ sub user_insert {
 
     print STDERR Dumper([$emailid, 1, $now]);
 
-    TravellersPalm::Database::Connector::insert($sql, [$emailid, 1, $now]);
+    TravellersPalm::Database::Connector::insert($sql, [$emailid, 1, $now], $c);
     return 1;
 }
 
@@ -90,7 +90,7 @@ sub user_ok {
     my $hash = md5_hex($password);
 
     my $sql = "SELECT rowid AS rowid FROM users WHERE username LIKE ? AND password LIKE ?";
-    my $row = TravellersPalm::Database::Connector::fetch_row($sql, [$username, $hash], '', 'NAME_lc');
+    my $row = TravellersPalm::Database::Connector::fetch_row($sql, [$username, $hash], $c, 'NAME_lc');
 
     return $row ? $row : 0;
 }
@@ -104,7 +104,7 @@ sub user_update {
 
     my $hash = md5_hex($password);
     my $sql  = "UPDATE users SET password = ? WHERE rowid = ?";
-    TravellersPalm::Database::Connector::update($sql, [$hash, $userid]);
+    TravellersPalm::Database::Connector::update($sql, [$hash, $userid], $c);
 
     return 1;
 }

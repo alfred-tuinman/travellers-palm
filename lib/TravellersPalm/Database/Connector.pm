@@ -5,6 +5,19 @@ use Carp qw(croak);
 use DBI;
 use Mojo::Base -base;
 
+our @EXPORT_OK = qw{
+                  dbh 
+                  database 
+                  main_dbh 
+                  fetch_all 
+                  fetch_row 
+                  do_sql 
+                  txn 
+                  insert 
+                  update 
+                  delete
+                  };
+
 #--------------------------------------------
 # DB handle cache
 #--------------------------------------------

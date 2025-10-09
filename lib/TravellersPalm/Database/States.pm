@@ -34,7 +34,7 @@ sub state {
         WHERE   states_id = ?
     };
 
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$states_id], '', 'NAME_lc');
+    return TravellersPalm::Database::Connector::fetch_row($sql, [$states_id], $c, 'NAME_lc');
 }
 
 sub states {
@@ -76,7 +76,7 @@ sub states {
     };
 
     # Add wildcard for LIKE
-    return TravellersPalm::Database::Connector::fetch_all($sql, [$category_hotel, "$country%"]);
+    return TravellersPalm::Database::Connector::fetch_all($sql, [$category_hotel, "$country%"], $c);
 }
 
 sub statesurl {
@@ -100,7 +100,7 @@ sub statesurl {
         WHERE   url LIKE ?
     };
 
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$url], '', 'NAME_lc');
+    return TravellersPalm::Database::Connector::fetch_row($sql, [$url], $c, 'NAME_lc');
 }
 
 1;
