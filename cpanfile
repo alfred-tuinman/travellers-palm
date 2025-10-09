@@ -12,3 +12,5 @@ requires 'Data::FormValidator';
 requires 'Data::Dumper';
 requires 'Geo::Location::TimeZone';
 requires 'Math::Polygon';
+requires 'HTTP::BrowserDetect';
+requires 'HTML::Strip'; 

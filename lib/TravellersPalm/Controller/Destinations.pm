@@ -52,12 +52,12 @@ sub show_region_list ($self) {
 
     $self->render(
         template   => 'regions',
-        metatags   => TravellersPalm::Database::General::metatags($REGIONS),
+        metatags   => TravellersPalm::Database::General::metatags(REGION()),
         writeup    => boldify($content->{writeup}),
-        page_title => url2text($REGIONS),
+        page_title => url2text(REGIONS()),
         regions    => regions(),
         crumb      => $crumb,
-        pathname   => $REGIONS,
+        pathname   => REGIONS,
         country    => $destination,
     );
 }
@@ -87,19 +87,19 @@ sub show_state_list ($self) {
     my $crumb = "<li>Destinations</li>"
         . "<li><a href='" . $self->req->url->base . "/destinations/$destination'>"
         . url2text($destination) . "</a></li>"
-        . "<li class='active'>" . url2text($STATES) . "</li>";
+        . "<li class='active'>" . url2text(STATES()) . "</li>";
 
     $self->render(
         template   => 'state',
-        metatags   => TravellersPalm::Database::General::metatags($STATES),
+        metatags   => TravellersPalm::Database::General::metatags(STATES()),
         writeup    => boldify(webtext(122)),
         states     => \@filtered,
         country    => $destination,
         random     => 1 + int(rand 35),
         crumb      => $crumb,
         call       => webtext(175),
-        page_title => url2text($STATES),
-        pathname   => $STATES,
+        page_title => url2text(STATES()),
+        pathname   => STATES(),
     );
 }
 

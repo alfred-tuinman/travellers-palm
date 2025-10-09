@@ -86,3 +86,11 @@ on your development machine. This locks module versions, ensuring consistent bui
 🔥 Result:
 You now have a single file (cpanfile) controlling all your CPAN dependencies.
 Your Docker builds become reproducible and faster, and you avoid forgetting a module.
+
+# Problem solving with code colour display
+Quick commands you can run in the project folder to help find problems:
+# show lines that start POD tags
+```grep -nE '^=(head|pod|begin|cut)' lib/TravellersPalm/Functions.pm```
+
+# show unmatched quotes roughly (not perfect):
+```perl -nle 'print "$.: $_" if /"/' lib/TravellersPalm/Functions.pm | wc -l ```
