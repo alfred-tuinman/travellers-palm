@@ -60,7 +60,13 @@ sub main_dbh  { shift->dbh(@_) }
 sub fetch_all {
     my ($class, $sql, $bind, $c) = @_;
     $bind //= [];
-    return $class->dbh($c)->selectall_arrayref($sql, { Slice => {} }, @$bind);
+    $class->dbh($c)->selectall_arrayref($sql, { Slice => {} }, @$bind);
+    
+    $c->dump_log('Database', "Fetching SQL = $sql with bind = " . join(", ", @$bind)." | Result = " . Dumper($class) );
+    # --- Add debug info to stash ---
+    push @{$c->stash->{debug_footer} ||= []}, "Fetched user: " . Dumper($class);
+
+    return $class;
 }
 
 sub fetch_row {
@@ -69,6 +75,8 @@ sub fetch_row {
     $key_case //= 'NAME';
 
     my $row = $class->dbh($c)->selectrow_hashref($sql, undef, @$bind);
+
+    $c->dump_log("Fetching SQL = $sql with $bind = " ,$row);
 
     if ($key_case eq 'NAME_lc' && $row) {
         my %lc = map { lc($_) => $row->{$_} } keys %$row;

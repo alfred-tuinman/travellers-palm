@@ -1,2 +1,189 @@
-<h2>[% message %]</h2>
-<p>Travelo is a demo travel booking platform built with Dancer2.</p>
+[% WRAPPER 'layouts/main.html.tt' %]
+[% INCLUDE layouts/header.html.tt %] 
+
+<section id="content">
+    <div class="container">
+        <div id="main">
+            <div class="image-style style1 large-block">
+                <ul class="image-block column-3 pull-left clearfix">
+                    <li><a href="#" class="middle-block"><img class="middle-item" src="[% IMAGE %]/about-us/staff_hema.jpg" height="80" width="80" alt="Hema" /></a></li>
+                    <li><a href="#" class="middle-block"><img class="middle-item" src="[% IMAGE %]/about-us/staff_ivan.jpg" height="80" width="80" alt="Ivan" /></a></li>
+                    <li><a href="#" class="middle-block"><img class="middle-item" src="[% IMAGE %]/about-us/staff_jenifer.jpg" height="80" width="80" alt="Jenifer" /></a></li>
+                    <li><a href="#" class="middle-block"><img class="middle-item" src="[% IMAGE %]/about-us/staff_krishna.jpg" height="80" width="80" alt="Krishna" /></a></li>
+                    <li><a href="#" class="middle-block"><img class="middle-item" src="[% IMAGE %]/about-us/staff_alfred.jpg" height="80" width="80" alt="Alfred" /></a></li>
+                    <li><a href="#" class="middle-block"><img class="middle-item" src="[% IMAGE %]/about-us/staff_prakash.jpg" height="80" width="80" alt="Prakash" /></a></li>
+                    <li><a href="#" class="middle-block"><img class="middle-item" src="[% IMAGE %]/about-us/staff_sirus.jpg" height="80" width="80" alt="Sirus" /></a></li>
+                    <li><a href="#" class="middle-block"><img class="middle-item" src="[% IMAGE %]/about-us/staff_sylvia.jpg" height="80" width="80" alt="Sylvia" /></a></li>
+                    <li><a href="#" class="middle-block"><img class="middle-item" src="[% IMAGE %]/about-us/staff_toletan.jpg" height="80" width="80" alt="Toletan" /></a></li>
+                </ul>
+                <h1>[% intro.title %]</h1>
+                <p>[% intro.writeup %]<a href="[% request.uri_base %]/contact-us" class="button btn-small sky-blue1">Get in Touch.</a>
+                </p>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="large-block">
+                <h2>Traveller's Palm Management Team</h2>
+                <div class="row image-box style1 ">
+                    <div class="col-sm-6 col-md-3">
+                        <article class="box">
+                            <div class="imageHolder">
+                                <a href="#"><img width="270" height="263" alt="[% hans.title %]" src="[% IMAGE %]/about-us/hans.jpg" /></a>
+                                <div class="caption">
+                                    <div class="odc-popup-text">[% hans.writeup %]</div>
+                                </div>
+                            </div>
+                            <div class="details text-center">
+                                <h4 class="box-title">[% hans.title %]</h4>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <article class="box">
+                            <div class="imageHolder">
+                                <img width="270" height="263" alt="[% sucheta.title %]" src="[% IMAGE %]/about-us/sucheta.jpg" />
+                                <div class="caption">
+                                    <div class="odc-popup-text">[% sucheta.writeup %]</div>
+                                </div>
+                            </div>
+                            <div class="details text-center">
+                             <h4 class="box-title">[% sucheta.title %]</h4>
+                         </div>
+                     </article>
+                 </div>
+                 <div class="col-sm-6 col-md-3">
+                    <article class="box">
+                        <div class="imageHolder">
+                            <img width="270" height="263" alt="[% phil.title %]" src="[% IMAGE %]/about-us/phil.jpg">
+                            <div class="caption">
+                                <div class="odc-popup-text">[% phil.writeup %]</div>
+                            </div>
+                        </div>
+                        <div class="details text-center">
+                           <h4 class="box-title">[% phil.title %]</h4>
+                       </div>
+                   </article>
+               </div>
+               <div class="col-sm-6 col-md-3">
+                <article class="box">
+                    <div class="imageHolder">
+                        <img width="270" height="263" alt="[% shalome.title %]" src="[% IMAGE %]/about-us/shalome.jpg" />
+                        <div class="caption">
+                           <div class="odc-popup-text">[% shalome.writeup %]</div>
+                       </div>
+                   </div>
+                   <div class="details text-center">
+                       <h4 class="box-title">[% shalome.title %]</h4>
+                   </div>
+               </article>
+           </div>
+       </div>
+   </div>
+
+   <div class="row large-block">
+    <div class="col-md-6">
+        <h2>Our Core values</h2>
+        <div class="tab-container box">
+            <ul class="tabs">
+                <li class="active"><a href="#philosophy" data-toggle="tab">[% philosophy.title %]</a></li>
+                <li><a href="#sustainable" data-toggle="tab">[% sustainable_tourism.title %]</a></li>
+                <li><a href="#responsible" data-toggle="tab">[% responsible_tourism.title %]</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="philosophy">
+                    <img data-src="[% IMAGE %]/about-us/our-philosophy.gif" alt="Travel philosophy" class="pull-left" />
+                    [% philosophy.writeup %]
+                </div>
+                <div class="tab-pane fade" id="sustainable">
+                    <img data-src="[% IMAGE %]/about-us/sustainable-tourism.gif" alt="Sustainable Tourism" class="pull-left" />
+                    [% sustainable_tourism.writeup %]
+                </div>
+                <div class="tab-pane fade" id="responsible">
+                    <img data-src="[% IMAGE %]/about-us/responsible.jpg" alt="Responsible tourism" class="pull-left" />
+                  [% responsible_tourism.writeup %]
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h2>Know More About Us</h2>
+        <div class="travelo-box">
+            <h2>[% meet_the_team.title %]</h2>                       
+            [% meet_the_team.writeup %]
+            <img data-src="[% IMAGE %]/about-us/travellers-palm.jpg" alt="Traveller's Palm"/>
+            <br><br>
+            <h2>[% what_is_travellers_palm.title %]</h2>
+            [% what_is_travellers_palm.writeup %]
+        </div>
+    </div>
+</div>
+</div>
+<div class="row large-block">
+    <div class="col-sm-6 col-md-3">
+        <div class="icon-box style3 counters-box">
+            <div class="numbers">
+                <i class="soap-icon-places yellow-color"></i>
+                <span class="display-counter" data-value="[% totalcities %]">[% totalcities %]</span>
+            </div>
+            <div class="description">Amazing Places To Visit</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="icon-box style3 counters-box">
+            <div class="numbers">
+                <i class="soap-icon-hotel blue-color"></i>
+                <span class="display-counter" data-value="[% totalitineraries %]">[% totalitineraries %]</span>
+            </div>
+            <div class="description">Interesting Trips We Offer</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="icon-box style3 counters-box">
+            <div class="numbers">
+                <i class="soap-icon-plane green-color"></i>
+                <span class="display-counter" data-value="[% totaltrains %]">[% totaltrains %]</span>
+            </div>
+            <div class="description">Trains To Travel On </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+
+        <div class="panel-content">
+            <p>Traveller's Palm is a registered trading name for Odyssey Tours &amp; Travels Pvt Ltd, incorporated in the state of Maharashtra, India</p>
+            <p>Registered office: 302 Sai Chambers, Santa Cruz East, Mumbai - 400 0551<br>
+CIN: U92410MH1992PTC066430</br>
+GST: 30 AAACO0488P 1ZA </p>
+        </div>                              
+    </div>
+</div>
+</div>
+</div> 
+</div>
+</section>
+
+[% INCLUDE layouts/footer.html.tt %] 
+[% END %]
+
+<!-- load revolution slider scripts -->
+<script type="text/javascript" src="[% request.uri_base %]/components/revolution_slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/components/revolution_slider/js/jquery.themepunch.revolution.min.js"></script>
+
+<!-- load BXSlider scripts -->
+<script type="text/javascript" src="[% request.uri_base %]/components/jquery.bxslider/jquery.bxslider.min.js"></script>
+
+<!-- Flex Slider -->
+<script type="text/javascript" src="[% request.uri_base %]/components/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- parallax -->
+<script type="text/javascript" src="[% request.uri_base %]/js/jquery.stellar.min.js"></script>
+
+<!-- waypoint -->
+<script type="text/javascript" src="[% request.uri_base %]/js/waypoints.min.js"></script>
+
+<!-- load page Javascript -->
+<script type="text/javascript" src="[% request.uri_base %]/js/theme-scripts.js"></script>
+<script type="text/javascript" src="[% request.uri_base %]/js/scripts.js"></script>
+
+
+</body>
+</html>

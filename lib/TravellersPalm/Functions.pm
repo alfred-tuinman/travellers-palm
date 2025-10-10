@@ -5,6 +5,7 @@ use warnings FATAL => 'all';
 
 use DateTime;
 use Date::Calc qw/Delta_Days check_date check_time/;
+use Data::Dumper qw(Dumper);
 use Date::Manip::Date;
 use Data::FormValidator;
 use Email::Valid;
@@ -17,6 +18,7 @@ use LWP::UserAgent;
 use POSIX qw(strftime);
 use Time::Local;
 use TravellersPalm::Model::Cities;
+use TravellersPalm::Database::General qw(web);
 # use URI;
 
 our @EXPORT = qw{
@@ -49,16 +51,30 @@ our @EXPORT = qw{
 # -----------------------------
 my $has_cities;
 my $cities_module;
+my $has_web;
+my $web_module;
 
 eval {
-    TravellersPalm::Model::Cities->import(qw(city web));
+    TravellersPalm::Model::Cities->import(qw(city));
     $has_cities = 1;
     $cities_module = 'TravellersPalm::Model::Cities';
+
+    if ($@) {
+        warn "Model::Cities not available: $@";
+        $has_cities = 0;
+    }
 };
-if ($@) {
-    warn "Model::Cities not available: $@";
-    $has_cities = 0;
-}
+
+eval {
+    TravellersPalm::Model::Web->import(qw(web));
+    $has_web = 1;
+    $web_module = 'TravellersPalm::Model::Web';
+
+    if ($@) {
+        warn "Model::Web not available: $@";
+        $has_web = 0;
+    }
+};
 
 # -----------------------------
 # Text Utilities
@@ -243,17 +259,44 @@ sub user_email {
 # -----------------------------
 # webtext using safe Model::Cities call
 # -----------------------------
+sub webtext2 {
+  my ($c_or_id, $id_maybe) = @_;
+
+  my ($c, $id);
+  if (ref $c_or_id && $c_or_id->can('app')) {
+      ($c, $id) = ($c_or_id, $id_maybe);
+  } else {
+      $id = $c_or_id;
+  }
+
+  # --- Fetch from DB or wherever ---
+  my $result = { id => $id, title => 'Example', text => 'Hello world' };
+
+  # --- Optional logging ---
+  $c->dump_log("Webtext fetched:", $result) if $c;
+
+  return $result;
+}
+
+
 sub webtext {
-    my $id = shift;
-    my $text = {};
-    if ($has_cities && $cities_module->can('web')) {
-        my $data = $cities_module->web($id);
-        my $rows = $data->{rows} // 0;
-        $text = $data->{data} // {};
-        $text->{writeup} = $rows > 0 ? boldify(addptags($text->{writeup})) : '';
+    my ($c, $id ) = @_;   # ID first, controller optional second
+
+    my $data = TravellersPalm::Database::General::web($c, $id);
+
+    if (defined $c && ref $c && $c->can('dump_log')) {
+        $c->dump_log("Webtext($id) returned:", $data);
     }
+
+    $data = {} unless ref $data eq 'HASH';
+    my $rows = $data->{rows} // 0;
+    my $text = $data->{data} // {};
+    $text->{writeup} = $rows > 0 ? boldify(addptags($text->{writeup})) : '';
+
     return $text;
 }
+
+
 
 sub weeknumber {
     my $date = shift;

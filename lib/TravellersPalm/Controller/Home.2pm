@@ -1,0 +1,183 @@
+package TravellersPalm::Controller::Home;
+
+use Mojo::Base 'Mojolicious::Controller', -signatures;
+use TravellersPalm::Functions qw(email_request webtext itineraries themes regions states itinerary itinerary_cost similartours daybyday youraccommodation placesyouwillvisit);
+use TravellersPalm::Database::General;
+use TravellersPalm::Database::Cities;
+use TravellersPalm::Database::Itineraries;
+use Template;
+use Data::Dumper;
+
+sub index ($self) {
+    $self->render(template => 'home');
+}
+
+sub about ($self) {
+    $self->render(
+        template                => 'about',
+        metatags                => TravellersPalm::Database::General::metatags('about-us'),
+        totalcities             => TravellersPalm::Database::Cities::totalcities(),
+        totalitineraries        => TravellersPalm::Database::Itineraries::totalitineraries(),
+        totaltrains             => TravellersPalm::Database::General::totaltrains(),
+        intro                   => webtext(9),
+        philosophy              => webtext(170),
+        sustainable_tourism     => webtext(171),
+        responsible_tourism     => webtext(172),
+        meet_the_team           => webtext(31),
+        why_travel_with_us      => webtext(12),
+        what_is_travellers_palm => webtext(8),
+        hans                    => webtext(164),
+        sucheta                 => webtext(165),
+        phil                    => webtext(166),
+        shalome                 => webtext(167),
+        crumb                   => ' <li class="active">About Us</li>',
+        page_title              => 'About Us',
+    );
+}
+
+sub contact_us ($self) {
+    my $params = $self->req->params->to_hash;
+    my ($ok, $error) = (0, 0);
+
+    if ($self->req->method eq 'POST') {
+        $ok = email_request($params);
+        $error = $ok ? 0 : 1;
+    }
+
+    $self->render(
+        template => 'contact',
+        error    => $error,
+        %$params
+    );
+}
+
+sub what_to_expect ($self) {
+    my $expect = webtext(21);
+
+    $self->log_debug({ params => $self->req->params->to_hash });
+
+    $self->render(
+        template        => 'what_to_expect',
+        metatags        => TravellersPalm::Database::General::metatags( (split '/', $self->req->url->path)[-1] ),
+        what_to_expect  => $expect,
+        special_hotels  => webtext(147),
+        eat_drink       => webtext(148),
+        private_car     => webtext(149),
+        travel_by_train => webtext(150),
+        fly_in_comfort  => webtext(151),
+        delays          => webtext(152),
+        before_you_go   => webtext(17),
+        getting_ready   => webtext(168),
+        right_attitude  => webtext(169),
+        crumb           => '<li class="active">'.$expect->{title}.'</li>',
+        page_title      => $expect->{title},
+    );
+}
+
+sub route_listing ($self, $destination, $option, $view, $order, $region) {
+    my $crumb = "<li>Destinations</li><li><a href=". $self->req->url->base ."/destinations/$destination>". $destination ."</a></li>";
+    my ($itineraries, $states, $state, $stateinfo, $state_writeup, $regioninfo, $places, $filter, $regions);
+
+    if ($option eq 'tailor') {
+        $itineraries = itineraries(option => 'itin', currency => 'EUR', order => $order);
+        $filter = 'tailor';
+        $crumb .= "<li class='active'>Tailor</li>";
+    }
+    elsif ($option eq 'regions') {
+        $itineraries = regions($region);
+        $regioninfo  = regionsurl($region);
+        $regions     = regions();
+        $filter      = 'regions';
+        $crumb .= "<li><a href='". $self->req->url->base ."/destinations/$destination/regions'>Regions</a></li><li class='active'>$regioninfo->{title}</li>";
+    }
+    elsif ($option eq 'states') {
+        $state = $region;
+        $stateinfo = statesurl($state);
+        $itineraries = toursinstate(state => $state, currency => 'EUR', order => $order);
+        $states = states($destination);
+        $filter = 'states';
+        $crumb .= "<li><a href='". $self->req->url->base ."/destinations/$destination/states'>States</a></li><li class='active'>$state</li>";
+        ($state_writeup, $places) = linkify($stateinfo->{webwriteup});
+    }
+
+    my ($min_duration, $max_duration, $min_cost, $max_cost) = (30, 0, 1_000_000, 0);
+    foreach my $trip (@$itineraries) {
+        $min_duration = $trip->{numdays} < $min_duration ? $trip->{numdays} : $min_duration;
+        $max_duration = $trip->{numdays} > $max_duration ? $trip->{numdays} : $max_duration;
+        $min_cost     = $trip->{cost} < $min_cost ? $trip->{cost} : $min_cost;
+        $max_cost     = $trip->{cost} > $max_cost ? $trip->{cost} : $max_cost;
+    }
+
+    if ($option eq 'states') {
+        $self->render(
+            template       => 'states',
+            metatags       => $stateinfo,
+            country        => $destination,
+            itineraries    => $itineraries,
+            states         => $states,
+            crumb          => $crumb,
+            filter         => $filter,
+            state          => $state,
+            state_intro    => $stateinfo->{writeup},
+            state_writeup  => $state_writeup,
+            cities         => $places,
+            display        => $view,
+            min_cost       => $min_cost,
+            max_cost       => $max_cost,
+            min_duration   => $min_duration,
+            max_duration   => $max_duration,
+        );
+    }
+    else {
+        $self->render(
+            template       => 'tours',
+            metatags       => $option eq 'regions' ? $regioninfo : { title => $option },
+            country        => $destination,
+            itineraries    => $itineraries,
+            filter         => $filter,
+            display        => $view,
+            pathname       => $option,
+            order          => $order,
+            min_cost       => $min_cost,
+            max_cost       => $max_cost,
+            min_duration   => $min_duration,
+            max_duration   => $max_duration,
+        );
+    }
+}
+
+sub route_itinerary ($self, $destination, $tour, $option, $theme) {
+    my $itinerary = itinerary($tour);
+
+    unless ($itinerary && ref $itinerary eq 'HASH') {
+        return $self->render(template => 'special_404', message => "$tour not found.", url => $self->req->url->path);
+    }
+
+    my $cost = itinerary_cost($itinerary->{fixeditin_id}, 'EUR');
+    my $startcity = city($itinerary->{startcity});
+    my $endcity   = city($itinerary->{endcity});
+    my $days      = $itinerary->{days} // '';
+    my $category  = $itinerary->{readytours} ? 'ready tour' : 'module';
+    my $inclusions = $itinerary->{inclusions};
+    my $daybyday   = daybyday($tour);
+    my $accommodation = youraccommodation($tour);
+    my $similartours  = similartours($startcity->{cities_id}, 'EUR');
+    my $placesyou     = placesyouwillvisit($tour);
+
+    $inclusions =~ s/\{/<br><h4>/g;
+    $inclusions =~ s/\}/<\/h4>/g;
+
+    $self->render(
+        template      => 'itinerary',
+        metatags      => $itinerary,
+        itinerary     => $itinerary,
+        cost          => $cost,
+        startcity     => $startcity,
+        endcity       => $endcity,
+        days          => $days,
+        category      => $category,
+        inclusions    => $inclusions,
+        daybyday      => $daybyday,
+        accommodation => $accommodation,
+        similartours  => $similartours,
+       

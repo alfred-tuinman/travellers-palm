@@ -4,7 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 use Exporter 'import';
 
-our @EXPORT_OK = qw(city web);
+our @EXPORT_OK = qw(city);
 
 sub city {
     my $id = shift;
@@ -16,18 +16,6 @@ sub city {
         latitude => 0,
         longitude => 0,
         writeup => "Writeup for city $id",
-    };
-}
-
-sub web {
-    my $id = shift;
-    return {
-        rows => 1,
-        data => {
-            writeup => "Sample writeup for web($id)",
-            title   => "Web page $id",
-            url     => "/web/$id.html",
-        },
     };
 }
 

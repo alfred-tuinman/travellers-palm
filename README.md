@@ -114,3 +114,67 @@ the first argument is always the controller object, and by convention, it’s na
 
 Inside plain modules (e.g., your TravellersPalm::Database::General),
 we don’t automatically have a controller object — we receive it as an argument, usually called $c for “context” or “controller”.
+
+# Cpanminus
+For development you would like to test the app locally for which you need the cpan modules. 
+
+Make sure cpan is installed 
+
+```sudo apt install cpanminus```
+
+Update and install essential build tools
+```bash
+sudo apt update
+sudo apt install -y build-essential curl wget git
+sudo apt install -y perl perl-modules perl-base
+sudo apt install -y libperl-dev 
+```
+
+DateTime and other XS modules often need system libraries:
+```bash
+sudo apt install -y \
+    libssl-dev libexpat1-dev libncurses5-dev libreadline-dev \
+    libsqlite3-dev zlib1g-dev libbz2-dev libffi-dev
+```
+These cover common modules like DateTime, DBI, DBD::SQLite, JSON::XS, etc.
+
+If you want a local install without sudo:
+```bash
+curl -L https://cpanmin.us | perl - --local-lib=~/perl5
+echo 'export PERL5LIB=~/perl5/lib/perl5:$PERL5LIB' >> ~/.bashrc
+echo 'export PATH=~/perl5/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+```
+Install modules from your CPANfile and to install the CPAN modules locally, if you haven't got a local perl folder
+
+```cpanm --installdeps --local-lib=~/perl5 . ```
+
+or else run
+
+```cpanm --installdeps . ```
+
+This may take some time, especially the first time, depending on the modules in your cpanfile. 
+
+
+Recreate your local Perl directory
+```mkdir -p ~/perl5/lib/perl5```
+
+Configure environment variables
+```bash
+export PERL_LOCAL_LIB_ROOT=~/perl5
+export PERL_MB_OPT="--install_base ~/perl5"
+export PERL_MM_OPT="INSTALL_BASE=~/perl5"
+export PATH=~/perl5/bin:$PATH
+export PERL5LIB=~/perl5/lib/perl5
+```
+Then reload the shell
+```source ~/.bashrc```
+
+Test that local::lib works
+```perl -Mlocal::lib```
+
+Optional: To avoid repeating the --local-lib option every time, set it globally for cpanm:
+```echo 'local::lib ~/perl5' >> ~/.cpanm/config ```
+
+## Dumper helper function
+TravellersPalm.pm has a helperfile called dump_log allowing a message with a variable to be called like $self->dump_log('Help me here with ',$var)

@@ -3,7 +3,7 @@ secrets:
   - f22ebd363e5fffa6826f785b72de3c50db11aa67
 
 db:
-  dsn: "dbi:SQLite:dbname=/var/app/myapp.db"
+  dsn: "dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db"
   username: ""
   password: ""
 

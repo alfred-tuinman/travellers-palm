@@ -2,23 +2,28 @@ package TravellersPalm::Model::Web;
 
 use strict;
 use warnings FATAL => 'all';
+use Data::Dumper qw(Dumper);
 use Exporter 'import';
+use TravellersPalm::Database::General qw(web);
 
 our @EXPORT_OK = qw(web);
 
 # Stub: returns sample structure expected by Functions::webtext
 sub web {
     my $id = shift;
+    return unless $id;
 
-    # Simulate a database/web fetch
+    my $data = web($id);
+
+    print "WEB $id is ".Dumper($data);
+    
     return {
         rows => 1,
         data => {
-            writeup => "Sample writeup for web id $id",
-            title   => "Sample Title",
-            meta_title => "Meta Title",
-            meta_descr => "Meta description",
-            meta_keywords => "keyword1, keyword2",
+            writeup => $data->{writeup},
+            title   => $data->{title},
+            pagename => $data->{pagename},
+            webpages_id => $data->{webpages_id},
         }
     };
 }

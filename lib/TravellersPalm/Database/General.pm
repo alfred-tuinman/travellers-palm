@@ -5,6 +5,8 @@ use warnings;
 
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row do_sql); 
+use Mojo::Log;
+use Data::Dumper;
 
 our @EXPORT_OK = qw( 
     categories   
@@ -269,21 +271,30 @@ sub webpages {
 # -----------------------------
 sub web {
     my ($c, $id) = @_;
-    return [] unless defined $id;
+    return { rows => 0, data => {} } unless defined $id;
 
     my $sql = q{
         SELECT srno, title, pagename, writeup, webpages_id
         FROM Web
         WHERE Web_id = ?
     };
-    my $text = fetch_row($sql, [$id], $c, 'NAME_lc');
+
+    $c->dump_log("Fetching SQL with bind = $id", $sql)
+        if $c && ref $c && $c->can('dump_log');
+
+    my $text = TravellersPalm::Database::Connector->fetch_row($sql, [$id], $c, 'NAME_lc');
+
+    $c->dump_log('Database web', $text)
+        if $c && ref $c && $c->can('dump_log');
 
     my $data = {
         rows => $text ? 1 : 0,
-        data => $text,
+        data => $text // {},
     };
 
     return $data;
 }
+
+
 
 1;

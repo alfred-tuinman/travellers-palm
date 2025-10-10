@@ -30,6 +30,7 @@ COPY script/ script/
 COPY templates/ templates/
 COPY public/ public/
 COPY config.yml config.yml
+COPY localdb/ localdb/
 
 # COPY localdb/Jadoo_2006.db localdb/Jadoo_2006.db
 
