@@ -178,3 +178,8 @@ Optional: To avoid repeating the --local-lib option every time, set it globally 
 
 ## Dumper helper function
 TravellersPalm.pm has a helperfile called dump_log allowing a message with a variable to be called like $self->dump_log('Help me here with ',$var)
+
+## Export
+Everything listed in @EXPORT is automatically imported into the caller’s namespace when they use your module.
+
+Everything listed in @EXPORT_OK is optionally exportable. It’s explicit — users must request it in their use statement.

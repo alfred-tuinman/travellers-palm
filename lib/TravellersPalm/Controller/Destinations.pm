@@ -2,6 +2,7 @@ package TravellersPalm::Controller::Destinations;
 
 use Mojo::Base 'Mojolicious::Controller', -signatures;
 use TravellersPalm::Functions qw(boldify email_request ourtime url2text webtext);
+use TravellersPalm::Controller::Itineraries;
 use TravellersPalm::Database::General qw(metatags); 
 use TravellersPalm::Database::States qw(states);
 use TravellersPalm::Database::Themes qw(themes);
@@ -33,10 +34,12 @@ sub show_tailor ($self) {
     my $view  = $arg[0];
     my $order = $arg[1] // 'popularity';
 
+    $self->dump_log("View is $view", $arg);
+
     if ($view =~ /^(grid|block|list)$/) {
-        TravellersPalm::FunctionsRouter::route_listing($destination, TAILOR(), $view, $order);
+        TravellersPalm::Controller::Itineraries::route_listing($destination, TAILOR(), $view, $order);
     } else {
-        TravellersPalm::FunctionsRouter::route_itinerary($destination, $view, TAILOR());
+        TravellersPalm::Controller::Itineraries::route_itinerary($destination, $view, TAILOR());
     }
 }
 

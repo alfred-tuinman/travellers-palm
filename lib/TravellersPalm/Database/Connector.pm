@@ -35,7 +35,7 @@ sub dbh {
 
     return $DBH if $DBH;
 
-    my $db_config = $c->app->config->{db} // croak "DB config missing in config.conf";
+    my $db_config = $c->app->config->{sqlserver} // croak "DB config missing in config.conf";
     my $dsn      = $db_config->{dsn}      // croak "dsn missing in db config";
     my $username = $db_config->{username} // '';
     my $password = $db_config->{password} // '';
