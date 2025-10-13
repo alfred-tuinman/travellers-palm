@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row do_sql); 
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute); 
 use Mojo::Log;
 use Data::Dumper;
 
@@ -27,7 +27,6 @@ our @EXPORT_OK = qw(
 # Categories
 # -----------------------------
 sub categories {
-    my ($c) = @_;
     my $sql = q{
         SELECT DISTINCT c.description,
                a2.categories_id,
@@ -44,14 +43,14 @@ sub categories {
           AND a2.categories_id IN (23,36,8)
         ORDER BY 3
     };
-    return fetch_all($sql, [], $c);
+    return fetch_all($sql, []);
 }
 
 # -----------------------------
 # Get country by column (like URL, id)
 # -----------------------------
 sub countries_url {
-    my ($c, $column, $country) = @_;
+    my ($column, $country) = @_;
     return unless $column && $country;
 
     my $sql = qq{
@@ -59,14 +58,14 @@ sub countries_url {
         FROM countries
         WHERE $column = ?
     };
-    return fetch_row($sql, [$country], $c, 'NAME_lc');
+    return fetch_row($sql, [$country], 'NAME_lc');
 }
 
 # -----------------------------
 # Day-by-day itinerary for tour
 # -----------------------------
 sub daybyday {
-    my ($c, $tour) = @_;
+    my ($tour) = @_;
     return [] unless defined $tour;
     
     my $sql = q{
@@ -80,14 +79,14 @@ sub daybyday {
         WHERE f.url LIKE ?
         ORDER BY c.dayno
     };
-    return fetch_all($sql, [$tour], $c);
+    return fetch_all($sql, [$tour]);
 }
 
 # -----------------------------
 # Hotel info
 # -----------------------------
 sub hotel {
-    my ($c, $hotel_id) = @_;
+    my ($hotel_id) = @_;
     return [] unless defined $hotel_id;
     
     my $sql = q{
@@ -113,14 +112,14 @@ sub hotel {
           AND a.categories_id IN (23,36,8)
     };
     
-    return fetch_row($sql, [$hotel_id], $c, 'NAME_lc');
+    return fetch_row($sql, [$hotel_id], 'NAME_lc');
 }
 
 # -----------------------------
 # Meta tags
 # -----------------------------
 sub metatags {
-    my ($c, $url) = @_;
+    my ($url) = @_;
     return [] unless defined $url;
 
     my $sql = q{
@@ -129,14 +128,13 @@ sub metatags {
         WHERE url = ?
     };
     
-    return fetch_row($sql, [$url], $c, 'NAME_lc');
+    return fetch_row($sql, [$url], 'NAME_lc');
 }
 
 # -----------------------------
 # Modules / tours list
 # -----------------------------
 sub modules {
-    my ($c) = @_;
     my %args = (
         currency => 'USD',
         order    => 'popularity',
@@ -187,14 +185,13 @@ sub modules {
           AND inactivewef IS NULL
         ORDER BY $order_by
     };
-    return fetch_all($sql, [$args{currency}, $args{region}], $c);
+    return fetch_all($sql, [$args{currency}, $args{region}]);
 }
 
 # -----------------------------
 # Region names
 # -----------------------------
 sub regionnames {
-    my ($c) = @_;
 
     my $sql = q{
         SELECT title
@@ -202,14 +199,14 @@ sub regionnames {
         ORDER BY orderno
     };
     
-    return fetch_all($sql,[], $c);
+    return fetch_all($sql,[]);
 }
 
 # -----------------------------
 # Regions
 # -----------------------------
 sub regions {
-    my ($c, $order) = @_;
+    my ($order) = @_;
     return 'orderno' unless defined $order;
 
     $order = 'title' if $order =~ /name/i;
@@ -220,14 +217,14 @@ sub regions {
         FROM regions
         ORDER BY $order
     };
-    return fetch_all($sql, [], $c);
+    return fetch_all($sql, []);
 }
 
 # -----------------------------
 # Region by URL
 # -----------------------------
 sub regionsurl {
-    my ($c, $url) = @_;
+    my ($url) = @_;
     return [] unless defined $url;
 
     my $sql = q{
@@ -236,17 +233,15 @@ sub regionsurl {
         WHERE url = ?
     };
 
-    return fetch_row($sql, [$url], $c, 'NAME_lc');
+    return fetch_row($sql, [$url], 'NAME_lc');
 }
 
 # -----------------------------
 # Total trains
 # -----------------------------
 sub totaltrains {
-    my ($c) = @_;
-
     my $sql = q{ SELECT startname FROM zz_trains };
-    my $rows = fetch_all($sql, [], $c);
+    my $rows = fetch_all($sql, []);
     
     return scalar @$rows;
 }
@@ -255,7 +250,7 @@ sub totaltrains {
 # Webpages
 # -----------------------------
 sub webpages {
-    my ($c, $id) = @_;
+    my ($id) = @_;
     return [] unless defined $id;
 
     my $sql = q{
@@ -263,14 +258,14 @@ sub webpages {
         FROM webpages
         WHERE webpages_id = ?
     };
-    return fetch_row($sql, [$id], $c, 'NAME_lc');
+    return fetch_row($sql, [$id], 'NAME_lc');
 }
 
 # -----------------------------
 # Web entry
 # -----------------------------
 sub web {
-    my ($c, $id) = @_;
+    my ($id) = @_;
     return { rows => 0, data => {} } unless defined $id;
 
     my $sql = q{
@@ -279,13 +274,7 @@ sub web {
         WHERE Web_id = ?
     };
 
-    $c->dump_log("Fetching SQL with bind = $id", $sql)
-        if $c && ref $c && $c->can('dump_log');
-
-    my $text = TravellersPalm::Database::Connector->fetch_row($sql, [$id], $c, 'NAME_lc');
-
-    $c->dump_log('Database web', $text)
-        if $c && ref $c && $c->can('dump_log');
+    my $text = TravellersPalm::Database::Connector->fetch_row($sql, [$id], 'NAME_lc');
 
     my $data = {
         rows => $text ? 1 : 0,

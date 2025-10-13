@@ -13,7 +13,7 @@ our @EXPORT_OK = qw(
 );
 
 sub state {
-    my ($c, $states_id) = @_;
+    my ($states_id) = @_;
     return [] unless defined $states_id;
 
     my $sql = q{
@@ -35,11 +35,11 @@ sub state {
         WHERE   states_id = ?
     };
 
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$states_id], $c, 'NAME_lc');
+    return TravellersPalm::Database::Connector::fetch_row($sql, [$states_id], 'NAME_lc');
 }
 
 sub states {
-    my ($c, $country, $order) = @_;
+    my ($country, $order) = @_;
     $order //= 'state';
 
     # sanitize order column
@@ -76,11 +76,11 @@ sub states {
         ORDER BY $order
     };
 
-    return TravellersPalm::Database::Connector::fetch_all($sql, [$category_hotel, "$country%"], $c);
+    return TravellersPalm::Database::Connector::fetch_all($sql, [$category_hotel, "$country%"]);
 }
 
 sub statesurl {
-    my ($c, $url) = @_;
+    my ($url) = @_;
     return [] unless defined $url;
 
     my $sql = q{
@@ -101,7 +101,7 @@ sub statesurl {
         WHERE   url LIKE ?
     };
 
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$url], $c, 'NAME_lc');
+    return TravellersPalm::Database::Connector::fetch_row($sql, [$url], 'NAME_lc');
 }
 
 1;

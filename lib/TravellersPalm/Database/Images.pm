@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row insert update delete);
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
 
 our @EXPORT_OK = qw( 
     imageproperties
@@ -22,7 +22,7 @@ our @EXPORT_OK = qw(
 # Get image properties by category and type
 # -----------------------------
 sub imageproperties {
-    my ($c, $imgcat, $imgtype) = @_;
+    my ($imgcat, $imgtype) = @_;
     return 0 unless defined $imgcat && defined $imgtype;
 
     my $sql = q{
@@ -35,14 +35,14 @@ sub imageproperties {
         FROM imageproperties
         WHERE imagecategories_id = ? AND imagetypes_id = ?
     };
-    return fetch_row($sql, [$imgcat, $imgtype], $c, 'NAME_lc');
+    return fetch_row($sql, [$imgcat, $imgtype], 'NAME_lc');
 }
 
 # -----------------------------
 # Get image properties by ID
 # -----------------------------
 sub imageproperties_id {
-    my ($c, $id) = @_;
+    my ($id) = @_;
     return 0 unless defined $id;
 
     my $sql = q{
@@ -55,14 +55,14 @@ sub imageproperties_id {
         FROM imageproperties
         WHERE imageproperties_id = ?
     };
-    return fetch_row($sql, [$id], $c, 'NAME_lc');
+    return fetch_row($sql, [$id], 'NAME_lc');
 }
 
 # -----------------------------
 # Get single image by name
 # -----------------------------
 sub image {
-    my ($c, $image_name) = @_;
+    my ($image_name) = @_;
     return [] unless defined 0;
 
     my $sql = q{
@@ -82,14 +82,14 @@ sub image {
         FROM images
         WHERE imagename LIKE ?
     };
-    return fetch_row($sql, [$imagename], $c, 'NAME_lc');
+    return fetch_row($sql, [$image_name], 'NAME_lc');
 }
 
 # -----------------------------
 # Get multiple images by object/category/type
 # -----------------------------
 sub images {
-    my ($c, $id, $category, $type) = @_;
+    my ($id, $category, $type) = @_;
     $id       //= 0;
     $category //= 0;
     $type     //= 0;
@@ -115,14 +115,14 @@ sub images {
         ORDER BY imagename
         LIMIT 10
     };
-    return fetch_all($sql, [$id, $category, $type], $c);
+    return fetch_all($sql, [$id, $category, $type]);
 }
 
 # -----------------------------
 # Get all images in a category
 # -----------------------------
 sub imagesall {
-    my ($c, $id) = @_;
+    my ($id) = @_;
     return 0 unless defined $id;
 
     my $sql = qq{
@@ -131,25 +131,24 @@ sub imagesall {
         WHERE ImageCategories_id = ?
         ORDER BY imagename
     };
-    return fetch_all($sql, [$id], $c);
+    return fetch_all($sql, [$id]);
 }
 
 # -----------------------------
 # Delete image by name
 # -----------------------------
 sub images_delete {
-    my ($c, $image_name) = @_;
+    my ($image_name) = @_;
     return unless defined $image_name;
     my $sql = q{DELETE FROM images WHERE imagename LIKE ?};
-    delete($sql, [$image_name], $c);
+    execute($sql, [$image_name]);
 }
 
 # -----------------------------
 # Get images for dropdown
 # -----------------------------
 sub images_dropdown {
-    my ($c) = @_;
-
+   
     my $sql = q{
         SELECT imagefolder,
                (SELECT imagetype FROM imagetypes WHERE imagetypes_id = p.imagetypes_id) AS imagetype,
@@ -161,15 +160,14 @@ sub images_dropdown {
         FROM ImageProperties p
         ORDER BY imagefolder
     };
-    return fetch_all($sql, $c);
+    return fetch_all($sql);
 }
 
 # -----------------------------
 # Insert or update image
 # -----------------------------
 sub images_update {
-    my ($c) = @_;
-
+   
     my %args = (
         alttag             => '',
         filesize           => 0,
@@ -206,7 +204,7 @@ sub images_update {
         my $sql = "UPDATE images SET " . join(", ", @fields) . " WHERE images_id = ?";
         push @values, $onfile->{images_id};
 
-        update($sql, @values, $c);
+        execute($sql, @values);
 
         return { status => 1, message => lc $args{imagename} . ' updated' };
     }
@@ -227,7 +225,7 @@ sub images_update {
         }
 
         my $sql = sprintf("INSERT INTO images (%s) VALUES (%s)", join(',', @cols), join(',', @placeholders));
-        insert($sql, @values, $c);
+        execute($sql, @values);
 
         return { status => 1, message => lc $args{imagename} . ' inserted' };
     }
@@ -239,13 +237,13 @@ sub images_update {
 # Get image upload types for a category
 # -----------------------------
 sub imgupload_type {
-    my ($c, $imgcat) = @_;
+    my ($imgcat) = @_;
     return 0 unless defined $imgcat;
 
     my $sql = "SELECT t.imagetypes_id, t.imagetype FROM imagetypes t";
     $sql .= " INNER JOIN imageproperties p ON t.imagetypes_id = p.imagetypes_id WHERE p.imagecategories_id = ?" if $imgcat > 0;
 
-    return fetch_all($sql, $imgcat > 0 ? [$imgcat] : [], $c);
+    return fetch_all($sql, $imgcat > 0 ? [$imgcat] : []);
 }
 
 1;

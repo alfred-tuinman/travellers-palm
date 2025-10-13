@@ -8,6 +8,7 @@ use File::Spec;
 use POSIX qw(strftime);
 use Term::ANSIColor;
 use TravellersPalm::Constants qw(:all);
+use TravellersPalm::Database::Connector qw(setup);
 
 
 # ----------------------
@@ -29,7 +30,28 @@ sub startup ($self) {
     $self->{config} = $config;
     $self->log->level('debug');
 
+    # Load config (with database credentials)
+    #    my $config = $self->plugin('Config');
+  
+    # Register a helper for DB calls with automatic error handling
+    $self->helper(db_call => sub ($c, $db_func, @args) {
+        my $result = eval { $db_func->(@args) };
+        if ($@) {
+            $c->app->log->error("DB exception: $@");
+            return $c->render(status => 500, json => { error => 'Database exception' });
+        }
 
+        if ($result->{error}) {
+            $c->app->log->error("DB error: $result->{error}");
+            return $c->render(status => 500, json => { error => 'Database error' });
+        }
+
+        return $result;
+        }
+    );
+
+    # Initialize the connector once
+    TravellersPalm::Database::Connector->setup($self);
     
     # ----------------------------
     # --- COLORED LOG FORMATTER ---
@@ -164,7 +186,11 @@ sub startup ($self) {
 
     # Destinations
     $r->get('/destinations/:destination')->to('destinations#show_destination');
-    $r->any(['GET','POST'],'/destinations/*/*')->to('destinations#show_tailor');
+    $r->get('/destinations/:destination/tailor/:view/:order' => [order => qr/.*/)
+      ->to('itineraries#route_listing')
+      ->name('route_listing')
+      ->over(view => qr/^(grid|block|list)$/);
+
     $r->get('/destinations/*/'.REGIONS())->to('destinations#show_region_list');
     $r->get('/destinations/*/'.REGIONS().'/*')->to('destinations#show_region_detail');
     $r->get('/destinations/*/'.STATES())->to('destinations#show_state_list');
@@ -190,6 +216,9 @@ sub startup ($self) {
     # API
     $r->get('/api/ping')->to('api#ping');
     $r->get('/api/user/:id')->to('api#user_info');
+
+    # Itineraries
+    $r->get('/destinations/:destination/:option/:view/:order/:region')->to('itineraries#route_listing');
 
 
     # Catch-all 404

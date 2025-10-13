@@ -4,20 +4,20 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row insert update);
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
 use Data::Dumper;
 use Digest::MD5 qw(md5_hex);
 use DateTime;
 
 our @EXPORT_OK = qw( 
-    user_exist
-    user_ok
-    user_update
-    update_password
     generate_password
     register_email
     register_user 
     send_password
+    update_password
+    user_exist
+    user_ok
+    user_update
 );
 
 
@@ -45,7 +45,7 @@ sub update_password {
 
     my $hash = md5_hex($newpass);
     my $sql  = "UPDATE users SET password = ? WHERE rowid = ?";
-    TravellersPalm::Database::Connector::update($sql, [$hash, $userid],$c);
+    TravellersPalm::Database::Connector::execute($sql, [$hash, $userid],$c);
 
     return 1;
 }
@@ -85,7 +85,7 @@ sub register_user {
 
     print STDERR Dumper([$emailid, 1, $now]);
 
-    TravellersPalm::Database::Connector::insert($sql, [$emailid, 1, $now], $c);
+    TravellersPalm::Database::Connector::execute($sql, [$emailid, 1, $now], $c);
     return 1;
 }
 
@@ -113,7 +113,7 @@ sub user_update {
 
     my $hash = md5_hex($password);
     my $sql  = "UPDATE users SET password = ? WHERE rowid = ?";
-    TravellersPalm::Database::Connector::update($sql, [$hash, $userid], $c);
+    TravellersPalm::Database::Connector::execute($sql, [$hash, $userid], $c);
 
     return 1;
 }

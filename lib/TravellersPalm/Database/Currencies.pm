@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row insert);
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
 use TravellersPalm::Functions qw(currencies);
 
 our @EXPORT_OK = qw(
@@ -20,7 +20,7 @@ our @EXPORT_OK = qw(
 # List currencies
 # -----------------------------
 sub currencies {
-    my ($c, $currencycode) = @_;
+    my ($currencycode) = @_;
     $currencycode = '' unless defined $currencycode;
 
     $currencycode = uc $currencycode;
@@ -44,14 +44,14 @@ sub currencies {
 
     $sql .= ' ORDER BY currencycode';
 
-    return fetch_all($sql, \@bind, $c);
+    return fetch_all($sql, \@bind);
 }
 
 # -----------------------------
 # Get or default currency
 # -----------------------------
 sub currency {
-    my ($c, $newcurrency) = @_;
+    my ($newcurrency) = @_;
     my $currency = 'USD';
 
     if (defined $newcurrency) {
@@ -66,7 +66,7 @@ sub currency {
 # Latest exchange rate for a currency
 # -----------------------------
 sub exchangerate {
-    my ($c, $currencycode) = @_;
+    my ($currencycode) = @_;
     return 0 unless $currencycode;
 
     my $sql = q{
@@ -78,7 +78,7 @@ sub exchangerate {
         LIMIT 1
     };
 
-    my $row = fetch_row($sql, [$currencycode], $c);
+    my $row = fetch_row($sql, [$currencycode]);
     return $row ? $row->{exchangerate} : 0;
 }
 
@@ -86,7 +86,6 @@ sub exchangerate {
 # Today's exchange rates
 # -----------------------------
 sub exchange_rates {
-    my ($c) = @_;
     
     my $sql = q{
         SELECT currency, exchange_rate, strftime('%d/%m/%Y', datetime(date, 'unixepoch')) AS date
@@ -95,14 +94,13 @@ sub exchange_rates {
         ORDER BY currency DESC
     };
     
-    return fetch_all($sql,[], $c);
+    return fetch_all($sql,[]);
 }
 
 # -----------------------------
 # Historical exchange rates for key currencies
 # -----------------------------
 sub exchange_rates_historical {
-    my ($c) = @_;
 
     my $sql = q{
         SELECT currency, strftime('%d/%m/%Y', datetime(date, 'unixepoch')) AS date, exchange_rate
@@ -115,7 +113,7 @@ sub exchange_rates_historical {
     my %data;
 
     foreach my $cur (@currencies) {
-        $data{$cur} = fetch_all($sql, [$cur], $c);
+        $data{$cur} = fetch_all($sql, [$cur]);
     }
 
     return \%data;
@@ -125,7 +123,7 @@ sub exchange_rates_historical {
 # Insert new exchange rates
 # -----------------------------
 sub exchange_rates_update {
-    my ($c, $rates) = @_;
+    my ($rates) = @_;
 
     my $sql = q{
         INSERT INTO exchange_rates (currency, date, exchange_rate)
@@ -133,7 +131,7 @@ sub exchange_rates_update {
     };
 
     foreach my $cur (qw(AUD EUR GBP USD)) {
-        insert($sql, [$cur, $rates->{$cur}], $c);
+        execute($sql, [$cur, $rates->{$cur}]);
     }
 
     return exchange_rates();

@@ -17,7 +17,7 @@ our @EXPORT_OK = qw(
 );
 
 sub subthemes {
-    my ($c, $themes_id) = @_;
+    my ($themes_id) = @_;
     return [] unless defined $themes_id;
 
     my $sql = q{
@@ -33,11 +33,11 @@ sub subthemes {
         ORDER BY title
     };
     
-    return TravellersPalm::Database::Connector::fetch_all($sql, [$themes_id], $c);
+    return TravellersPalm::Database::Connector::fetch_all($sql, [$themes_id]);
 }
 
 sub subthemes_id {
-    my ($c, $subthemes_id) = @_;
+    my ($subthemes_id) = @_;
     return [] unless defined $subthemes_id;
 
     my $sql = q{
@@ -52,11 +52,11 @@ sub subthemes_id {
         WHERE   subthemes_id = ?
     };
     
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$subthemes_id], $c, 'NAME_lc');
+    return TravellersPalm::Database::Connector::fetch_row($sql, [$subthemes_id], 'NAME_lc');
 }
 
 sub themes {
-    my ($c, $parameter, $order) = @_;
+    my ($parameter, $order) = @_;
     $order //= 'title';
     
     my $condition = '';
@@ -82,11 +82,11 @@ sub themes {
         ORDER BY $order_by
     };
 
-    return TravellersPalm::Database::Connector::fetch_all($sql, [], $c);
+    return TravellersPalm::Database::Connector::fetch_all($sql, []);
 }
 
 sub themes_subthemes {
-    my ($c, $themes_id) = @_;
+    my ($themes_id) = @_;
     return [] unless defined $themes_id;
 
     my $sql = q{
@@ -104,11 +104,11 @@ sub themes_subthemes {
         ORDER BY s.subthemes_id
     };
 
-    return TravellersPalm::Database::Connector::fetch_all($sql, [$themes_id], $c);
+    return TravellersPalm::Database::Connector::fetch_all($sql, [$themes_id]);
 }
 
 sub themes_url {
-    my ($c, $theme) = @_;
+    my ($theme) = @_;
     return [] unless defined $theme;
 
     my $sql = q{
@@ -124,11 +124,11 @@ sub themes_url {
         WHERE   url LIKE ?
     };
 
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$theme], $c, 'NAME_lc');
+    return TravellersPalm::Database::Connector::fetch_row($sql, [$theme], 'NAME_lc');
 }
 
 sub themetrips {
-    my ($c, $tour, $currency, $order) = @_;
+    my ($tour, $currency, $order) = @_;
     $currency //= 'USD';
     $order    //= 'popularity';
 
@@ -200,11 +200,11 @@ sub themetrips {
         ORDER BY $order_by
     };
 
-    return TravellersPalm::Database::Connector::fetch_all($sql, [$currency, $tour], $c);
+    return TravellersPalm::Database::Connector::fetch_all($sql, [$currency, $tour]);
 }
 
 sub themeurl {
-    my ($c, $url) = @_;
+    my ($url) = @_;
     return [] unless defined $url;
 
     my $sql = q{
@@ -219,7 +219,7 @@ sub themeurl {
         WHERE   url LIKE ?
     };
     
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$url], $c, 'NAME_lc');
+    return TravellersPalm::Database::Connector::fetch_row($sql, [$url], 'NAME_lc');
 }
 
 1;

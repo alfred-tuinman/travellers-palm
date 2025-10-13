@@ -25,3 +25,4 @@ requires 'Template::Plugin::Comma';
 requires 'Term::ANSIColor';
 requires 'Time::Local';
 requires 'YAML::XS';
+requires 'Try::Tiny';

@@ -2,8 +2,8 @@ package TravellersPalm::Controller::Destinations;
 
 use Mojo::Base 'Mojolicious::Controller', -signatures;
 use TravellersPalm::Functions qw(boldify email_request ourtime url2text webtext);
-use TravellersPalm::Controller::Itineraries;
-use TravellersPalm::Database::General qw(metatags); 
+use TravellersPalm::Database::Itineraries qw(itinerary itinerary_cost);
+use TravellersPalm::Database::General qw(metatags regionsurl); 
 use TravellersPalm::Database::States qw(states);
 use TravellersPalm::Database::Themes qw(themes);
 use TravellersPalm::Constants qw(:all);
@@ -30,8 +30,8 @@ sub show_destination ($self) {
 # → tailor listings
 sub show_tailor ($self) {
     my ($destination, $arg) = @{ $self->stash('splat') // [] };
-    my @arg = ref $arg eq 'ARRAY' ? @$arg : ();
-    my $view  = $arg[0];
+    my @arg   = ref $arg eq 'ARRAY' ? @$arg : ();
+    my $view  = $arg[0] // 'list';
     my $order = $arg[1] // 'popularity';
 
     $self->dump_log("View is $view", $arg);
@@ -53,12 +53,18 @@ sub show_region_list ($self) {
         . url2text($destination) . "</a></li>"
         . "<li class='active'>" . url2text(REGIONS()) . "</li>";
 
+    my $metatags = TravellersPalm::Database::General::metatags($self,REGION());
+    if ($metatags->{error}) {
+        $self->app->log->error("DB error: $metatags->{error}");
+        return $self->render(status => 500, json => { error => 'Database error' });
+    }
+    
     $self->render(
         template   => 'regions',
-        metatags   => TravellersPalm::Database::General::metatags($self,REGION()),
+        metatags   => $metatags,
         writeup    => boldify($content->{writeup}),
         page_title => url2text(REGIONS()),
-        regions    => regions(),
+        regions    => TravellersPalm::Database::General::regions(),
         crumb      => $crumb,
         pathname   => REGIONS(),
         country    => $destination,

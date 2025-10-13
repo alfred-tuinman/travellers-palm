@@ -23,8 +23,8 @@ our @EXPORT_OK = qw(
 # Airports
 # -----------------------------
 sub airports {
-    my ($c, $country) = @_;
-    return [] unless defined 0;
+    my ($country) = @_;
+    return [] unless defined $country;
 
     my $sql = q{
         SELECT city, RTRIM(citycode) AS citycode
@@ -34,11 +34,11 @@ sub airports {
         ORDER BY c.city
     };
 
-    return fetch_row($sql, [$country], $c);
+    return fetch_row($sql, [$country]);
 }
 
 sub get_airports_by_country {
-    my ($c, $country) = @_;
+    my ($country) = @_;
     $country = 0 unless defined $country;
 
     my $sql = q{
@@ -49,14 +49,14 @@ sub get_airports_by_country {
         ORDER BY c.city
     };
 
-    return fetch_all($sql, [$country], $c);
+    return fetch_all($sql, [$country]);
 }
 
 # -----------------------------
 # City Details
 # -----------------------------
 sub city {
-    my ($c, $cities_id) = @_;
+    my ($cities_id) = @_;
     return [] unless defined $cities_id;
 
     my $sql = q{
@@ -102,14 +102,14 @@ sub city {
         WHERE cities_id = ?
     };
 
-    return fetch_row($sql, [$cities_id], $c, 'NAME_lc');
+    return fetch_row($sql, [$cities_id], 'NAME_lc');
 }
 
 # -----------------------------
 # Hotels in a city
 # -----------------------------
 sub cityhotels {
-    my ($c, $cityid) = @_;
+    my ($cityid) = @_;
 
     my $sql = q{
         SELECT wh.hotel_id, wh.hotel, wh.description, wh.category, wh.categoryname, dh.addressbook_id AS isdefault
@@ -141,23 +141,23 @@ sub cityhotels {
         ORDER BY category
     };
     
-    return fetch_all($sql, [$cityid], $c);
+    return fetch_all($sql, [$cityid]);
 }
 
 # -----------------------------
 # City ID lookup
 # -----------------------------
 sub cityid {
-    my ($c, $city) = @_;
+    my ($city) = @_;
     my $sql = q{SELECT cities_id FROM cities WHERE city = ?};
-    return fetch_row($sql, [$city], $c);
+    return fetch_row($sql, [$city]);
 }
 
 # -----------------------------
 # Themes in a city
 # -----------------------------
 sub citythemes {
-    my ($c, $subthemes_id) = @_;
+    my ($subthemes_id) = @_;
     my $sql = q{
         SELECT s.cities_id AS id,
                c.city AS name,
@@ -168,44 +168,44 @@ sub citythemes {
         JOIN cities c ON c.cities_id = s.cities_id
         WHERE s.subthemes_id = ?
     };
-    return fetch_all($sql, [$subthemes_id], $c);
+    return fetch_all($sql, [$subthemes_id]);
 }
 
 # -----------------------------
 # Ideas in a city
 # -----------------------------
 sub cityidea {
-    my ($c, $cities_id) = @_;
+    my ($cities_id) = @_;
     my $sql = q{
         SELECT idea_id, title, description, pic1, pic2
         FROM cityideas
         WHERE cities_id = ?
         ORDER BY title
     };
-    return fetch_all($sql, [$cities_id], $c);
+    return fetch_all($sql, [$cities_id]);
 }
 
 # -----------------------------
 # Nearby cities
 # -----------------------------
 sub nearcities {
-    my ($c, $cityid) = @_;
+    my ($cityid) = @_;
     my $sql = q{
         SELECT c.cities_id, c.city, c.oneliner, c.writeup, c.latitude, c.longitude
         FROM cities c
         JOIN nearcities n ON c.cities_id = n.cities_id
         WHERE c.display = 1 AND n.maincities_id = ?
     };
-    return fetch_all($sql, [$cityid], $c);
+    return fetch_all($sql, [$cityid]);
 }
 
 # -----------------------------
 # Random cities (excluding main and nearby)
 # -----------------------------
 sub randomcities {
-    my ($c, $cityid) = @_;
+    my ($cityid) = @_;
     
-    my $all_sql = q{
+    my $sql = q{
         SELECT DISTINCT c.cities_id, c.city
         FROM cities c
         JOIN defaulthotels dh ON dh.cities_id = c.cities_id
@@ -213,7 +213,7 @@ sub randomcities {
         ORDER BY c.city
     };
     
-    my $all_cities = fetch_all($all_sql, [], $c);
+    my $all_cities = fetch_all($sql, []);
     my %seen = map { $_ => 1 } ($cityid, map { $_->{cities_id} } @{ nearcities($cityid) });
     my @rndcities = grep { !$seen{ $_->{cities_id} } } @$all_cities;
 
@@ -224,14 +224,13 @@ sub randomcities {
 # Total cities count
 # -----------------------------
 sub totalcities {
-    my ($c) = @_;
     my $sql = q{
         SELECT DISTINCT c.cities_id
         FROM cities c
         JOIN defaulthotels dh ON dh.cities_id = c.cities_id
         WHERE c.nighthalt = 1 AND c.display = 1 AND c.countries_id = 200
     };
-    my $rows = fetch_all($sql, [], $c);
+    my $rows = fetch_all($sql, []);
     return scalar @$rows;
 }
 

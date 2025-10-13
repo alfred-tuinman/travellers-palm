@@ -1,27 +1,40 @@
 package TravellersPalm::Controller::Home;
 
 use Mojo::Base 'Mojolicious::Controller', -signatures;
-use TravellersPalm::Functions qw(email_request webtext);
+use TravellersPalm::Functions qw(email_request user_is_registered user_email webtext);
+use TravellersPalm::Database::Themes qw(themes);
+use TravellersPalm::Database::Cities qw(totalcities);
+use TravellersPalm::Database::Itineraries qw(totalitineraries);
+use TravellersPalm::Database::General qw(metatags web webpages totaltrains);
 use Data::Dumper;
 
-# $Data::Dumper::Indent = 1;   # pretty-print with indentation
-
-# use TravellersPalm::Database::General;
-
-
 sub index ($self) {
-    my $tags = metatags => TravellersPalm::Database::General::metatags( 
-      ( split '/', $self->req->url->path )[-1] );
-    my $slidetext = web(163);
-    my @slides    = $slidetext->{data}->{writeup} =~ /\G(?=.)([^\n]*)\n?/sg;
-  
+    my $page = (split '/', $self->req->url->path)[-1];    
+    my $tags = $self->db_call(\&TravellersPalm::Database::General::metatags,$page) or return;
+
+  #  my $tags = metatags => TravellersPalm::Database::General::metatags( 
+  #    ( split '/', $self->req->url->path )[-1] );
+    if ($tags->{error}) {
+        $self->app->log->error("DB error: $tags->{error}");
+        return $self->render(status => 500, json => { error => 'Database error' });
+    }
+
+    my $slidetext = TravellersPalm::Database::General::web(163);
+    if ($slidetext->{error}) {
+        $self->app->log->error("DB error: $slidetext->{error}");
+        return $self->render(status => 500, json => { error => 'Database error' });
+    }
+    
+    my $writeup = $slidetext->{data}->{writeup} // '';
+    my @slides  = split /\n/, $writeup;
+ 
     unshift @slides, 'dummy item';
 
     $self->render(
         template => 'home',
-        metatags             => webpages(6),
-        themes               => themes('LIMIT'),
-        tripideas            => themes('TRIPIDEAS'),
+        metatags             => TravellersPalm::Database::General::webpages(6),
+        themes               => TravellersPalm::Database::Themes::themes('LIMIT'),
+        tripideas            => TravellersPalm::Database::Themes::themes('TRIPIDEAS'),
         country              => 'india',
         slides               => \@slides,
         the_travel_experts1  => webtext(119),
@@ -239,9 +252,9 @@ sub travel_ideas ($self) {
  
   $self->render(
       template => 'travel_ideas',
-      metatags        => $tags,
-      page_title      => 'Travel Ideas',
-      crumb           => '<li class="active">Travel Ideas</li>'
+      metatags => $tags,
+      page_title => 'Travel Ideas',
+      crumb => '<li class="active">Travel Ideas</li>'
     ) 
 }
 

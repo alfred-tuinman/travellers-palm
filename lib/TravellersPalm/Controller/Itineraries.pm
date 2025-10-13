@@ -3,97 +3,28 @@ package TravellersPalm::Controller::Itineraries;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
 use POSIX qw(strftime);
 use TravellersPalm::Constants;
+use TravellersPalm::Database::Itineraries qw( itineraries itinerary itinerary_cost placesyouwillvisit similartours toursinstate youraccommodation);
+use TravellersPalm::Database::Themes qw( themes themes_url );
+use TravellersPalm::Database::General qw(daybyday hotel modules regions regionsurl);
+use TravellersPalm::Database::States qw(states statesurl );
+use TravellersPalm::Database::Cities qw(city);
+use TravellersPalm::Database::Images qw(images);
 
 my $session_currency = 'USD';
 
 # /destinations/:destination/:option/:view/:order/:region
-sub route_listing ($self) {
-  my $destination = $self->param('destination');
-  my $option      = $self->param('option');
-  my $view        = $self->param('view');
-  my $order       = $self->param('order');
-  my $region      = $self->param('region');
-
-  my $crumb = qq{
-    <li>Destinations</li>
-    <li><a href="@{[$self->req->url->base]}destinations/$destination">@{[url2text($destination)]}</a></li>
-  };
-
-  my ($itineraries, $states, $stateinfo, $filter, $regions, $regioninfo);
-
-  if ($option eq TAILOR()) {
-    $itineraries = TravellersPalm::Database::Itineraries::itineraries(
-      option => 'itin', 
-      currency => $session_currency, 
-      order => $order
-    );
-    $filter      = 'tailor';
-    $crumb      .= "<li class='active'>" . url2text(TAILOR()) . "</li>";
-  }
-  elsif ($option eq REGIONS()) {
-    $itineraries = TravellersPalm::Database::General::modules(
-      region => $region, 
-      currency => $session_currency, 
-      order => $order
-    );
-    $regioninfo  = TravellersPalm::Database::General::regionsurl($region);
-    $regions     = TravellersPalm::Database::General::regions();
-    $filter      = 'regions';
-    $crumb      .= "<li class='active'>" . $regioninfo->{title} . "</li>";
-  }
-
-elsif ($option eq STATES()) {
-    my $state = $region;
-    my $stateinfo = TravellersPalm::Database::States::statesurl($state);
-    my $itineraries = TravellersPalm::Database::Itineraries::toursinstate(
-        state    => $state,
-        currency => $session_currency,
-        order    => $order
-    );
-    my $states = TravellersPalm::Database::States::states($destination);
-    my $filter = 'states';
-
-    my $crumb .= sprintf(
-        "<li><a href='%s/destinations/%s/%s'>%s</a></li>
-         <li class='active'>%s</li>",
-        $self->req->url->base,
-        $destination,
-        STATES(),
-        url2text(STATES()),
-        url2text($state)
-    );
-}
-
-  # compute min/max
-  my ($min_duration, $max_duration, $min_cost, $max_cost) = (30, 0, 1_000_000, 0);
-  for my $trip (@$itineraries) {
-    $min_duration = $trip->{numdays} if $trip->{numdays} < $min_duration;
-    $max_duration = $trip->{numdays} if $trip->{numdays} > $max_duration;
-    $min_cost     = $trip->{cost}    if $trip->{cost}    < $min_cost;
-    $max_cost     = $trip->{cost}    if $trip->{cost}    > $max_cost;
-  }
-
-  $self->render(
-    template     => $option eq STATES() ? 'states' : 'tours',
-    itineraries  => $itineraries,
-    crumb        => $crumb,
-    filter       => $filter,
-    view         => $view,
-    order        => $order,
-    min_duration => $min_duration,
-    max_duration => $max_duration,
-    min_cost     => $min_cost,
-    max_cost     => $max_cost,
-    country      => $destination,
-    regioninfo   => $regioninfo,
-    regions      => $regions,
-  );
-}
-
 # /destinations/:destination/:tour/:option/:theme
-sub route_listing ($self, $destination, $option, $view = undef, $order = undef, $region = undef) {
-    # $destination = $self->param('destination');
-    # $option      = $self->param('option');
+sub route_listing ($self, $destination, $view, $order = undef, $region = undef) {
+
+    # Sanity checks
+    my %valid = map { $_ => 1 } qw(grid block list);
+    unless ($valid{$view}) {
+      return $self->render(status => 400, text => "Invalid view '$view'");
+    }
+
+    # Debug (optional)
+    $self->app->log->debug("route_listing: dest=$destination view=$view order=$order");
+
     $view = $view // 'list';
     $order = $order // 'days';
     
@@ -121,8 +52,8 @@ sub route_listing ($self, $destination, $option, $view = undef, $order = undef, 
           currency => $session_currency, 
           order => $order
         );
-        $regioninfo  = TravellersPalm::Database::Regions::regionsurl($region);
-        $regions     = TravellersPalm::Database::Regions::regions();
+        $regioninfo  = TravellersPalm::Database::General::regionsurl($region);
+        $regions     = TravellersPalm::Database::General::regions();
         $filter      = 'regions';
 
         my $metatags = {
@@ -235,7 +166,7 @@ sub route_listing ($self, $destination, $option, $view = undef, $order = undef, 
 }
 
 sub route_itinerary ($self,$destination,$tour,$option = undef,$theme = undef) {
-    my $itinerary = TravellersPalm::Database::itinerary($tour);
+    my $itinerary = TravellersPalm::Database::Itineraries::itinerary($tour);
 
     unless (ref $itinerary eq 'HASH') {
         return $self->render(
@@ -245,19 +176,19 @@ sub route_itinerary ($self,$destination,$tour,$option = undef,$theme = undef) {
         );
     }
 
-    my $cost = TravellersPalm::Database::itinerary_cost(
+    my $cost = TravellersPalm::Database::Itineraries::itinerary_cost(
       $itinerary->{fixeditin_id}, 
       $session_currency
     );
-    my $startcity     = $itinerary->{startcity} ? city($itinerary->{startcity}) : '';
-    my $endcity       = TravellersPalm::Database::city($itinerary->{endcity});
+    my $startcity     = $itinerary->{startcity} ? TravellersPalm::Database::Cities::city($itinerary->{startcity}) : '';
+    my $endcity       = TravellersPalm::Database::Cities::city($itinerary->{endcity});
     my $category      = $itinerary->{readytours} ? 'ready tour' : 'module';
     my $inclusions    = $itinerary->{inclusions};
     my $ourtime       = ourtime();
-    my $daybyday      = TravellersPalm::Database::daybyday($tour);
-    my $accommodation = TravellersPalm::Database::youraccommodation($tour);
-    my $similartours  = $startcity ? TravellersPalm::Database::similartours($startcity->{cities_id}, $session_currency) : [];
-    my $placesyou     = TravellersPalm::Database::placesyouwillvisit($tour);
+    my $daybyday      = TravellersPalm::Database::Itineraries::daybyday($tour);
+    my $accommodation = TravellersPalm::Database::Itineraries::youraccommodation($tour);
+    my $similartours  = $startcity ? TravellersPalm::Database::Itineraries::similartours($startcity->{cities_id}, $session_currency) : [];
+    my $placesyou     = TravellersPalm::Database::Itineraries::placesyouwillvisit($tour);
     my $itin          = $itinerary->{itinerary};
 
     $inclusions =~ s/\{/<br><h4>/g;
@@ -299,11 +230,11 @@ sub route_itinerary ($self,$destination,$tour,$option = undef,$theme = undef) {
     # hotel popups
     for my $hotel (@$accommodation) {
         my $vars = {
-            items     => TravellersPalm::Database::images($hotel->{hotel_id}, 'hotel', 'large'),
+            items     => TravellersPalm::Database::Images::images($hotel->{hotel_id}, 'hotel', 'large'),
             imagepath => 'hotel',
             uribase   => $self->req->url->base,
             writeup   => addptags($hotel->{description}),
-            hotelinfo => TravellersPalm::Database::hotel($hotel->{hotel_id}),
+            hotelinfo => TravellersPalm::Database::General::hotel($hotel->{hotel_id}),
             IMAGE     => $imagedir,
         };
         my $output = $self->app->config->{root}.'/public/ajax/slideshow-hotel-' . $hotel->{hotel_id} . '.html';
@@ -332,7 +263,7 @@ sub route_itinerary ($self,$destination,$tour,$option = undef,$theme = undef) {
                    <li class='active'>$itinerary->{title}</li>";
     }
     elsif ($option eq REGIONS()) {
-        $regioninfo = TravellersPalm::Database::regionsurl($theme);
+        $regioninfo = TravellersPalm::Database::General::regionsurl($theme);
         $image = "mod_$itinerary->{tourname}_large_1.jpg";
         $crumb .= "<li><a href='".$self->req->url->base."/destinations/$destination/".REGIONS()."'>".url2text(REGIONS())."</a></li>
                    <li><a href='".$self->req->url->base."/destinations/$destination/".REGIONS()."/$regioninfo->{url}/list'>$regioninfo->{title}</a></li>

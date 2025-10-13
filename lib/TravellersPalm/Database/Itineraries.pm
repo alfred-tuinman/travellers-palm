@@ -26,16 +26,16 @@ our @EXPORT_OK = qw(
 # Check if itinerary is quoted
 # -----------------------------
 sub isquoted {
-    my ($c, $user, $id) = @_;
+    my ($user, $id) = @_;
     my $sql = "SELECT COUNT(*) FROM quotes WHERE username = ? AND id = ?";
-    return fetch_row($sql, [$user, $id], $c);
+    return fetch_row($sql, [$user, $id]);
 }
 
 # -----------------------------
 # Get itinerary cost
 # -----------------------------
 sub itincost {
-    my ($c, $itinid, $currency) = @_;
+    my ($itinid, $currency) = @_;
     my $sql = qq/
         SELECT cost
         FROM fixeditincosts fc
@@ -49,7 +49,7 @@ sub itincost {
         LIMIT 1
     /;
 
-    my $cost = fetch_row($sql, [$itinid, $currency], $c);
+    my $cost = fetch_row($sql, [$itinid, $currency]);
     return int($cost);
 }
 
@@ -57,7 +57,6 @@ sub itincost {
 # List itineraries
 # -----------------------------
 sub itineraries {
-    my ($c) = @_;
     my %args = (
         currency => 'USD',
         order    => 'popularity',
@@ -117,14 +116,14 @@ sub itineraries {
 
     my @params = ($args{currency});
     push @params, $args{option} if $args{option} && $args{option} ne 'all' && $args{option} ne 'itin';
-    return fetch_all($sql, \@params, $c);
+    return fetch_all($sql, \@params);
 }
 
 # -----------------------------
 # Single itinerary by URL
 # -----------------------------
 sub itinerary {
-    my ($c, $tour) = @_;
+    my ($tour) = @_;
     # Return empty arrayref if $tour is undefined or empty
     return [] unless defined $tour && length $tour;
 
@@ -148,14 +147,14 @@ sub itinerary {
         WHERE f.url = ?
     /;
 
-    return fetch_row($sql, [$tour], $c, 'NAME_lc');
+    return fetch_row($sql, [$tour],'NAME_lc');
 }
 
 # -----------------------------
 # Itinerary cost
 # -----------------------------
 sub itinerary_cost {
-    my ($c, $fixeditin_id, $currencycode) = @_;
+    my ($fixeditin_id, $currencycode) = @_;
     $fixeditin_id  //= 0;
     $currencycode  //= 'USD';
 
@@ -174,19 +173,19 @@ sub itinerary_cost {
         GROUP BY c.currencycode, c.symbol
     /;
 
-    return fetch_row($sql, [$fixeditin_id, $currencycode], $c, 'NAME_lc');
+    return fetch_row($sql, [$fixeditin_id, $currencycode], 'NAME_lc');
 }
 
 # -----------------------------
 # Check itinerary existence
 # -----------------------------
 sub itinerary_exist {
-    my ($c, $tour) = @_;
+    my ($tour) = @_;
   # Return empty arrayref if $tour is undefined or empty
     return [] unless defined $tour && length $tour;
 
     my $sql = "SELECT f.fixeditin_id FROM fixeditin f WHERE f.url = ?";
-    my $row = fetch_row($sql, [$tour], $c, 'NAME_lc');
+    my $row = fetch_row($sql, [$tour], 'NAME_lc');
     return { exist => $row ? $row->{fixeditin_id} : 0 };
 }
 
@@ -194,7 +193,7 @@ sub itinerary_exist {
 # Itinerary by ID
 # -----------------------------
 sub itinerary_id {
-    my ($c, $id) = @_;
+    my ($id) = @_;
     return [] unless defined $id;
     
     my $sql = qq/
@@ -207,14 +206,14 @@ sub itinerary_id {
         WHERE fixeditin_id = ?
     /;
 
-    return fetch_row($sql, [$id], $c, 'NAME_lc');
+    return fetch_row($sql, [$id], 'NAME_lc');
 }
 
 # -----------------------------
 # Places you will visit
 # -----------------------------
 sub placesyouwillvisit {
-    my ($c, $tour) = @_;
+    my ($tour) = @_;
     return [] unless defined $tour && length $tour;
     
     my $sql = qq/
@@ -233,14 +232,14 @@ sub placesyouwillvisit {
         ORDER BY dayno
     /;
 
-    return fetch_all($sql, [$tour], $c);
+    return fetch_all($sql, [$tour]);
 }
 
 # -----------------------------
 # Similar tours
 # -----------------------------
 sub similartours {
-    my ($c, $city, $currency) = @_;
+    my ($city, $currency) = @_;
     $city     //= 0;
     $currency //= 'USD';
 
@@ -265,14 +264,14 @@ sub similartours {
         LIMIT 3
     /;
 
-    return fetch_all($sql, [$currency, $city], $c);
+    return fetch_all($sql, [$currency, $city]);
 }
 
 # -----------------------------
 # Trip ideas
 # -----------------------------
 sub tripideas_trips {
-    my ($c, $tour, $currency, $exchrate, $order) = @_;
+    my ($tour, $currency, $exchrate, $order) = @_;
     $tour     = lc($tour);
     $currency //= 'USD';
     $order    //= 'popularity';
@@ -337,7 +336,7 @@ SQL
     # append validated ORDER BY outside the heredoc
     $sql .= "\nORDER BY $order_by";
 
-    return TravellersPalm::Database::Connector::fetch_all($sql, [$exchrate, $tour], $c);
+    return TravellersPalm::Database::Connector::fetch_all($sql, [$exchrate, $tour]);
 }
 
 
@@ -345,7 +344,6 @@ SQL
 # Total itineraries
 # -----------------------------
 sub totalitineraries {
-    my ($c) = @_;
     my $sql = qq/
         SELECT fixeditin_id
         FROM fixeditin f
@@ -355,7 +353,7 @@ sub totalitineraries {
         ORDER BY days
     /;
 
-    my $rows = fetch_all($sql, [], $c);
+    my $rows = fetch_all($sql, []);
     return scalar @$rows;
 }
 
@@ -363,7 +361,6 @@ sub totalitineraries {
 # Tours in a state
 # -----------------------------
 sub toursinstate {
-    my ($c) = @_;
     my %args = (
         currency => 'USD',
         order    => 'popularity',
@@ -413,14 +410,14 @@ sub toursinstate {
         ORDER BY $order_by
     /;
 
-    return fetch_all($sql, [$args{currency}, $args{state}], $c);
+    return fetch_all($sql, [$args{currency}, $args{state}]);
 }
 
 # -----------------------------
 # Your accommodation
 # -----------------------------
 sub youraccommodation {
-    my ($c, $tour) = @_;
+    my ($tour) = @_;
     return [] unless defined $tour && length $tour;
 
     my $sql = qq/
@@ -449,7 +446,7 @@ sub youraccommodation {
         ORDER BY cdf.dayno, category ASC
     /;
 
-    return fetch_all($sql, [$tour], $c);
+    return fetch_all($sql, [$tour]);
 }
 
 1;
