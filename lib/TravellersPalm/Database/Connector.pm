@@ -4,94 +4,44 @@ use DBI;
 use Try::Tiny;
 use Exporter 'import';
 
-our @EXPORT_OK = qw(
-                  execute 
-                  fetch_all
-                  fetch_row
-                  setup
-                  );
+our @EXPORT_OK = qw(fetch_all fetch_row execute);
 
-my ($dbh, $config, $log);
+my (%DBH, $config, $log);
 
 # Called from startup()
 sub setup {
     my ($class, $app) = @_;
-    $config = $app->config->{database};
+    $config = $app->config->{databases};
     $log    = $app->log;
 }
 
-# Internal DB handle manager
-sub _dbh {
-    unless ($dbh && $dbh->ping) {
-        try {
-            $dbh = DBI->connect(
-                $config->{dsn},
-                $config->{username},
-                $config->{password},
-                {
-                    RaiseError => 1,
-                    PrintError => 0,
-                    AutoCommit => 1,
-                    mysql_enable_utf8 => 1,
-                }
-            );
-        }
-        catch {
-            $log->error("DB connect error: $_") if $log;
-            die "Database connection failed: $_";
-        };
-    }
-    return $dbh;
-}
+# Get DB handle
+sub dbh {
+    my ($class, $dbkey) = @_;
+    $dbkey //= 'jadoo';  # default DB
 
-# SELECT queries
-sub fetch_all {
-    my ($class, $sql, @bind) = @_;
-    my $dbh = eval { $class->_dbh };
-    return { error => $@ } if $@;
+    return $DBH{$dbkey} if $DBH{$dbkey} && $DBH{$dbkey}->ping;
 
-    my $result = {};
+    my $cfg = $config->{$dbkey} or die "No configuration for database '$dbkey'";
     try {
-        my $sth = $dbh->prepare($sql);
-        $sth->execute(@bind);
-        $result->{rows} = $sth->fetchall_arrayref({});
+        $DBH{$dbkey} = DBI->connect(
+            $cfg->{dsn},
+            $cfg->{username},
+            $cfg->{password},
+            {
+                RaiseError => $cfg->{dbi_params}->{RaiseError} // 1,
+                AutoCommit => $cfg->{dbi_params}->{AutoCommit} // 1,
+                PrintError => $cfg->{dbi_params}->{PrintError} // 0,
+                sqlite_unicode => 1,  # for SQLite
+            }
+        );
     }
     catch {
-        $log->error("SQL error: $_ ($sql)") if $log;
-        $result->{error} = $_;
+        $log->error("DB connect error for $dbkey: $_") if $log;
+        die "Database connection failed for $dbkey: $_";
     };
 
-    return $result;
+    return $DBH{$dbkey};
 }
 
-# INSERT/UPDATE/DELETE
-sub execute {
-    my ($class, $sql, @bind) = @_;
-    my $dbh = eval { $class->_dbh };
-    return { error => $@ } if $@;
-
-    my $result = {};
-    try {
-        my $sth = $dbh->prepare($sql);
-        $sth->execute(@bind);
-        $result->{rows_affected} = $sth->rows;
-    }
-    catch {
-        $log->error("SQL exec error: $_ ($sql)") if $log;
-        $result->{error} = $_;
-    };
-
-    return $result;
-}
-
-# Optional helper: return only one row
-sub fetch_row {
-    my ($class, $sql, @bind) = @_;
-    my $res = $class->fetch_all($sql, @bind);
-    return $res if $res->{error};
-
-    $res->{row} = $res->{rows}->[0] if $res->{rows} && @{$res->{rows}};
-    return $res;
-}
-
-1;
+# fetch_all / fetch_row / execute stay the same

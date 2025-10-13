@@ -5,20 +5,43 @@ public_dir: "public"
 root: "/usr/src/app"
 secrets:
   - f22ebd363e5fffa6826f785b72de3c50db11aa67
-sqlserver:
-  dsn: "dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db"
-  username: ""
-  password: ""
 
-# Two server connections
-servers:
-  primary:
-     dsn: "dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db"
-     username: ""
-     password: ""
-  secondary:
-    host: "db2.example.com"
-    port: 5432
-    username: "user2"
-    password: "secret2"
-    database: "backup_db"
+databases:
+  jadoo:
+    dsn: "dbi:SQLite:dbname=/usr/src/app/db/Jadoo_2006.db"
+    username: ""
+    password: ""
+    dbi_params:
+      RaiseError: 1
+      AutoCommit: 1
+      PrintError: 1
+
+  users:
+    dsn: "dbi:SQLite:dbname=/usr/src/app/db/users.db"
+    username: ""
+    password: ""
+    dbi_params:
+      RaiseError: 1
+      AutoCommit: 1
+      PrintError: 1
+
+plugins:
+  - MemcachedFast:
+      servers:
+        - "127.0.0.1:11211"
+      default_timeout: 3600
+
+plack_middlewares:
+  -
+    - Expires
+    - content_type
+    -
+      - image/gif
+      - image/jpeg
+      - image/png
+      - text/css
+      - application/javascript
+    - expires
+    - access plus 3 days
+  -
+    - Deflater
