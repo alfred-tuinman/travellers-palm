@@ -185,11 +185,13 @@ sub startup ($self) {
     $r->get('/hand-picked-hotels')->to('hotels#show_hand_picked_hotels');
 
     # Destinations
-    $r->get('/destinations/:destination')->to('destinations#show_destination');
-    $r->get('/destinations/:destination/tailor/:view/:order' => [order => qr/.*/)
-      ->to('itineraries#route_listing')
-      ->name('route_listing')
-      ->over(view => qr/^(grid|block|list)$/);
+    my $options = join('|', TAILOR(), REGIONS(), IDEAS());
+
+    $r->get('/destinations/:destination/:option/:view/:order' => [
+        option => qr/^(?:$options)$/,
+        view   => qr/^(?:grid|block|list)$/,
+        order  => qr/.*/,
+    ])->to('itineraries#route_listing', order => undef);
 
     $r->get('/destinations/*/'.REGIONS())->to('destinations#show_region_list');
     $r->get('/destinations/*/'.REGIONS().'/*')->to('destinations#show_region_detail');

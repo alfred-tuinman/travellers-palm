@@ -14,12 +14,14 @@ use Geo::Location::TimeZone;
 use HTML::LinkExtor;
 use HTML::Strip;
 use HTTP::BrowserDetect;
+use HTTP::Request;
 use LWP::UserAgent;
 use POSIX qw(strftime);
-use Time::Local;
+use Time::Local qw(timelocal);
 use TravellersPalm::Model::Cities;
 use TravellersPalm::Database::General qw(web);
 # use URI;
+
 
 our @EXPORT = qw{
     addptags
@@ -44,7 +46,6 @@ our @EXPORT = qw{
     webtext
     weeknumber
 };
-
 
 # -----------------------------
 # Safe optional Model::Cities module
@@ -79,36 +80,68 @@ eval {
 # -----------------------------
 # Text Utilities
 # -----------------------------
-sub addptags { 
-    my $str = shift or return '<p></p>';
-    my @lines = split /\R/, $str;
+sub addptags {
+    my ($str) = @_;
+    return '<p></p>' unless defined $str && length $str;
+
+    # Split on any line break (\n, \r\n, \r)
+    my @lines = grep { /\S/ } split /\R/, $str;  # remove empty lines
+
     return '<p>' . join('</p><p>', @lines) . '</p>';
 }
 
 sub boldify {
-    my $str = shift;
-    $str =~ s/\{/<strong>/g;
-    $str =~ s/\}/<\/strong>/g;
+    my ($str) = @_;
+    return '' unless defined $str;
+
+    # Replace {…} with <strong>…</strong>
+    $str =~ s/\{(.*?)\}/<strong>$1<\/strong>/g;
+
     return $str;
 }
 
+
 sub clean_text {
     my $t = shift // '';
+    
+    # Trim leading/trailing spaces
     $t =~ s/^\s+|\s+$//g;
+
+    # Optional: collapse multiple spaces/tabs inside the string to a single space
+    $t =~ s/\s+/ /g;
+
     return $t;
 }
 
 sub cutpara {
     my ($para, $size) = @_;
-    return substr($para, 0, $size);
+    return '' unless defined $para && defined $size && $size > 0;
+
+    # Decode in case we get UTF-8 bytes
+    use Encode qw(decode);
+    $para = decode('UTF-8', $para) unless utf8::is_utf8($para);
+
+    # Trim to $size but try not to cut mid-word
+    if (length($para) > $size) {
+        my $cut = substr($para, 0, $size);
+        $cut =~ s/\s+\S*$//;   # remove incomplete trailing word
+        $para = $cut . '...';  # indicate truncation
+    }
+
+    return $para;
 }
 
 sub domain {
     my $c = shift;
-    my $url = $c->req->url->base;
-    my $host = $url->host;
-    $host =~ s!^(?:www\.)?!!i;
-    return $host;
+
+    # Use base URL from request or fallback to the app's configured URL
+    # Ensures you’re working on a copy, not modifying the live request object by accident.
+    my $url  = $c->req->url->base->clone; 
+    my $host = $url->host // '';
+
+    # Normalize and strip common prefixes
+    $host =~ s/^(?:www\.|m\.|dev\.)//i;
+    return lc $host;
 }
 
 
@@ -135,39 +168,83 @@ sub elog {
 
 sub email_request {
     my ($name, $email, $reference, $message) = @_;
-    return 1;  # placeholder, email sending logic removed
+
+    # Basic sanity checks
+    for ($name, $email, $reference, $message) {
+        return { error => 'Missing parameter(s)' } unless defined $_ && length $_;
+    }
+
+    # Simple email format sanity check
+    unless ($email =~ /^[^\s@]+@[^\s@]+\.[^\s@]+$/) {
+        return { error => 'Invalid email format' };
+    }
+
+    # Placeholder for actual mail sending logic
+    # (e.g., using Email::Stuffer, Mojo::Mail, or MIME::Lite)
+    # my $result = send_mail(...);
+
+    return 1;
+    # better would be   return { success => 1 };
 }
 
+
+
+my $hs;  # reuse object to avoid recreating it every call
+
 sub html_strip {
-    my $html = shift;
-    my $hs = HTML::Strip->new(emit_spaces => 0);
+    my ($html) = @_;
+    return '' unless defined $html && length $html;
+
+    # Lazily initialize the HTML::Strip object
+    $hs //= HTML::Strip->new(emit_spaces => 0);
+
     my $text = $hs->parse($html);
-    $hs->eof;
+    $hs->eof;  # reset internal buffer
     return $text;
 }
+
 
 sub linkExtor {
     my $urlfile = 'url-report.txt';
     return unless -f $urlfile;
 
-    open(my $fh, '<:encoding(UTF-8)', $urlfile) or warn "Could not open file '$urlfile' $!" and return;
+    open my $fh, '<:encoding(UTF-8)', $urlfile
+      or warn "Could not open file '$urlfile': $!" and return;
+
+    my $ua = LWP::UserAgent->new;
+    $ua->timeout(10);  # avoid hanging requests
+    $ua->agent("linkExtor/1.0");
+
     while (my $url = <$fh>) {
         chomp $url;
-        my $ua = LWP::UserAgent->new;
-        my @imgs;
+        next unless $url;
 
+        my @imgs;
         my $callback = sub {
             my ($tag, %attr) = @_;
             return unless $tag eq 'img';
-            push @imgs, values %attr;
+            push @imgs, $attr{src} if exists $attr{src};
         };
 
         my $p = HTML::LinkExtor->new($callback);
-        my $res = $ua->request(HTTP::Request->new(GET => $url), sub { $p->parse($_[0]) });
-        print join("\n", @imgs), "\n";
+
+        my $res = eval { $ua->request(HTTP::Request->new(GET => $url), sub { $p->parse($_[0]) }) };
+        if ($@) {
+            warn "Failed to fetch $url: $@";
+            next;
+        }
+
+        if ($res->is_success) {
+            print "Images from $url:\n";
+            print join("\n", @imgs), "\n\n" if @imgs;
+        } else {
+            warn "Request failed for $url: " . $res->status_line;
+        }
     }
-    close($fh);
+
+    close $fh;
 }
+
 
 # -----------------------------
 # Linkify with safe city lookup
@@ -198,9 +275,13 @@ sub linkify {
 
 sub moneyfy { return; }
 
-sub ourtime { 
-    return DateTime->now(time_zone => 'Asia/Kolkata'); 
+sub ourtime {
+    my ($tz) = @_;
+    $tz //= 'Asia/Kolkata';
+    return DateTime->now(time_zone => $tz);
+    # for logging use  DateTime->now(time_zone => $tz)->strftime('%Y-%m-%d %H:%M:%S');
 }
+
 
 # -----------------------------
 # SEO helper
@@ -208,41 +289,66 @@ sub ourtime {
 sub seo {
     my ($url, $data) = @_;
     $data //= {};
-    my $line = "$url\n"
-             . "   title       = " . ($data->{meta_title} // '') . "\n"
-             . "   description = " . ($data->{meta_descr} // '') . "\n"
-             . "   keywords    = " . ($data->{meta_keywords} // '') . "\n\n";
-    return $line;
+
+    # Ensure values are defined strings
+    my %fields = map { $_ => ($data->{$_} // '') } qw(meta_title meta_descr meta_keywords);
+
+    # Map keys to user-friendly labels
+    my %labels = (
+        meta_title    => 'title',
+        meta_descr    => 'description',
+        meta_keywords => 'keywords',
+    );
+
+    my $out = "$url\n";
+    for my $key (qw(meta_title meta_descr meta_keywords)) {
+        $out .= sprintf "   %-12s = %s\n", $labels{$key}, $fields{$key};
+    }
+    $out .= "\n";
+
+    return $out;
 }
 
+
 sub trim {
-    my $str = shift;
+    my ($str) = @_;
+    return '' unless defined $str && length $str;
+
     $str =~ s/^\s+|\s+$//g;
     return $str;
 }
 
 sub validate_date {
-    my $d = shift;
-    my $dd = Date::Manip::Date->new;
-    my $err = $dd->parse($d);
-    return !$err;
+    my ($date) = @_;
+    return 0 unless defined $date && length $date;
+
+    my $dd  = Date::Manip::Date->new;
+    my $err = $dd->parse($date);
+
+    return $err ? 0 : 1;
 }
 
 sub valid_email {
-    my $a = shift;
-    return Email::Valid->address($a) ? 1 : 0;
+    my ($address) = @_;
+    return 0 unless defined $address ;
+    return Email::Valid->address($address) ? 1 : 0;
 }
 
 sub url2text {
-    my $text = shift;
-    $text =~ tr/-/ /;
-    $text =~ s/([\w']+)/\u\L$1/g;
+    my ($text) = @_;
+    return '' unless defined $text && length $text;
+
+    $text =~ tr/-_/  /;                 # also treat underscores as spaces
+    $text =~ s/\s+/ /g;                 # collapse multiple spaces
+    # $text =~ s/([\w']+)/\u\L$1/g;       # Title Case
+    $text =~ s/\s+$//;                  # trim trailing space
+
     return $text;
 }
 
 sub user_is_registered {
-    my $c = shift;
-    return $c->session('username') ? 1 : 0;
+    my ($c) = @_;
+    return !!$c->session('username'); 
 }
 
 sub user_register {
@@ -252,57 +358,50 @@ sub user_register {
 }
 
 sub user_email {
-    my $c = shift;
-    return $c->session('username');
-}
-
-# -----------------------------
-# webtext using safe Model::Cities call
-# -----------------------------
-sub webtext2 {
-  my ($c_or_id, $id_maybe) = @_;
-
-  my ($c, $id);
-  if (ref $c_or_id && $c_or_id->can('app')) {
-      ($c, $id) = ($c_or_id, $id_maybe);
-  } else {
-      $id = $c_or_id;
-  }
-
-  # --- Fetch from DB or wherever ---
-  my $result = { id => $id, title => 'Example', text => 'Hello world' };
-
-  # --- Optional logging ---
-  $c->dump_log("Webtext fetched:", $result) if $c;
-
-  return $result;
+    my ($c) = @_;
+    return $c->session('username') // '';
 }
 
 
 sub webtext {
-    my ($c, $id ) = @_;   # ID first, controller optional second
+    my ($id, $c) = @_;  # ID first, controller optional
 
-    my $data = TravellersPalm::Database::General::web($c, $id);
+    # Fetch from DB; pass $c only if defined
+    my $data = defined $c 
+             ? TravellersPalm::Database::General::web($c, $id)
+             : TravellersPalm::Database::General::web(undef, $id);
 
+    # Log if controller provided and has dump_log
     if (defined $c && ref $c && $c->can('dump_log')) {
         $c->dump_log("Webtext($id) returned:", $data);
     }
 
+    # Ensure hashref
     $data = {} unless ref $data eq 'HASH';
+
     my $rows = $data->{rows} // 0;
     my $text = $data->{data} // {};
-    $text->{writeup} = $rows > 0 ? boldify(addptags($text->{writeup})) : '';
+
+    # Ensure writeup is defined before processing
+    $text->{writeup} = $rows > 0 && defined $text->{writeup} 
+                     ? boldify(addptags($text->{writeup})) 
+                     : '';
 
     return $text;
 }
 
 
-
 sub weeknumber {
-    my $date = shift;
-    my ($month, $day, $year) = split '/', $date;
-    my $epoch = timelocal(0,0,0, $day, $month-1, $year-1900);
-    return strftime("%U", localtime($epoch));
+    my $date = shift // '';
+    return undef unless $date =~ m{^(\d{1,2})/(\d{1,2})/(\d{4})$};
+    
+    my ($month, $day, $year) = ($1, $2, $3);
+    
+    my $epoch = eval { timelocal(0,0,0, $day, $month-1, $year-1900) };
+    return undef if $@;
+    
+    return strftime("%U", localtime($epoch));  # week starting Sunday
 }
+
 
 1;

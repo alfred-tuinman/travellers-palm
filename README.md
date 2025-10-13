@@ -107,13 +107,15 @@ Sets up object-oriented inheritance.
 Adds strict/warnings automatically (so you don’t need use strict; use warnings;).
 
 # Mojolicious
-In Mojolicious:
 
+## Controllers
 Inside controllers (e.g., TravellersPalm::Controller::Something),
 the first argument is always the controller object, and by convention, it’s named $self.
 
-Inside plain modules (e.g., your TravellersPalm::Database::General),
-we don’t automatically have a controller object — we receive it as an argument, usually called $c for “context” or “controller”.
+Inside plain modules (e.g., your TravellersPalm::Database::General), we don’t automatically have a controller object — we receive it as an argument, usually called $c for “context” or “controller”.
+
+## Extra parameters
+Mojolicious always calls your controller with just $self unless you retrieve values from $c->stash or $c->param.
 
 # Cpanminus
 For development you would like to test the app locally for which you need the cpan modules. 

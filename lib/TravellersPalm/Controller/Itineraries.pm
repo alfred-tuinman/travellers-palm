@@ -12,9 +12,14 @@ use TravellersPalm::Database::Images qw(images);
 
 my $session_currency = 'USD';
 
-# /destinations/:destination/:option/:view/:order/:region
-# /destinations/:destination/:tour/:option/:theme
-sub route_listing ($self, $destination, $view, $order = undef, $region = undef) {
+sub route_listing ($self) {
+    my $destination = $self->stash('destination');
+    my $option      = $self->stash('option');
+    my $view        = $self->stash('view');
+    my $order       = $self->stash('order');   # optional
+    my $region      = $self->stash('region');  # optional
+
+    $self->app->log->debug("Dest=$destination Option=$option View=$view Order=$order");
 
     # Sanity checks
     my %valid = map { $_ => 1 } qw(grid block list);
@@ -25,7 +30,7 @@ sub route_listing ($self, $destination, $view, $order = undef, $region = undef) 
     # Debug (optional)
     $self->app->log->debug("route_listing: dest=$destination view=$view order=$order");
 
-    $view = $view // 'list';
+    $view  = $view  // 'list';
     $order = $order // 'days';
     
     my $crumb = sprintf(
@@ -165,7 +170,14 @@ sub route_listing ($self, $destination, $view, $order = undef, $region = undef) 
     }
 }
 
-sub route_itinerary ($self,$destination,$tour,$option = undef,$theme = undef) {
+sub route_itinerary ($self) {
+    my $destination = $self->stash('destination');
+    my $tour        = $self->stash('tour');
+    my $option      = $self->stash('option');
+    my $theme        = $self->stash('theme');
+    
+    $self->app->log->debug("Dest=$destination Tour=$tour Option=$option Theme=$theme");
+
     my $itinerary = TravellersPalm::Database::Itineraries::itinerary($tour);
 
     unless (ref $itinerary eq 'HASH') {

@@ -87,9 +87,10 @@ sub execute {
 # Optional helper: return only one row
 sub fetch_row {
     my ($class, $sql, @bind) = @_;
-    my $res = $class->query($sql, @bind);
+    my $res = $class->fetch_all($sql, @bind);
     return $res if $res->{error};
-    $res->{rows} = $res->{rows}[0];
+
+    $res->{row} = $res->{rows}->[0] if $res->{rows} && @{$res->{rows}};
     return $res;
 }
 

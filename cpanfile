@@ -12,6 +12,7 @@ requires 'Geo::Location::TimeZone';
 requires 'HTML::LinkExtor';
 requires 'HTML::Strip'; 
 requires 'HTTP::BrowserDetect';
+requires 'HTTP::Request';
 requires 'JSON';
 requires 'LWP::UserAgent';
 requires 'Math::Polygon';
