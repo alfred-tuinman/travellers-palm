@@ -2,17 +2,16 @@ package TravellersPalm::Database::Users;
 
 use strict;
 use warnings;
-
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
-use Data::Dumper;
 use Digest::MD5 qw(md5_hex);
 use DateTime;
+use Data::Dumper;
 
-our @EXPORT_OK = qw( 
+our @EXPORT_OK = qw(
     generate_password
     register_email
-    register_user 
+    register_user
     send_password
     update_password
     user_exist
@@ -20,9 +19,14 @@ our @EXPORT_OK = qw(
     user_update
 );
 
-
-sub send_pasword {
-    my ($c, $length) = @_;
+#--------------------------------------------------
+# Send password placeholder (stub)
+#--------------------------------------------------
+sub send_password {
+    my ($c, $email) = @_;
+    # This can later integrate with TravellersPalm::Mail
+    # or a similar mailer subsystem.
+    warn "send_password() not yet implemented for $email\n";
     return;
 }
 
@@ -31,7 +35,8 @@ sub send_pasword {
 #--------------------------------------------------
 sub generate_password {
     my ($c, $length) = @_;
-    $length = 10 unless defined $length;
+    $length ||= 10;
+
     my @chars = ('A'..'Z', 'a'..'z', 0..9);
     return join '', map { $chars[rand @chars] } 1..$length;
 }
@@ -45,19 +50,19 @@ sub update_password {
 
     my $hash = md5_hex($newpass);
     my $sql  = "UPDATE users SET password = ? WHERE rowid = ?";
-    TravellersPalm::Database::Connector::execute($sql, [$hash, $userid],$c);
+    TravellersPalm::Database::Connector::execute($sql, [$hash, $userid], $c);
 
     return 1;
 }
 
 #--------------------------------------------------
-# Register an email (creates a new user)
+# Register an email (shortcut for new user insert)
 #--------------------------------------------------
 sub register_email {
     my ($c, $email) = @_;
     return unless defined $email;
 
-    user_insert($email);
+    register_user($c, $email);
     return 1;
 }
 
@@ -65,27 +70,26 @@ sub register_email {
 # Check if user exists
 #--------------------------------------------------
 sub user_exist {
-    my ($c, $user) = @_;
-    return [] unless defined $user;
+    my ($c, $username) = @_;
+    return [] unless defined $username;
+
     my $sql = "SELECT rowid, username FROM users WHERE username LIKE ?";
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$user], $c);
+    return TravellersPalm::Database::Connector::fetch_row($sql, [$username], $c, 'NAME_lc');
 }
 
 #--------------------------------------------------
 # Insert new user with email
 #--------------------------------------------------
 sub register_user {
-     my ($c, $emailid) = @_;
-    return [] unless defined $emailid;
+    my ($c, $email) = @_;
+    return [] unless defined $email;
 
     my $now = DateTime->now->datetime;
     $now =~ y/T/ /;   # Convert ISO format to space-separated datetime
 
     my $sql = "INSERT INTO users (username, active, registeredon) VALUES (?, ?, ?)";
+    TravellersPalm::Database::Connector::execute($sql, [$email, 1, $now], $c);
 
-    print STDERR Dumper([$emailid, 1, $now]);
-
-    TravellersPalm::Database::Connector::execute($sql, [$emailid, 1, $now], $c);
     return 1;
 }
 
@@ -98,7 +102,12 @@ sub user_ok {
 
     my $hash = md5_hex($password);
 
-    my $sql = "SELECT rowid AS rowid FROM users WHERE username LIKE ? AND password LIKE ?";
+    my $sql = q{
+        SELECT rowid AS rowid
+        FROM users
+        WHERE username LIKE ?
+          AND password LIKE ?
+    };
     my $row = TravellersPalm::Database::Connector::fetch_row($sql, [$username, $hash], $c, 'NAME_lc');
 
     return $row ? $row : 0;

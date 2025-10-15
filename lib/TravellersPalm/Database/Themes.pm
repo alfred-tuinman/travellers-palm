@@ -16,9 +16,12 @@ our @EXPORT_OK = qw(
     themeurl
 );
 
+# -------------------------------------------------
+# Get subthemes for a given theme
+# -------------------------------------------------
 sub subthemes {
     my ($themes_id) = @_;
-    return [] unless defined $themes_id;
+    return undef unless defined $themes_id;
 
     my $sql = q{
         SELECT  subthemes_id,
@@ -32,13 +35,16 @@ sub subthemes {
         WHERE   themes_id = ?
         ORDER BY title
     };
-    
-    return TravellersPalm::Database::Connector::fetch_all($sql, [$themes_id]);
+
+    return fetch_all($sql, [$themes_id]);
 }
 
+# -------------------------------------------------
+# Get subtheme details by ID
+# -------------------------------------------------
 sub subthemes_id {
     my ($subthemes_id) = @_;
-    return [] unless defined $subthemes_id;
+    return undef unless defined $subthemes_id;
 
     my $sql = q{
         SELECT  subthemes_id,
@@ -51,19 +57,24 @@ sub subthemes_id {
         FROM    subthemes
         WHERE   subthemes_id = ?
     };
-    
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$subthemes_id], 'NAME_lc');
+
+    return fetch_row($sql, [$subthemes_id], 'NAME_lc');
 }
 
+# -------------------------------------------------
+# List all themes, optionally limited or extended
+# -------------------------------------------------
 sub themes {
-    my ($parameter, $order) = @_;
+    my ($filter, $order) = @_;
     $order //= 'title';
-    
+
     my $condition = '';
-    if (defined $parameter) {
-        $condition = (uc($parameter) eq 'LIMIT')
-            ? 'WHERE themes_id < 7'
-            : 'WHERE themes_id > 6';
+    if (defined $filter) {
+        if (uc($filter) eq 'LIMIT') {
+            $condition = 'WHERE themes_id < 7';
+        } elsif (uc($filter) eq 'EXTENDED') {
+            $condition = 'WHERE themes_id >= 7';
+        }
     }
 
     my $order_by = ($order =~ /url/i) ? 'url' : 'pagename';
@@ -82,15 +93,18 @@ sub themes {
         ORDER BY $order_by
     };
 
-    return TravellersPalm::Database::Connector::fetch_all($sql, []);
+    return fetch_all($sql, []);
 }
 
+# -------------------------------------------------
+# Get cities associated with a theme (via subthemes)
+# -------------------------------------------------
 sub themes_subthemes {
     my ($themes_id) = @_;
-    return [] unless defined $themes_id;
+    return undef unless defined $themes_id;
 
     my $sql = q{
-        SELECT  s.cities_id AS id,
+        SELECT  s.cities_id AS city_id,
                 c.city      AS name,
                 c.latitude  AS lat,
                 c.longitude AS lng,
@@ -104,12 +118,15 @@ sub themes_subthemes {
         ORDER BY s.subthemes_id
     };
 
-    return TravellersPalm::Database::Connector::fetch_all($sql, [$themes_id]);
+    return fetch_all($sql, [$themes_id]);
 }
 
+# -------------------------------------------------
+# Get theme by URL
+# -------------------------------------------------
 sub themes_url {
-    my ($theme) = @_;
-    return [] unless defined $theme;
+    my ($theme_url) = @_;
+    return undef unless defined $theme_url;
 
     my $sql = q{
         SELECT  pagename,
@@ -124,11 +141,14 @@ sub themes_url {
         WHERE   url LIKE ?
     };
 
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$theme], 'NAME_lc');
+    return fetch_row($sql, [$theme_url], 'NAME_lc');
 }
 
+# -------------------------------------------------
+# List all trips under a given theme
+# -------------------------------------------------
 sub themetrips {
-    my ($tour, $currency, $order) = @_;
+    my ($theme, $currency, $order) = @_;
     $currency //= 'USD';
     $order    //= 'popularity';
 
@@ -140,7 +160,7 @@ sub themetrips {
         religion  => 5,
         monuments => 6,
     );
-    $tour = $theme_map{ lc($tour) } // $tour;
+    $theme = $theme_map{ lc($theme) } // $theme;
 
     my $order_by = 'f.orderno';
     $order_by = 'cost'    if $order =~ /price/i;
@@ -150,29 +170,27 @@ sub themetrips {
     $order_by .= ' DESC'  if $order =~ /desc/i;
 
     my $sql = qq{
-        SELECT  f.fixeditin_id  AS tourname,
+        SELECT  f.fixeditin_id  AS tour_id,
                 f.title,
                 f.oneliner,
                 f.introduction,
-                LENGTH(f.introduction) AS lengthintro,
-                itinerary,
-                triphighlights,
-                quotes,
-                adv,
-                f.regions_id,
-                readytours,
-                itindates,
-                inclusions,
-                prices,
+                LENGTH(f.introduction) AS intro_length,
+                f.itinerary,
+                f.triphighlights,
+                f.quotes,
+                f.readytours,
+                f.itindates,
+                f.inclusions,
+                f.prices,
                 f.orderno,
-                days AS numdays,
-                duration,
-                inactivewef,
+                f.days AS numdays,
+                f.duration,
+                f.inactivewef,
                 f.meta_title,
                 f.meta_descr,
                 f.meta_keywords,
                 f.url,
-                f.startcities_id AS scity,
+                f.startcities_id AS start_city_id,
                 (
                     SELECT CAST(MIN(fc.cost) AS INT)
                     FROM   fixeditincosts fc
@@ -200,12 +218,15 @@ sub themetrips {
         ORDER BY $order_by
     };
 
-    return TravellersPalm::Database::Connector::fetch_all($sql, [$currency, $tour]);
+    return fetch_all($sql, [$currency, $theme]);
 }
 
+# -------------------------------------------------
+# Fetch single theme by URL
+# -------------------------------------------------
 sub themeurl {
     my ($url) = @_;
-    return [] unless defined $url;
+    return undef unless defined $url;
 
     my $sql = q{
         SELECT  title,
@@ -218,8 +239,8 @@ sub themeurl {
         FROM    themes
         WHERE   url LIKE ?
     };
-    
-    return TravellersPalm::Database::Connector::fetch_row($sql, [$url], 'NAME_lc');
+
+    return fetch_row($sql, [$url], 'NAME_lc');
 }
 
 1;

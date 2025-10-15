@@ -1,3 +1,7 @@
+# cpanfile for Perl module dependencies
+# See https://metacpan.org/pod/distribution/cpanminus/bin/cpanfile
+
+requires 'Cache::Memcached';
 requires 'DateTime';
 requires 'Date::Calc';
 requires 'Date::Manip::Date';
@@ -19,11 +23,13 @@ requires 'Math::Polygon';
 requires 'Mojo::JSON';
 requires 'Mojo::Log';
 requires 'Mojolicious';
+requires 'Mojolicious::Plugin::Cache';
 requires 'Mojolicious::Plugin::TtRenderer';
 requires 'Mojolicious::Plugin::YamlConfig';
 requires 'POSIX';
 requires 'Template::Plugin::Comma';
 requires 'Term::ANSIColor';
+requires 'Time::HiRes';
 requires 'Time::Local';
 requires 'YAML::XS';
 requires 'Try::Tiny';

@@ -1,5 +1,6 @@
 package TravellersPalm;
 
+use Cache::Memcached;
 use Mojo::Base 'Mojolicious', -signatures;
 use Mojo::File 'path';
 use Mojo::JSON qw(encode_json);
@@ -7,6 +8,7 @@ use Mojo::Log;
 use File::Spec;
 use POSIX qw(strftime);
 use Term::ANSIColor;
+use Time::HiRes qw(gettimeofday tv_interval);
 use TravellersPalm::Constants qw(:all);
 use TravellersPalm::Database::Connector qw(setup);
 
@@ -26,14 +28,21 @@ sub startup ($self) {
         stash_key => 'conf',
         class     => 'YAML::XS',
     });
+
+    $self->{config} = $config;    
     $self->secrets($config->{secrets});
-    $self->{config} = $config;
+
+    # Initialize Memcached manually
+    my $memd_conf = $self->config->{memcached};
+    my $memd = Cache::Memcached->new({
+        servers => $memd_conf->{servers},
+        compress_threshold => 10_000,
+    });
+    $self->helper(memcache => sub { $memd });
+
+
     $self->log->level('debug');
 
-    # Load config (with database credentials)
-    #    my $config = $self->plugin('Config');
-  
-    # Register a helper for DB calls with automatic error handling
     $self->helper(db_call => sub ($c, $db_func, @args) {
         my $result = eval { $db_func->(@args) };
         if ($@) {
@@ -256,6 +265,61 @@ sub startup ($self) {
         push @{$c->stash->{_debug_dumps}}, $full;
       }
     });
+
+
+  # ----------------------
+  # Test and benchmark Memcached (development only)
+  # ----------------------
+  if ($self->mode eq 'development') {
+      $self->routes->get('/memcache/test' => sub ($c) {
+          my $cache = $c->memcache;
+
+          my $key   = 'travellers_palm_test';
+          my $value = 'Hello from Memcached at ' . scalar localtime;
+
+          # --- Basic functionality check
+          $cache->set($key, $value, 60);
+          my $fetched = $cache->get($key);
+
+          my %basic = (
+              stored  => $value,
+              fetched => $fetched // 'undef',
+              status  => (defined $fetched && $fetched eq $value) ? 'ok' : 'error'
+          );
+
+          # --- Performance benchmark
+          my $count = 1000;
+          my $prefix = 'bench_test_';
+          my $start_set = [Time::HiRes::gettimeofday()];
+          for my $i (1 .. $count) {
+              $cache->set("${prefix}${i}", "value_$i", 60);
+          }
+          my $elapsed_set = Time::HiRes::tv_interval($start_set);
+
+          my $start_get = [Time::HiRes::gettimeofday()];
+          my $hits = 0;
+          for my $i (1 .. $count) {
+              my $v = $cache->get("${prefix}${i}");
+              $hits++ if defined $v;
+          }
+          my $elapsed_get = Time::HiRes::tv_interval($start_get);
+
+          my %bench = (
+              count        => $count,
+              set_time_s   => sprintf('%.4f', $elapsed_set),
+              get_time_s   => sprintf('%.4f', $elapsed_get),
+              set_per_sec  => sprintf('%.1f', $count / $elapsed_set),
+              get_per_sec  => sprintf('%.1f', $count / $elapsed_get),
+              hits         => $hits,
+              hit_rate_pct => sprintf('%.1f', ($hits / $count) * 100),
+          );
+
+          return $c->render(json => {
+              basic_check => \%basic,
+              benchmark   => \%bench
+          });
+      });
+  }
 
 }
 

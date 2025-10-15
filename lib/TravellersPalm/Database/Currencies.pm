@@ -5,7 +5,7 @@ use warnings;
 
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
-use TravellersPalm::Functions qw(currencies);
+use Data::Dumper;
 
 our @EXPORT_OK = qw(
     currencies
@@ -17,19 +17,42 @@ our @EXPORT_OK = qw(
 );
 
 # -----------------------------
+# Wrapper for logging calls
+# -----------------------------
+sub _fetch_all {
+    my ($sql, $bind_ref) = @_;
+    $bind_ref //= [];
+    warn "[Currencies] fetch_all SQL: $sql, Bind: " . Dumper($bind_ref);
+    return fetch_all($sql, $bind_ref);
+}
+
+sub _fetch_row {
+    my ($sql, $bind_ref) = @_;
+    $bind_ref //= [];
+    warn "[Currencies] fetch_row SQL: $sql, Bind: " . Dumper($bind_ref);
+    return fetch_row($sql, $bind_ref);
+}
+
+sub _execute {
+    my ($sql, $bind_ref) = @_;
+    $bind_ref //= [];
+    warn "[Currencies] execute SQL: $sql, Bind: " . Dumper($bind_ref);
+    return execute($sql, $bind_ref);
+}
+
+# -----------------------------
 # List currencies
 # -----------------------------
 sub currencies {
     my ($currencycode) = @_;
     $currencycode = '' unless defined $currencycode;
-
     $currencycode = uc $currencycode;
 
     my @bind;
-    my $sql = qq{
+    my $sql = q{
         SELECT currencycode, currency, symbol, c.currencies_id, wef
         FROM (
-            SELECT currencies_id, max(wef) AS wef
+            SELECT currencies_id, MAX(wef) AS wef
             FROM currencydetails
             GROUP BY currencies_id
         ) temp
@@ -43,8 +66,7 @@ sub currencies {
     }
 
     $sql .= ' ORDER BY currencycode';
-
-    return fetch_all($sql, \@bind);
+    return _fetch_all($sql, \@bind);
 }
 
 # -----------------------------
@@ -78,7 +100,7 @@ sub exchangerate {
         LIMIT 1
     };
 
-    my $row = fetch_row($sql, [$currencycode]);
+    my $row = _fetch_row($sql, [$currencycode]);
     return $row ? $row->{exchangerate} : 0;
 }
 
@@ -86,22 +108,20 @@ sub exchangerate {
 # Today's exchange rates
 # -----------------------------
 sub exchange_rates {
-    
     my $sql = q{
         SELECT currency, exchange_rate, strftime('%d/%m/%Y', datetime(date, 'unixepoch')) AS date
         FROM exchange_rates
         WHERE strftime('%d/%m/%Y', datetime(date, 'unixepoch')) = strftime('%d/%m/%Y','now')
         ORDER BY currency DESC
     };
-    
-    return fetch_all($sql,[]);
+
+    return _fetch_all($sql, []);
 }
 
 # -----------------------------
 # Historical exchange rates for key currencies
 # -----------------------------
 sub exchange_rates_historical {
-
     my $sql = q{
         SELECT currency, strftime('%d/%m/%Y', datetime(date, 'unixepoch')) AS date, exchange_rate
         FROM exchange_rates
@@ -113,7 +133,7 @@ sub exchange_rates_historical {
     my %data;
 
     foreach my $cur (@currencies) {
-        $data{$cur} = fetch_all($sql, [$cur]);
+        $data{$cur} = _fetch_all($sql, [$cur]);
     }
 
     return \%data;
@@ -131,7 +151,7 @@ sub exchange_rates_update {
     };
 
     foreach my $cur (qw(AUD EUR GBP USD)) {
-        execute($sql, [$cur, $rates->{$cur}]);
+        _execute($sql, [$cur, $rates->{$cur}]);
     }
 
     return exchange_rates();

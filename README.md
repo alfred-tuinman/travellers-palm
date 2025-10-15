@@ -185,3 +185,111 @@ TravellersPalm.pm has a helperfile called dump_log allowing a message with a var
 Everything listed in @EXPORT is automatically imported into the caller’s namespace when they use your module.
 
 Everything listed in @EXPORT_OK is optionally exportable. It’s explicit — users must request it in their use statement.
+
+# Memcached
+Your config.yml plugins is always an array (dash -). The inner hash is just MemcachedConfig → your Perl code reads it as:
+
+```my $memd_conf = $self->config->{plugins}[0]{MemcachedConfig};```
+
+
+Make sure the memcached service is running:
+
+```memcached -vv ```
+
+or if using Docker
+
+```docker exec -it your_app_container memcached -vv```
+
+Start your Mojolicious app:
+
+```morbo script/travellers_palm ```
+
+Open the broswer
+
+```http://localhost:3000/memcache/test ```
+
+
+You should see 
+
+```json
+    {
+      "basic_check": {
+        "stored": "Hello from Memcached at Wed Oct 15 21:10:05 2025",
+        "fetched": "Hello from Memcached at Wed Oct 15 21:10:05 2025",
+        "status": "ok"
+      },
+      "benchmark": {
+        "count": 1000,
+        "set_time_s": "0.0450",
+        "get_time_s": "0.0392",
+        "set_per_sec": "22222.2",
+        "get_per_sec": "25510.2",
+        "hits": 1000,
+        "hit_rate_pct": "100.0"
+      }
+    }
+```
+
+Perfect — let’s make this concrete.
+
+You’re asking about the **relative overhead** of using Memcached inside Mojolicious (vs. in-memory Perl variables or a direct DB call). Let’s look at what that means in real numbers.
+
+---
+
+### ⚙️ The setup
+
+If you run the `/memcache/test` route I gave you, it performs:
+
+* 1000 `set` operations
+* 1000 `get` operations
+* and measures the total elapsed time for each
+
+This gives you a **real measurement of overhead** under your exact environment.
+
+---
+
+### 📈 Typical results (on localhost Memcached)
+
+| Operation | Count | Elapsed (seconds) | Ops/sec | Relative Overhead |
+| --------- | ----- | ----------------- | ------- | ----------------- |
+| `set`     | 1000  | 0.020             | ~50,000 | +0.02 ms per op   |
+| `get`     | 1000  | 0.012             | ~83,000 | +0.012 ms per op  |
+
+*(That’s with `Cache::Memcached` on localhost 127.0.0.1, measured on a midrange CPU.)*
+
+---
+
+### 🧮 Comparison vs. alternatives
+
+| Storage method                      | Typical latency | Notes                                             |
+| ----------------------------------- | --------------- | ------------------------------------------------- |
+| Perl hash (`$c->stash`, in-process) | < 0.0001 ms     | Essentially free, but not shared between workers  |
+| Memcached (local TCP socket)        | 0.01–0.03 ms    | Shared across processes/servers; tiny overhead    |
+| Memcached (remote LAN)              | 0.3–0.8 ms      | Still extremely fast for cached reads             |
+| SQLite (on disk)                    | 0.5–5 ms        | Orders of magnitude slower for many small queries |
+| HTTP API / external call            | 20–200 ms       | Not comparable — network I/O dominates            |
+
+---
+
+### 🧠 Interpretation
+
+* Memcached adds **tens of microseconds** per operation on localhost — essentially negligible compared to a DB hit.
+* It’s about **50–200× faster than a small SQLite query** and **thousands of times faster** than hitting an API.
+* The overhead relative to in-memory Perl variables is there, but tiny — you trade ~0.02 ms per lookup for cross-process caching.
+
+---
+
+### 🧩 Practical takeaway
+
+| Use case                                                              | Recommendation               |
+| --------------------------------------------------------------------- | ---------------------------- |
+| Per-request temporary data                                            | Perl variables / `$c->stash` |
+| Data reused across requests (sessions, HTML fragments, API responses) | ✅ Memcached                  |
+| Persistent data (must survive restarts)                               | Database                     |
+
+---
+
+If you run your `/memcache/test` route, I can help you **interpret your real numbers** (ops/sec, latency, etc.) and compare to these baselines.
+Would you like me to show how to include a small *in-memory benchmark* too, so you can directly see Memcached vs. Perl hash vs. SQLite on your system?
+
+
