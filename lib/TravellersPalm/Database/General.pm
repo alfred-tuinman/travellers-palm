@@ -134,7 +134,7 @@ sub modules {
 # -----------------------------
 sub regionnames {
     my $sql = q{
-        SELECT region_id, region_name
+        SELECT region_id, region
         FROM regions
     };
     return _fetch_all($sql, [], 'jadoo');
@@ -145,9 +145,9 @@ sub regionnames {
 # -----------------------------
 sub regions {
     my $sql = q{
-        SELECT DISTINCT region_name
+        SELECT DISTINCT region
         FROM regions
-        ORDER BY region_name
+        ORDER BY region
     };
     return _fetch_all($sql, [], 'jadoo');
 }
@@ -157,7 +157,7 @@ sub regions {
 # -----------------------------
 sub regionsurl {
     my $sql = q{
-        SELECT region_name, url
+        SELECT region, url
         FROM regions
     };
     return _fetch_all($sql, [], 'jadoo');

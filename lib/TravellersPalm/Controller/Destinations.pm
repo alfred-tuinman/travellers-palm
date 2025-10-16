@@ -48,7 +48,7 @@ sub show_tailor ($self) {
 
 # → regions overview
 sub show_region_list ($self) {
-    my ($destination) = @{ $self->stash('splat') // [] };
+    my $destination = $self->stash('destination');
     my $content = webtext(7);
 
     my $crumb = "<li>Destinations</li>"
@@ -72,7 +72,7 @@ sub show_region_list ($self) {
 
 # → region-specific listings
 sub show_region_detail ($self) {
-    my ($destination, $arg) = @{ $self->stash('splat') // [] };
+    my $destination = $self->stash('destination');
     my @arg = ref $arg eq 'ARRAY' ? @$arg : ();
 
     my $region = $arg[0];
