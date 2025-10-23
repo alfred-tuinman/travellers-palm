@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
+use TravellersPalm::Database::Helpers qw(_fetch_row _fetch_all);
 use Data::Dumper;
 
 our @EXPORT_OK = qw(
@@ -23,26 +24,6 @@ our @EXPORT_OK = qw(
 );
 
 # -----------------------------
-# Internal wrappers for logging
-# -----------------------------
-sub _fetch_row {
-    my ($sql, $bind_ref, $key_style, $dbkey) = @_;
-    $bind_ref  //= [];
-    $key_style //= 'NAME_lc';
-
-    warn "[Itineraries] fetch_row called with SQL: $sql, Bind: " . Dumper($bind_ref);
-    return fetch_row($sql, $bind_ref, $key_style, $dbkey);
-}
-
-sub _fetch_all {
-    my ($sql, $bind_ref, $dbkey) = @_;
-    $bind_ref //= [];
-
-    warn "[Itineraries] fetch_all called with SQL: $sql, Bind: " . Dumper($bind_ref);
-    return fetch_all($sql, $bind_ref, $dbkey);
-}
-
-# -----------------------------
 # Check if itinerary is quoted
 # -----------------------------
 sub isquoted {
@@ -52,7 +33,7 @@ sub isquoted {
         FROM itineraries
         WHERE itinerary_id = ?
     };
-    return _fetch_row($sql, [$itinerary_id], 'NAME_lc', 'jadoo');
+    return _fetch_row($sql, [$itinerary_id], 'NAME_lc');
 }
 
 # -----------------------------
@@ -65,7 +46,7 @@ sub itincost {
         FROM itinerary_costs
         WHERE itinerary_id = ?
     };
-    return _fetch_row($sql, [$itinerary_id], 'NAME_lc', 'jadoo');
+    return _fetch_row($sql, [$itinerary_id], 'NAME_lc');
 }
 
 # -----------------------------
@@ -77,7 +58,7 @@ sub itineraries {
         FROM itineraries
         ORDER BY title
     };
-    return _fetch_all($sql, [], 'jadoo');
+    return _fetch_all($sql);
 }
 
 # -----------------------------
@@ -90,7 +71,7 @@ sub itinerary {
         FROM itineraries
         WHERE itinerary_id = ?
     };
-    return _fetch_row($sql, [$itinerary_id], 'NAME_lc', 'jadoo');
+    return _fetch_row($sql, [$itinerary_id], 'NAME_lc');
 }
 
 # -----------------------------
@@ -103,7 +84,7 @@ sub itinerary_cost {
         FROM itinerary_costs
         WHERE itinerary_id = ?
     };
-    return _fetch_all($sql, [$itinerary_id], 'jadoo');
+    return _fetch_all($sql, [$itinerary_id]);
 }
 
 # -----------------------------
@@ -116,7 +97,7 @@ sub itinerary_exist {
         FROM itineraries
         WHERE itinerary_id = ?
     };
-    return _fetch_row($sql, [$itinerary_id], 'NAME_lc', 'jadoo');
+    return _fetch_row($sql, [$itinerary_id], 'NAME_lc');
 }
 
 # -----------------------------
@@ -129,7 +110,7 @@ sub itinerary_id {
         FROM itineraries
         WHERE title = ?
     };
-    return _fetch_row($sql, [$title], 'NAME_lc', 'jadoo');
+    return _fetch_row($sql, [$title], 'NAME_lc');
 }
 
 # -----------------------------
@@ -143,7 +124,7 @@ sub placesyouwillvisit {
         WHERE itinerary_id = ?
         ORDER BY day_no
     };
-    return _fetch_all($sql, [$itinerary_id], 'jadoo');
+    return _fetch_all($sql, [$itinerary_id]);
 }
 
 # -----------------------------
@@ -160,7 +141,7 @@ sub similartours {
         GROUP BY i.itinerary_id
         LIMIT 5
     };
-    return _fetch_all($sql, [$itinerary_id, $itinerary_id], 'jadoo');
+    return _fetch_all($sql, [$itinerary_id, $itinerary_id]);
 }
 
 # -----------------------------
@@ -175,7 +156,7 @@ sub tripideas_trips {
         WHERE it.theme_id = ?
         ORDER BY i.title
     };
-    return _fetch_all($sql, [$theme_id], 'jadoo');
+    return _fetch_all($sql, [$theme_id]);
 }
 
 # -----------------------------
@@ -186,7 +167,7 @@ sub totalitineraries {
         SELECT COUNT(*) AS total
         FROM itineraries
     };
-    return _fetch_row($sql, [], 'NAME_lc', 'jadoo');
+    return _fetch_row($sql, [], 'NAME_lc');
 }
 
 # -----------------------------
@@ -201,7 +182,7 @@ sub toursinstate {
         WHERE ir.region_id = ?
         ORDER BY i.title
     };
-    return _fetch_all($sql, [$state_id], 'jadoo');
+    return _fetch_all($sql, [$state_id]);
 }
 
 # -----------------------------
@@ -214,7 +195,7 @@ sub youraccommodation {
         FROM itinerary_accommodation
         WHERE itinerary_id = ?
     };
-    return _fetch_all($sql, [$itinerary_id], 'jadoo');
+    return _fetch_all($sql, [$itinerary_id]);
 }
 
 1;

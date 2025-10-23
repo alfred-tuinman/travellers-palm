@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
+use TravellersPalm::Database::Helpers qw(_fetch_row _fetch_all);
 use Data::Dumper;
 
 our @EXPORT_OK = qw(
@@ -15,26 +16,6 @@ our @EXPORT_OK = qw(
     itinerary_themes
     itinerary_search
 );
-
-# -----------------------------
-# Internal wrappers for logging
-# -----------------------------
-sub _fetch_row {
-    my ($sql, $bind_ref, $key_style, $dbkey) = @_;
-    $bind_ref  //= [];
-    $key_style //= 'NAME_lc';
-
-    warn "[Itineraries] fetch_row called with SQL: $sql, Bind: " . Dumper($bind_ref);
-    return fetch_row($sql, $bind_ref, $key_style, $dbkey);
-}
-
-sub _fetch_all {
-    my ($sql, $bind_ref, $dbkey) = @_;
-    $bind_ref //= [];
-
-    warn "[Itineraries] fetch_all called with SQL: $sql, Bind: " . Dumper($bind_ref);
-    return fetch_all($sql, $bind_ref, $dbkey);
-}
 
 # -----------------------------
 # Route listing for a destination
@@ -49,7 +30,7 @@ sub route_listing {
         AND i.option_type = ?
         ORDER BY ?
     };
-    return _fetch_all($sql, [$destination, $option, $order], 'jadoo');
+    return _fetch_all($sql, [$destination, $option, $order]);
 }
 
 # -----------------------------
@@ -62,7 +43,7 @@ sub itinerary_details {
         FROM itineraries i
         WHERE i.itinerary_id = ?
     };
-    return _fetch_row($sql, [$itinerary_id], 'NAME_lc', 'jadoo');
+    return _fetch_row($sql, [$itinerary_id], 'NAME_lc');
 }
 
 # -----------------------------
@@ -76,7 +57,7 @@ sub itinerary_days {
         WHERE itinerary_id = ?
         ORDER BY day_no
     };
-    return _fetch_all($sql, [$itinerary_id], 'jadoo');
+    return _fetch_all($sql, [$itinerary_id]);
 }
 
 # -----------------------------
@@ -91,7 +72,7 @@ sub itinerary_modules {
         WHERE im.itinerary_id = ?
         ORDER BY m.module_name
     };
-    return _fetch_all($sql, [$itinerary_id], 'jadoo');
+    return _fetch_all($sql, [$itinerary_id]);
 }
 
 # -----------------------------
@@ -106,7 +87,7 @@ sub itinerary_regions {
         WHERE ir.itinerary_id = ?
         ORDER BY r.region_name
     };
-    return _fetch_all($sql, [$itinerary_id], 'jadoo');
+    return _fetch_all($sql, [$itinerary_id]);
 }
 
 # -----------------------------
@@ -121,7 +102,7 @@ sub itinerary_themes {
         WHERE it.itinerary_id = ?
         ORDER BY t.theme_name
     };
-    return _fetch_all($sql, [$itinerary_id], 'jadoo');
+    return _fetch_all($sql, [$itinerary_id]);
 }
 
 # -----------------------------
@@ -137,7 +118,7 @@ sub itinerary_search {
         ORDER BY i.title
     };
     my $like = "%$keyword%";
-    return _fetch_all($sql, [$like, $like], 'jadoo');
+    return _fetch_all($sql, [$like, $like]);
 }
 
 1;

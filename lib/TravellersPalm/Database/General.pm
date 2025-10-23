@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
+use TravellersPalm::Database::Helpers qw(_fetch_row _fetch_all);
 use Data::Dumper;
 
 our @EXPORT_OK = qw(
@@ -20,26 +21,6 @@ our @EXPORT_OK = qw(
     webpages
     web
 );
-
-# -----------------------------
-# Internal wrappers for logging
-# -----------------------------
-sub _fetch_row {
-    my ($sql, $bind_ref, $key_style, $dbkey) = @_;
-    $bind_ref  //= [];
-    $key_style //= 'NAME_lc';
-
-    warn "[General] fetch_row called with SQL: $sql, Bind: " . Dumper($bind_ref);
-    return fetch_row($sql, $bind_ref, $key_style, $dbkey);
-}
-
-sub _fetch_all {
-    my ($sql, $bind_ref, $dbkey) = @_;
-    $bind_ref //= [];
-
-    warn "[General] fetch_all called with SQL: $sql, Bind: " . Dumper($bind_ref);
-    return fetch_all($sql, $bind_ref, $dbkey);
-}
 
 # -----------------------------
 # Categories (example multi-row)
@@ -61,7 +42,7 @@ sub categories {
           AND a2.categories_id IN (23,36,8)
         ORDER BY 3
     };
-    return _fetch_all($sql, [], 'jadoo');
+    return _fetch_all($sql);
 }
 
 # -----------------------------
@@ -72,7 +53,7 @@ sub countries_url {
         SELECT country_name, url
         FROM countries
     };
-    return _fetch_all($sql, [], 'jadoo');
+    return _fetch_all($sql);
 }
 
 # -----------------------------
@@ -86,7 +67,7 @@ sub daybyday {
         WHERE itinerary_id = ?
         ORDER BY day_no
     };
-    return _fetch_all($sql, [$itinerary_id], 'jadoo');
+    return _fetch_all($sql, [$itinerary_id]);
 }
 
 # -----------------------------
@@ -99,7 +80,7 @@ sub hotel {
         FROM hotels
         WHERE hotel_id = ?
     };
-    return _fetch_row($sql, [$hotel_id], 'NAME_lc', 'jadoo');
+    return _fetch_row($sql, [$hotel_id], 'NAME_lc');
 }
 
 # -----------------------------
@@ -114,7 +95,7 @@ sub metatags {
         FROM webpages
         WHERE url = ?
     };
-    return _fetch_row($sql, [$url], 'NAME_lc', 'jadoo');
+    return _fetch_row($sql, [$url], 'NAME_lc');
 }
 
 # -----------------------------
@@ -126,7 +107,7 @@ sub modules {
         FROM modules
         ORDER BY module_name
     };
-    return _fetch_all($sql, [], 'jadoo');
+    return _fetch_all($sql);
 }
 
 # -----------------------------
@@ -137,7 +118,7 @@ sub regionnames {
         SELECT region_id, region
         FROM regions
     };
-    return _fetch_all($sql, [], 'jadoo');
+    return _fetch_all($sql);
 }
 
 # -----------------------------
@@ -149,7 +130,7 @@ sub regions {
         FROM regions
         ORDER BY region
     };
-    return _fetch_all($sql, [], 'jadoo');
+    return _fetch_all($sql);
 }
 
 # -----------------------------
@@ -160,7 +141,7 @@ sub regionsurl {
         SELECT region, url
         FROM regions
     };
-    return _fetch_all($sql, [], 'jadoo');
+    return _fetch_all($sql);
 }
 
 # -----------------------------
@@ -171,7 +152,7 @@ sub totaltrains {
         SELECT COUNT(*) AS total
         FROM trains
     };
-    return _fetch_row($sql, [], 'NAME_lc', 'jadoo');
+    return _fetch_row($sql, [], 'NAME_lc');
 }
 
 # -----------------------------
@@ -186,7 +167,7 @@ sub webpages {
         FROM webpages
         WHERE webpages_id = ?
     };
-    return _fetch_row($sql, [$id], 'NAME_lc', 'jadoo');
+    return _fetch_row($sql, [$id], 'NAME_lc');
 }
 
 # -----------------------------
@@ -201,7 +182,7 @@ sub web {
         FROM Web
         WHERE Web_id = ?
     };
-    return _fetch_row($sql, [$id], 'NAME_lc', 'jadoo');
+    return _fetch_row($sql, [$id], 'NAME_lc');
 }
 
 1;

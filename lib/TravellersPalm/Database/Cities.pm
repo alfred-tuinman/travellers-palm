@@ -5,6 +5,7 @@ use warnings;
 
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
+use TravellersPalm::Database::Helpers qw(_fetch_row _fetch_all);
 
 our @EXPORT_OK = qw(
     airports

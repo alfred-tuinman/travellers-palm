@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
+use TravellersPalm::Database::Helpers qw(_fetch_row _fetch_all);
 use Digest::MD5 qw(md5_hex);
 use DateTime;
 use Data::Dumper;

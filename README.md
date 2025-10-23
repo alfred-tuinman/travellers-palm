@@ -293,3 +293,19 @@ If you run your `/memcache/test` route, I can help you **interpret your real num
 Would you like me to show how to include a small *in-memory benchmark* too, so you can directly see Memcached vs. Perl hash vs. SQLite on your system?
 
 
+# Logs
+We keep the logs outside docker using a volume as that has many benefits
+
+Logs persist outside the container
+Containers are ephemeral — if one is rebuilt or deleted, all internal files (including /usr/src/app/log/mojo.log) vanish.
+→ Mounting a host volume keeps your logs on the host filesystem (./log/), so you never lose them.
+
+Easier access for debugging
+You can tail -f log/travellers_palm.log directly on your host machine, without docker exec or docker logs.
+
+Works with file rotation / external log processing
+You can feed these logs into logrotate, grep, or external tools like ELK, Loki, or Datadog.
+
+Keeps container images stateless
+A good Docker image shouldn’t depend on internal state (like growing log files).
+Externalizing logs keeps the image clean and portable.

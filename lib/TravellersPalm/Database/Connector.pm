@@ -1,8 +1,10 @@
 package TravellersPalm::Database::Connector;
+
 use Mojo::Base -base;
 use DBI;
 use Try::Tiny;
 use Exporter 'import';
+use Data::Dumper;
 
 our @EXPORT_OK = qw(fetch_all fetch_row execute setup);
 
@@ -50,32 +52,48 @@ sub dbh {
 sub fetch_row {
     my ($sql, $bind_ref, $key_style, $dbkey) = @_;
     $bind_ref  //= [];
-    $key_style //= 'NAME_lc';
-    $dbkey     //= 'jadoo';
+    $key_style //= '';  # '' means DBI returns columns as-is
+    $dbkey     //= (keys %{$config->{databases}})[0];  # first DB in config
 
-    my $sth = dbh($dbkey)->prepare($sql);
+    my $dbh = dbh($dbkey);
+    $log->debug("Executing SQL (fetch_row): $sql with bind: " . join(", ", @$bind_ref));
+    $log->debug("Connected DB file: " . $dbh->{Name});
+
+    my $sth = $dbh->prepare($sql);
     $sth->execute(@$bind_ref);
-    return $sth->fetchrow_hashref($key_style);
+
+    my $row = $sth->fetchrow_hashref($key_style);
+    $log->debug("Returned row: " . Dumper($row // {}));
+
+    return $row;
 }
 
 # ----------------------
 # fetch_all: returns arrayref of hashrefs
 # ----------------------
 sub fetch_all {
-    my ($sql, $bind_ref, $dbkey) = @_;
-    $bind_ref //= [];
-    $dbkey    //= 'jadoo';
+    my ($sql, $bind_ref, $key_style, $dbkey) = @_;
+    $bind_ref  //= [];
+    $key_style //= '';  # '' = keep DB column names exactly
+    $dbkey     //= (keys %{$config->{databases}})[0];
 
-    my $sth = dbh($dbkey)->prepare($sql);
+    my $dbh = dbh($dbkey);
+    $log->debug("Executing SQL (fetch_all): $sql with bind: " . join(", ", @$bind_ref));
+    $log->debug("Connected DB file: " . $dbh->{Name});
+
+    my $sth = $dbh->prepare($sql);
     $sth->execute(@$bind_ref);
 
     my @rows;
-    while (my $row = $sth->fetchrow_hashref) {
+    while (my $row = $sth->fetchrow_hashref($key_style)) {
         push @rows, $row;
     }
 
+    $log->debug("Returned " . scalar(@rows) . " rows: " . Dumper(\@rows));
+
     return \@rows;
 }
+
 
 # ----------------------
 # execute: for insert/update/delete

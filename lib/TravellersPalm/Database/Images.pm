@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
+use TravellersPalm::Database::Helpers qw(_fetch_row _fetch_all);
 use Data::Dumper;
 
 our @EXPORT_OK = qw(
@@ -18,22 +19,6 @@ our @EXPORT_OK = qw(
     imgupload_type
 );
 
-# -----------------------------
-# Debug wrappers
-# -----------------------------
-sub _fetch_all {
-    my ($sql, $bind_ref) = @_;
-    $bind_ref //= [];
-    warn "[Images] fetch_all SQL: $sql, Bind: " . Dumper($bind_ref);
-    return fetch_all($sql, $bind_ref);
-}
-
-sub _fetch_row {
-    my ($sql, $bind_ref) = @_;
-    $bind_ref //= [];
-    warn "[Images] fetch_row SQL: $sql, Bind: " . Dumper($bind_ref);
-    return fetch_row($sql, $bind_ref);
-}
 
 sub _execute {
     my ($sql, $bind_ref) = @_;

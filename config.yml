@@ -6,6 +6,21 @@ root: "/usr/src/app"
 secrets:
   - f22ebd363e5fffa6826f785b72de3c50db11aa67
 
+log:
+  level: debug
+  path: /usr/src/app/log/app.log
+
+template_tokens:
+  PHONE1: "+91 88051 22221"
+  PHONE2: "+91 90111 55551"
+  TAILOR: "tailor-made"
+  THEMES: "themes"
+  STATES: "states"
+  REGIONS: "regions"
+  IDEAS: "ideas"
+  IMAGE: "http://images.travellers-palm.com"
+  domain: "www.travellers-palm.com"
+  
 databases:
   jadoo:
     dsn: "dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db"

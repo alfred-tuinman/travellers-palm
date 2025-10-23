@@ -1,0 +1,151 @@
+[1761208907.47822] [pid:6] [36mDEBUG[0m Matched route: (?^ups:^/(.+))
+[1761208919.94286] [pid:6] [36mDEBUG[0m Executing SQL: 
+        SELECT DISTINCT region
+        FROM regions
+        ORDER BY region
+     with bind: 
+[1761208919.94609] [pid:6] [36mDEBUG[0m Connected DB file: dbname=/usr/src/app/localdb/Jadoo_2006.db
+[1761208919.94748] [pid:6] [31mERROR[0m [2W8RCUkr0rIy]DBD::SQLite::st fetchrow_hashref failed: Can't use attribute 'jadoo' because it doesn't contain a reference to an array (undef) at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 78.
+
+[1761208919.99111] [pid:6] [36mDEBUG[0m Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/list)
+[1761208920.02915] [pid:6] [36mDEBUG[0m No endpoint route matched (maybe static or 404): /mojo/highlight.js/highlight.min.js
+[1761208920.06723] [pid:6] [36mDEBUG[0m No endpoint route matched (maybe static or 404): /mojo/bootstrap/bootstrap.js
+[1761208920.08386] [pid:6] [36mDEBUG[0m No endpoint route matched (maybe static or 404): /mojo/bootstrap/bootstrap.css
+[1761208920.11713] [pid:6] [36mDEBUG[0m No endpoint route matched (maybe static or 404): /mojo/logo-white-2x.png
+[1761208920.14549] [pid:6] [36mDEBUG[0m No endpoint route matched (maybe static or 404): /mojo/highlight.js/mojolicious.min.js
+[1761208920.17722] [pid:6] [36mDEBUG[0m No endpoint route matched (maybe static or 404): /mojo/highlight.js/highlight-mojo-dark.css
+[1761208920.20066] [pid:6] [36mDEBUG[0m No endpoint route matched (maybe static or 404): /mojo/mojo.css
+[1761208920.21376] [pid:6] [36mDEBUG[0m No endpoint route matched (maybe static or 404): /mojo/popper/popper.js
+[1761208920.28246] [pid:6] [36mDEBUG[0m No endpoint route matched (maybe static or 404): /mojo/pinstripe-light.png
+[1761208920.29154] [pid:6] [36mDEBUG[0m No endpoint route matched (maybe static or 404): /mojo/pinstripe-dark.png
+[1761208920.49681] [pid:6] [36mDEBUG[0m No endpoint route matched (maybe static or 404): /favicon.ico
+[1761209844.81803] [pid:7] [36mDEBUG[0m Executing SQL: 
+        SELECT DISTINCT region
+        FROM regions
+        ORDER BY region
+     with bind: 
+[1761209844.82002] [pid:7] [36mDEBUG[0m Connected DB file: dbname=/usr/src/app/localdb/Jadoo_2006.db
+[1761209844.82067] [pid:7] [36mDEBUG[0m Returned 9 rows
+[1761209844.91632] [pid:7] [36mDEBUG[0m Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/list)
+[1761212224.44023] [pid:7] [36mDEBUG[0m Executing SQL (fetch_row): 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     with bind: explore-by-region
+[1761212224.44876] [pid:7] [36mDEBUG[0m Connected DB file: dbname=/usr/src/app/localdb/Jadoo_2006.db
+[1761212224.4525] [pid:7] [31mERROR[0m [g5QvCmMgoz5V]Undefined subroutine &TravellersPalm::Database::Connector::Dumper called at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 64.
+
+[1761212257.7694] [pid:7] [36mDEBUG[0m Executing SQL (fetch_row): 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     with bind: explore-by-region
+[1761212257.76959] [pid:7] [36mDEBUG[0m Connected DB file: dbname=/usr/src/app/localdb/Jadoo_2006.db
+[1761212257.77099] [pid:7] [31mERROR[0m [GgnslAR3U6zf]Undefined subroutine &TravellersPalm::Database::Connector::Dumper called at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 64.
+
+[1761212295.16159] [pid:7] [36mDEBUG[0m Executing SQL (fetch_row): 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     with bind: explore-by-region
+[1761212295.16176] [pid:7] [36mDEBUG[0m Connected DB file: dbname=/usr/src/app/localdb/Jadoo_2006.db
+[1761212295.16915] [pid:7] [31mERROR[0m [RopTumqrHCKd]Undefined subroutine &TravellersPalm::Database::Connector::Dumper called at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 64.
+
+[1761212669.15222] [pid:7] [36mDEBUG[0m Executing SQL (fetch_row): 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     with bind: explore-by-region
+[1761212669.1601] [pid:7] [36mDEBUG[0m Connected DB file: dbname=/usr/src/app/localdb/Jadoo_2006.db
+[1761212669.16448] [pid:7] [31mERROR[0m [VdecCN6kwNMs]Undefined subroutine &TravellersPalm::Database::Connector::Dumper called at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 64.
+
+[1761212669.21986] [pid:7] [36mDEBUG[0m Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/list)
+[1761217291.8219] [pid:7] [36mDEBUG[0m Executing SQL (fetch_row): 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     with bind: explore-by-region
+[1761217291.82805] [pid:7] [36mDEBUG[0m Connected DB file: dbname=/usr/src/app/localdb/Jadoo_2006.db
+[1761217291.82998] [pid:7] [36mDEBUG[0m Returned row: $VAR1 = {
+          'meta_descr' => 'Explore India your own way by using our unique range of short itineraries as a guideline or as building blocks of a longer tailor-made tour in India. ',
+          'meta_title' => 'Build your own India trip - Independent Travel in India | Traveller\'s Palm',
+          'meta_keywords' => 'india, independent india travel, short trips, tailor-made india holidays, india custom tours'
+        };
+
+[1761217291.83043] [pid:7] [36mDEBUG[0m Executing SQL (fetch_all): 
+        SELECT DISTINCT region
+        FROM regions
+        ORDER BY region
+     with bind: 
+[1761217291.83053] [pid:7] [36mDEBUG[0m Connected DB file: dbname=/usr/src/app/localdb/Jadoo_2006.db
+[1761217291.83146] [pid:7] [36mDEBUG[0m Returned 9 rows: $VAR1 = [
+          {
+            'Region' => 'Deep in the azure waters of the Indian Ocean lies the last of the enchanted isles. The {Lakshadweep}, or Laccadive Islands, is a string of little known islands lying approximately 200 miles off the coast of Kerala. 
+
+The jewel of the Lakshadweep is {Bangaram Island}. A teardrop shaped, uninhabited island where there are no intrusions from the everyday world. No televisions, no telephone or newspapers. This is the perfect place to relax or to discover the myriad forms of undersea life by snorkeling or scuba diving.
+'
+          },
+          {
+            'Region' => 'Entered through {Delhi}, capital of India, {Rajasthan} and the northern state of {Uttar Pradesh} have arguably the densest concentration of top attractions on the subcontinent.
+
+In Rajasthan, the desert forts of {Jaisalmer} and {Jodhpur}, the palaces and lakes of {Udaipur}, the Pink City of {Jaipur} and the {Ranthambore National Park} evoke all the romance and splendour of the state\'s princely past.
+
+From Jaipur, you can head east to {Agra}, home to the {Taj Mahal}, and the ancient city of {Varanasi}, India\'s holiest pilgrimage site. Further east, off the tourist track, you can visit {Bodh Gaya} where the Buddha gained enlightenment.'
+          },
+          {
+            'Region' => 'In the western state of {Gujarat}, you find exquisite crafts in the textile villages around {Bhuj}, rare wildlife at {Sasangir} and the {Little Rann of Kutch}, and some beautiful beaches at {Diu} and {Mandvi}.
+
+In {Madhya Pradesh}, the heart of India, are the famous {Khajuraho} temples, the great Buddhist stupa of {Sanchi} and the romantic ghost-town of {Mandu}. You also find here two of India\'s finest game sanctuaries, {Bandhavgarh} and {Kanha}. 
+
+The remote and thickly forested tribal areas of the neighbouring states of {Jharkhand} and {Chhatisgarh} offer access to some of the country\'s last unexplored frontiers.
+'
+          },
+          {
+            'Region' => 'Kerala is known as {"God\'s own country"}. It is South India\'s top destination, particularly for the well-heeled traveler in search of pampering and relaxation.
+
+The main entry point is the harbour city of {Kochi (Cochin)}, with its diverse architectural and religious influences. In a small radius from here you have coconut-lined white beaches at {Marari}, and lush backwaters plied by {houseboats} near {Allapuzha} and {Kumarakom}. 
+
+Further inland are the verdant hills and rain forests of the Western Ghats, home to herds of wild elephants at {Thekkady}, tea plantations at {Munnar}, and further north, the rain forests of {Wayanad}.
+'
+          },
+          {
+            'Region' => 'Northeast of Delhi lie the Golden Temple at {Amritsar}, one of India\'s most wonderful attractions, and the famous hill stations of {Himachal Pradesh} such as {Shimla}, {Dharamsala} and {Manali}.
+
+Moving even farther north, you reach {Jammu and Kashmir}, India\'s northernmost state, bordering Pakistan and China\'s Tibetan plateau. It\'s three distinct regions - Jammu, the Kashmir Valley and {Ladakh} - offer a rich diversity of landscapes, religions and people.
+
+Northwest of Delhi is {Uttaranchal}, a small state filled to the brim with religious sites, wildlife reserves and cool hills that invite escape.'
+          },
+          {
+            'Region' => 'Teetering on the edge of the Arabian Sea, {Mumbai} is a vibrant, confident metropolis that\'s tangibly high on energy. The state capital of {Maharashtra}, this is home to many of the subcontinent\'s best restaurants and great hotels. 
+
+Mumbai is also the ideal base for an eastward jaunt to the ancient rock-cut caves of {Ajanta and Ellora}, Maharashtra\'s startling World Heritage Sites. 
+
+Further down the cost are the beautiful tropical beaches of {Goa}, famous for their easy-going ambience, good food, and lovely climate. A Portuguese colonial heritage has left an indelible mark on this tiny enclave, from cuisine to architecture, with plenty to see. 
+'
+          },
+          {
+            'Region' => 'The main entry point for {Karnataka} is the hip city of {Bangalore}, famous for its burgeoning software industry. From there you can head north to the lost city of {Hampi} or south to the sandalwood city of {Mysore} and the coffee and spice-growing region of {Coorg}.   
+
+In the neighbouring state of {Tamil Nadu} you find the most superb Dravidian temples in {Mamallapuram}, {Thanjavur}, {Trichy} and {Madurai}.
+
+In the middle of this is the former French coastal town of {Pondicherry} which has a unique blend of spiritual aura, French colonial heritage, Tamil culture, and a cosmopolitan flair.
+'
+          },
+          {
+            'Region' => 'This string of more than 300 almost virgin islands lies quietly in the Andaman Sea, east of the Bay of Bengal, hardly touched by modern civilization. 
+
+{Port Blair} is the capital of the {Andaman & Nicobar Islands}. From here you can take a boat to explore nearby islands with their beautiful palm fringed beaches and turquoise blue waters, perfect for scuba diving and snorkeling enthusiasts.
+
+The islands are ringed with fine white coral sand and one only has to wade in knee-deep to enter an underwater world filled with myriad dazzling fish and corals. The best place to holiday is {Havelock Island}.
+'
+          },
+          {
+            'Region' => '{Kolkata}, India\'s second largest city, is the best known destination for visitors to Eastern India. The city has outstanding colonial architecture and sophisticated Bengali culture.
+
+From here you can either head north to the cooling breezes of West Bengal\'s hill stations, {Kurseong} & {Darjeeling}, famous for their tea plantations, and on to the the spectacular mountain vistas of the Buddhist state of {Sikkim}; or you can head south to {Orissa}\'s magnificent temples and beaches. 
+
+Further east are {Assam} and the {northeastern states}, home to many different tribal communities, whose distinct cultures flourish in areas of pristine natural beauty.'
+          }
+        ];
+
+[1761217291.92014] [pid:7] [36mDEBUG[0m Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/list)
