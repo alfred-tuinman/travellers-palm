@@ -1,110 +1,159 @@
 package TravellersPalm::Database::Connector;
 
-use Mojo::Base -base;
+use strict;
+use warnings;
 use DBI;
-use Try::Tiny;
-use Exporter 'import';
 use Data::Dumper;
+use Exporter 'import';
 
-our @EXPORT_OK = qw(fetch_all fetch_row execute setup);
+our @EXPORT_OK = qw(setup dbh fetch_row fetch_all insert_row update_row delete_row);
 
-my (%DBH, $config, $log);
+my ($app, %handles);
 
-# Called from startup()
+# -----------------------------------
+# setup($app)
+# -----------------------------------
 sub setup {
-    my ($class, $app) = @_;
-    $config = $app->config->{databases};
-    $log    = $app->log;
+    my ($class, $app_ref) = @_;
+    die "No app reference provided to Connector" unless $app_ref;
+    $app = $app_ref;
+    $app->log->debug("Calling DB setup, app=$app") if $app->can('log');
+    return 1;
 }
 
-# Get DB handle
-sub dbh {
-    my ($class, $dbkey) = @_;
-    $dbkey //= 'jadoo';  # default DB
+# -----------------------------------
+# Internal SQL logging utility
+# -----------------------------------
+sub _log_sql {
+    my ($sql, $bind_ref, $c) = @_;
+    my $timestamp = scalar localtime;
+    my $binds = $bind_ref && @$bind_ref ? join(", ", map { defined $_ ? $_ : 'NULL' } @$bind_ref) : '(none)';
 
-    return $DBH{$dbkey} if $DBH{$dbkey} && $DBH{$dbkey}->ping;
+    # Get DB subroutine caller
+    my ($package, $filename, $line, $subroutine) = caller(1);
+    $subroutine //= 'unknown_db_sub';
 
-    my $cfg = $config->{$dbkey} or die "No configuration for database '$dbkey'";
-    try {
-        $DBH{$dbkey} = DBI->connect(
-            $cfg->{dsn},
-            $cfg->{username},
-            $cfg->{password},
-            {
-                RaiseError => $cfg->{dbi_params}->{RaiseError} // 1,
-                AutoCommit => $cfg->{dbi_params}->{AutoCommit} // 1,
-                PrintError => $cfg->{dbi_params}->{PrintError} // 0,
-                sqlite_unicode => 1,  # for SQLite
-            }
-        );
+    # Get route info if $c is provided
+    my $route_info = '';
+    if ($c && $c->match) {
+        my $pattern = eval { $c->match->endpoint->pattern->uncompiled } // '';
+        $route_info = $pattern ? " | route: $pattern" : '';
     }
-    catch {
-        $log->error("DB connect error for $dbkey: $_") if $log;
-        die "Database connection failed for $dbkey: $_";
-    };
 
-    return $DBH{$dbkey};
+    my $msg = sprintf("[SQL] %s | binds: %s | called from: %s at %s line %d%s",
+                      $sql, $binds, $subroutine, $filename, $line, $route_info);
+
+    if ($app && $app->can('log')) {
+        $app->log->debug($msg);
+    } else {
+        print STDERR "[$timestamp] [pid:$$] $msg\n";
+    }
 }
 
-# ----------------------
-# fetch_row: returns single row as hashref
-# ----------------------
+# -----------------------------------
+# Get DB handle safely
+# -----------------------------------
+sub dbh {
+    my ($dbkey) = @_;
+    die "Connector not setup" unless $app;
+
+    my $databases = $app->config->{databases} || {};
+    die "No databases in config" unless %$databases;
+
+    $dbkey //= (keys %$databases)[0];
+    die "No database config for '$dbkey'" unless exists $databases->{$dbkey};
+
+    # Return cached handle if exists
+    return $handles{$dbkey} if $handles{$dbkey};
+
+    my $dbconf = $databases->{$dbkey};
+    my $dsn    = $dbconf->{dsn}      // '';
+    my $user   = $dbconf->{username} // '';
+    my $pass   = $dbconf->{password} // '';
+    my $params = $dbconf->{dbi_params} || {};
+    $params->{sqlite_unicode} = 1 unless exists $params->{sqlite_unicode};
+
+    my $dbh = DBI->connect($dsn, $user, $pass, $params)
+        or die "DB connect failed for '$dbkey': $DBI::errstr";
+
+    $handles{$dbkey} = $dbh;
+
+    eval { $app->log->debug("Connected to DB [$dbkey] dsn=$dsn") };
+
+    return $dbh;
+}
+
+# -----------------------------------
+# Generic DB operations
+# -----------------------------------
 sub fetch_row {
-    my ($sql, $bind_ref, $key_style, $dbkey) = @_;
+    my ($sql, $bind_ref, $key_style, $dbkey, $c) = @_;
     $bind_ref  //= [];
-    $key_style //= '';  # '' means DBI returns columns as-is
-    $dbkey     //= (keys %{$config->{databases}})[0];  # first DB in config
-
+    $key_style //= 'NAME';
     my $dbh = dbh($dbkey);
-    $log->debug("Executing SQL (fetch_row): $sql with bind: " . join(", ", @$bind_ref));
-    $log->debug("Connected DB file: " . $dbh->{Name});
 
-    my $sth = $dbh->prepare($sql);
-    $sth->execute(@$bind_ref);
+    _log_sql($sql, $bind_ref, $c);
 
-    my $row = $sth->fetchrow_hashref($key_style);
-    $log->debug("Returned row: " . Dumper($row // {}));
-
-    return $row;
+    my $sth;
+    eval { $sth = $dbh->prepare($sql); $sth->execute(@$bind_ref); };
+    die "DB error: $@" if $@;
+    return $sth->fetchrow_hashref($key_style);
 }
 
-# ----------------------
-# fetch_all: returns arrayref of hashrefs
-# ----------------------
 sub fetch_all {
-    my ($sql, $bind_ref, $key_style, $dbkey) = @_;
+    my ($sql, $bind_ref, $key_style, $dbkey, $c) = @_;
     $bind_ref  //= [];
-    $key_style //= '';  # '' = keep DB column names exactly
-    $dbkey     //= (keys %{$config->{databases}})[0];
-
+    $key_style //= 'NAME';
     my $dbh = dbh($dbkey);
-    $log->debug("Executing SQL (fetch_all): $sql with bind: " . join(", ", @$bind_ref));
-    $log->debug("Connected DB file: " . $dbh->{Name});
 
-    my $sth = $dbh->prepare($sql);
-    $sth->execute(@$bind_ref);
+    _log_sql($sql, $bind_ref, $c);
+
+    my $sth;
+    eval { $sth = $dbh->prepare($sql); $sth->execute(@$bind_ref); };
+    die "DB error: $@" if $@;
 
     my @rows;
-    while (my $row = $sth->fetchrow_hashref($key_style)) {
-        push @rows, $row;
-    }
-
-    $log->debug("Returned " . scalar(@rows) . " rows: " . Dumper(\@rows));
-
+    while (my $r = $sth->fetchrow_hashref($key_style)) { push @rows, $r; }
     return \@rows;
 }
 
+sub insert_row {
+    my ($sql, $bind_ref, $dbkey, $c) = @_;
+    $bind_ref ||= [];
+    my $dbh = dbh($dbkey);
 
-# ----------------------
-# execute: for insert/update/delete
-# ----------------------
-sub execute {
-    my ($sql, $bind_ref, $dbkey) = @_;
-    $bind_ref //= [];
-    $dbkey    //= 'jadoo';
+    _log_sql($sql, $bind_ref, $c);
 
-    my $sth = dbh($dbkey)->prepare($sql);
-    return $sth->execute(@$bind_ref);
+    my $sth;
+    eval { $sth = $dbh->prepare($sql); $sth->execute(@$bind_ref); };
+    die "DB error: $@" if $@;
+    return 1;
+}
+
+sub update_row {
+    my ($sql, $bind_ref, $dbkey, $c) = @_;
+    $bind_ref ||= [];
+    my $dbh = dbh($dbkey);
+
+    _log_sql($sql, $bind_ref, $c);
+
+    my $sth;
+    eval { $sth = $dbh->prepare($sql); $sth->execute(@$bind_ref); };
+    die "DB error: $@" if $@;
+    return 1;
+}
+
+sub delete_row {
+    my ($sql, $bind_ref, $dbkey, $c) = @_;
+    $bind_ref ||= [];
+    my $dbh = dbh($dbkey);
+
+    _log_sql($sql, $bind_ref, $c);
+
+    my $sth;
+    eval { $sth = $dbh->prepare($sql); $sth->execute(@$bind_ref); };
+    die "DB error: $@" if $@;
+    return 1;
 }
 
 1;

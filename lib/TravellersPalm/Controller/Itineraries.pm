@@ -39,14 +39,24 @@ sub route_listing ($self) {
     my ($itineraries, $states, $state, $stateinfo, $state_writeup, $regioninfo, $places, $filter, $regions);
 
     if ($option eq TAILOR) {
-        $itineraries = itineraries(option => 'itin', currency => $session_currency, order => $order);
-        $filter      = 'tailor';
-        $crumb     .= "<li class='active'>" . url2text(TAILOR) . "</li>";
+        $itineraries = TravellersPalm::Database::Itineraries::itineraries(
+          option => 'itin', 
+          currency => $session_currency, 
+          order => $order,
+          $self
+        );
+        $filter = 'tailor';
+        $crumb .= "<li class='active'>" . url2text(TAILOR) . "</li>";
     }
     elsif ($option eq REGIONS) {
-        $itineraries = modules(region => $region, currency => $session_currency, order => $order);
-        $regioninfo  = regionsurl($region);
-        $regions     = regions();
+        $itineraries = TravellersPalm::Database::General::modules(
+          region => $region, 
+          currency => $session_currency, 
+          order => $order,
+          $self
+        );
+        $regioninfo  = TravellersPalm::Database::General::regionsurl($region, $self);
+        $regions     = TravellersPalm::Database::General::regions($self);
         $filter      = 'regions';
 
         $crumb .= sprintf(
@@ -60,9 +70,14 @@ sub route_listing ($self) {
     }
     elsif ($option eq STATES) {
         $state       = $region;
-        $stateinfo   = statesurl($state);
-        $itineraries = toursinstate(state => $state, currency => $session_currency, order => $order);
-        $states      = states($destination);
+        $stateinfo   = TravellersPalm::Database::States::statesurl($state, $self);
+        $itineraries = TravellersPalm::Database::States::toursinstate(
+          state => $state, 
+          currency => $session_currency, 
+          order => $order,
+          $self
+        );
+        $states      = TravellersPalm::Database::States::states($destination, $self);
         $filter      = 'states';
 
         $crumb .= sprintf(
@@ -111,10 +126,10 @@ sub route_listing ($self) {
 
     return $self->render(
         template          => 'tours',
-        metatags          => metatags(TAILOR),
+        metatags          => TravellersPalm::Database::General::metatags(TAILOR, $self),
         country           => $destination,
         itineraries       => $itineraries,
-        tripideas         => themes('TRIPIDEAS'),
+        tripideas         => TravellersPalm::Database::Themes::themes('TRIPIDEAS', $self),
         crumb             => $crumb,
         filter            => $filter,
         display           => $view,
@@ -151,16 +166,20 @@ sub route_itinerary ($self) {
         );
     }
 
-    my $cost          = itinerary_cost($itinerary->{fixeditin_id}, $session_currency);
-    my $startcity     = $itinerary->{startcity} ? city($itinerary->{startcity}) : '';
-    my $endcity       = city($itinerary->{endcity});
+    my $cost = TravellersPalm::Database::Itineraries::itinerary_cost(
+      $itinerary->{fixeditin_id}, 
+      $session_currency, 
+      $self
+    );
+    my $startcity     = $itinerary->{startcity} ? TravellersPalm::Database::Cities::city($itinerary->{startcity}, $self) : '';
+    my $endcity       = TravellersPalm::Database::Cities::city($itinerary->{endcity}, $self);
     my $category      = $itinerary->{readytours} ? 'ready tour' : 'module';
     my $inclusions    = $itinerary->{inclusions};
     my $ourtime       = ourtime();
-    my $daybyday      = daybyday($tour);
-    my $accommodation = youraccommodation($tour);
-    my $similartours  = $startcity ? similartours($startcity->{cities_id}, $session_currency) : [];
-    my $placesyou     = placesyouwillvisit($tour);
+    my $daybyday      = TravellersPalm::Database::General::daybyday($tour, $self);
+    my $accommodation = TravellersPalm::Database::Itineraries::youraccommodation($tour, $self);
+    my $similartours  = $startcity ? TravellersPalm::Database::Itineraries::similartours($startcity->{cities_id}, $session_currency, $self) : [];
+    my $placesyou     = TravellersPalm::Database::Itineraries::placesyouwillvisit($tour, $self);
     my $itin          = $itinerary->{itinerary};
 
     $inclusions =~ s/\{/<br><h4>/g;

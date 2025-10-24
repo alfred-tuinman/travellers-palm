@@ -24,7 +24,7 @@ sub show_hand_picked_hotels ($self) {
 
     $self->render(
         template         => 'hand_picked_hotels',
-        metatags         => metatags($path_segment),
+        metatags         => TravellersPalm::Database::General::metatags($path_segment, $self),
         hotel_categories => webtext(18),
         heritage_hotels  => webtext(19),
         home_stays       => webtext(20),

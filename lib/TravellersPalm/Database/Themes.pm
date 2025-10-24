@@ -5,7 +5,6 @@ use warnings;
 
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
-use TravellersPalm::Database::Helpers qw(_fetch_row _fetch_all);
 
 our @EXPORT_OK = qw(
     subthemes
@@ -21,7 +20,7 @@ our @EXPORT_OK = qw(
 # Get subthemes for a given theme
 # -------------------------------------------------
 sub subthemes {
-    my ($themes_id) = @_;
+    my ($themes_id, $c) = @_;
     return undef unless defined $themes_id;
 
     my $sql = q{
@@ -37,14 +36,14 @@ sub subthemes {
         ORDER BY title
     };
 
-    return fetch_all($sql, [$themes_id]);
+    return fetch_all($sql, [$themes_id], 'NAME', 'jadoo', $c);
 }
 
 # -------------------------------------------------
 # Get subtheme details by ID
 # -------------------------------------------------
 sub subthemes_id {
-    my ($subthemes_id) = @_;
+    my ($subthemes_id, $c) = @_;
     return undef unless defined $subthemes_id;
 
     my $sql = q{
@@ -59,14 +58,14 @@ sub subthemes_id {
         WHERE   subthemes_id = ?
     };
 
-    return fetch_row($sql, [$subthemes_id], 'NAME_lc');
+    return fetch_row($sql, [$subthemes_id], 'NAME_lc', 'jadoo', $c);
 }
 
 # -------------------------------------------------
 # List all themes, optionally limited or extended
 # -------------------------------------------------
 sub themes {
-    my ($filter, $order) = @_;
+    my ($filter, $order, $c) = @_;
     $order //= 'title';
 
     my $condition = '';
@@ -94,14 +93,14 @@ sub themes {
         ORDER BY $order_by
     };
 
-    return fetch_all($sql, []);
+    return fetch_all($sql, [], 'NAME', 'jadoo', $c);
 }
 
 # -------------------------------------------------
 # Get cities associated with a theme (via subthemes)
 # -------------------------------------------------
 sub themes_subthemes {
-    my ($themes_id) = @_;
+    my ($themes_id, $c) = @_;
     return undef unless defined $themes_id;
 
     my $sql = q{
@@ -119,14 +118,14 @@ sub themes_subthemes {
         ORDER BY s.subthemes_id
     };
 
-    return fetch_all($sql, [$themes_id]);
+    return fetch_all($sql, [$themes_id], 'NAME', 'jadoo', $c);
 }
 
 # -------------------------------------------------
 # Get theme by URL
 # -------------------------------------------------
 sub themes_url {
-    my ($theme_url) = @_;
+    my ($theme_url, $c) = @_;
     return undef unless defined $theme_url;
 
     my $sql = q{
@@ -142,14 +141,14 @@ sub themes_url {
         WHERE   url LIKE ?
     };
 
-    return fetch_row($sql, [$theme_url], 'NAME_lc');
+    return fetch_row($sql, [$theme_url], 'NAME_lc', 'jadoo', $c);
 }
 
 # -------------------------------------------------
 # List all trips under a given theme
 # -------------------------------------------------
 sub themetrips {
-    my ($theme, $currency, $order) = @_;
+    my ($theme, $currency, $order, $c) = @_;
     $currency //= 'USD';
     $order    //= 'popularity';
 
@@ -219,14 +218,14 @@ sub themetrips {
         ORDER BY $order_by
     };
 
-    return fetch_all($sql, [$currency, $theme]);
+    return fetch_all($sql, [$currency, $theme], 'NAME', 'jadoo', $c);
 }
 
 # -------------------------------------------------
 # Fetch single theme by URL
 # -------------------------------------------------
 sub themeurl {
-    my ($url) = @_;
+    my ($url, $c) = @_;
     return undef unless defined $url;
 
     my $sql = q{
@@ -241,7 +240,7 @@ sub themeurl {
         WHERE   url LIKE ?
     };
 
-    return fetch_row($sql, [$url], 'NAME_lc');
+    return fetch_row($sql, [$url], 'NAME_lc', 'jadoo', $c);
 }
 
 1;

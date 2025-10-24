@@ -5,7 +5,6 @@ use warnings;
 
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
-use TravellersPalm::Database::Helpers qw(_fetch_row _fetch_all);
 
 our @EXPORT_OK = qw(
     state
@@ -17,7 +16,7 @@ our @EXPORT_OK = qw(
 # Get a single state by ID
 # -----------------------------
 sub state {
-    my ($states_id) = @_;
+    my ($states_id, $c) = @_;
     return undef unless defined $states_id;
 
     my $sql = q{
@@ -28,14 +27,14 @@ sub state {
         WHERE states_id = ?
     };
 
-    return fetch_row($sql, [$states_id], 'NAME_lc');
+    return fetch_row($sql, [$states_id], 'NAME_lc', 'jadoo', $c);
 }
 
 # -----------------------------
 # List of states for a country
 # -----------------------------
 sub states {
-    my ($country, $order) = @_;
+    my ($country, $order, $c) = @_;
     $order //= 'state';
 
     # sanitize order column to prevent SQL injection
@@ -61,14 +60,14 @@ sub states {
         ORDER BY $order
     };
 
-    return fetch_all($sql, [$category_hotel, "$country%"]);
+    return fetch_all($sql, [$category_hotel, "$country%"], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Get state details by URL
 # -----------------------------
 sub statesurl {
-    my ($url) = @_;
+    my ($url, $c) = @_;
     return undef unless defined $url;
 
     my $sql = q{
@@ -79,7 +78,7 @@ sub statesurl {
         WHERE url LIKE ?
     };
 
-    return fetch_row($sql, [$url], 'NAME_lc');
+    return fetch_row($sql, [$url], 'NAME_lc', 'jadoo', $c);
 }
 
 1;

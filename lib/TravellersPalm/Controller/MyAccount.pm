@@ -15,14 +15,14 @@ sub login ($self) {
 # POST /register
 sub register ($self) {
     my $params = $self->req->params->to_hash;
-    register_user($params);  # simplified call
+    TravellersPalm::Database::Users::register_user($params, $self);  # simplified call
     $self->render(template => 'my_account_register_thankyou');
 }
 
 # POST /mail-password
 sub mail_password ($self) {
     my $params = $self->req->params->to_hash;
-    send_password($params->{email});  # simplified call
+    TravellersPalm::Database::Users::send_password($params->{email}, $self);  # simplified call
     $self->render(template => 'my_account_password_emailed');
 }
 

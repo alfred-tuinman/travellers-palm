@@ -2,10 +2,10 @@ package TravellersPalm::Database::Images;
 
 use strict;
 use warnings;
-use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
-use TravellersPalm::Database::Helpers qw(_fetch_row _fetch_all);
+
 use Data::Dumper;
+use Exporter 'import';
+use TravellersPalm::Database::Connector qw( delete_row fetch_all fetch_row insert_row update_row);
 
 our @EXPORT_OK = qw(
     imageproperties
@@ -20,18 +20,11 @@ our @EXPORT_OK = qw(
 );
 
 
-sub _execute {
-    my ($sql, $bind_ref) = @_;
-    $bind_ref //= [];
-    warn "[Images] execute SQL: $sql, Bind: " . Dumper($bind_ref);
-    return execute($sql, $bind_ref);
-}
-
 # -----------------------------
 # Get image properties by category and type
 # -----------------------------
 sub imageproperties {
-    my ($imgcat, $imgtype) = @_;
+    my ($imgcat, $imgtype, $c) = @_;
     return {} unless defined $imgcat && defined $imgtype;
 
     my $sql = q{
@@ -44,14 +37,14 @@ sub imageproperties {
         FROM imageproperties
         WHERE imagecategories_id = ? AND imagetypes_id = ?
     };
-    return _fetch_row($sql, [$imgcat, $imgtype]);
+    return fetch_row($sql, [$imgcat, $imgtype], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Get image properties by ID
 # -----------------------------
 sub imageproperties_id {
-    my ($id) = @_;
+    my ($id, $c) = @_;
     return {} unless defined $id;
 
     my $sql = q{
@@ -64,14 +57,14 @@ sub imageproperties_id {
         FROM imageproperties
         WHERE imageproperties_id = ?
     };
-    return _fetch_row($sql, [$id]);
+    return fetch_row($sql, [$id], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Get single image by name
 # -----------------------------
 sub image {
-    my ($image_name) = @_;
+    my ($image_name, $c) = @_;
     return {} unless defined $image_name;
 
     my $sql = q{
@@ -92,14 +85,14 @@ sub image {
         WHERE imagename LIKE ?
         LIMIT 1
     };
-    return _fetch_row($sql, [$image_name]);
+    return fetch_row($sql, [$image_name], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Get multiple images by object/category/type
 # -----------------------------
 sub images {
-    my ($id, $category, $type) = @_;
+    my ($id, $category, $type, $c) = @_;
     $id       //= 0;
     $category //= 0;
     $type     //= 0;
@@ -131,14 +124,14 @@ sub images {
         ORDER BY imagename
         LIMIT 10
     };
-    return _fetch_all($sql, [$id, $category, $type]);
+    return fetch_all($sql, [$id, $category, $type], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Get all images in a category
 # -----------------------------
 sub imagesall {
-    my ($id) = @_;
+    my ($id, $c) = @_;
     return [] unless defined $id;
 
     my $sql = q{
@@ -147,24 +140,27 @@ sub imagesall {
         WHERE ImageCategories_id = ?
         ORDER BY imagename
     };
-    return _fetch_all($sql, [$id]);
+    return fetch_all($sql, [$id], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Delete image by name
 # -----------------------------
 sub images_delete {
-    my ($image_name) = @_;
+    my ($image_name, $c) = @_;
     return unless defined $image_name;
 
-    my $sql = q{DELETE FROM images WHERE imagename LIKE ?};
-    _execute($sql, [$image_name]);
+    my $res = TravellersPalm::Database::Connector::delete_row(
+      "DELETE FROM images WHERE imagename LIKE ?", 
+      [$image_name], 'NAME', 'jadoo', $c
+    );
 }
 
 # -----------------------------
 # Get images for dropdown
 # -----------------------------
 sub images_dropdown {
+    my ($c) = @_;
     my $sql = q{
         SELECT imagefolder,
                (SELECT imagetype FROM imagetypes WHERE imagetypes_id = p.imagetypes_id) AS imagetype,
@@ -176,14 +172,14 @@ sub images_dropdown {
         FROM ImageProperties p
         ORDER BY imagefolder
     };
-    return _fetch_all($sql);
+    return fetch_all($sql,[], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Insert or update image
 # -----------------------------
 sub images_update {
-    my (%args) = @_;
+    my (%args, $c) = @_;
 
     # defaults
     %args = (
@@ -219,11 +215,13 @@ sub images_update {
             push @values, $args{$col};
         }
 
-        my $sql = "UPDATE images SET " . join(", ", @fields) . " WHERE images_id = ?";
         push @values, $onfile->{images_id};
 
-        _execute($sql, \@values);
-        return { status => 1, message => lc $args{imagename} . ' updated' };
+        my $res = TravellersPalm::Database::Connector::update_row(
+          "UPDATE images SET " . join(", ", @fields) . " WHERE images_id = ?", 
+          \@values, 'NAME', 'jadoo', $c
+        );
+        return { status => $res, message => lc $args{imagename} . ' updated' };
     }
 
     # -----------------------------
@@ -233,7 +231,8 @@ sub images_update {
     my @placeholders;
     my @values;
 
-    for my $col (qw(imagename imagecategories_id imagetypes_id width height filesize alttag title srno imageobjectid tineye)) {
+    for my $col (qw/imagename imagecategories_id imagetypes_id width height filesize 
+                    alttag title srno imageobjectid tineye/) {
         next unless defined $args{$col};
         push @cols, $col;
         push @placeholders, '?';
@@ -241,25 +240,26 @@ sub images_update {
     }
 
     my $sql = sprintf("INSERT INTO images (%s) VALUES (%s)", join(',', @cols), join(',', @placeholders));
-    _execute($sql, \@values);
+    my $res = TravellersPalm::Database::Connector::insert_row($sql, \@values, 'NAME', 'jadoo', $c);
 
-    return { status => 1, message => lc $args{imagename} . ' inserted' };
+    return { status => $res, message => lc $args{imagename} . ' inserted' };
 }
 
 # -----------------------------
 # Get image upload types for a category
 # -----------------------------
 sub imgupload_type {
-    my ($imgcat) = @_;
+    my ($imgcat, $c) = @_;
     return [] unless defined $imgcat;
 
-    my $sql = "SELECT t.imagetypes_id, t.imagetype FROM imagetypes t";
+    my $sql = qq/SELECT t.imagetypes_id, t.imagetype FROM imagetypes t/;
     if ($imgcat > 0) {
-        $sql .= " INNER JOIN imageproperties p ON t.imagetypes_id = p.imagetypes_id WHERE p.imagecategories_id = ?";
-        return _fetch_all($sql, [$imgcat]);
+        $sql .= qq/ INNER JOIN imageproperties p ON t.imagetypes_id = p.imagetypes_id 
+        WHERE p.imagecategories_id = ?/;
+        return fetch_all($sql, [$imgcat]);
     }
 
-    return _fetch_all($sql);
+    return fetch_all($sql,[], 'NAME', 'jadoo', $c);
 }
 
 1;

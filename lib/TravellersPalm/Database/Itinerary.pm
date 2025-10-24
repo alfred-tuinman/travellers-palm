@@ -2,10 +2,10 @@ package TravellersPalm::Database::Itineraries;
 
 use strict;
 use warnings;
-use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
-use TravellersPalm::Database::Helpers qw(_fetch_row _fetch_all);
+
 use Data::Dumper;
+use Exporter 'import';
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
 
 our @EXPORT_OK = qw(
     route_listing
@@ -21,7 +21,7 @@ our @EXPORT_OK = qw(
 # Route listing for a destination
 # -----------------------------
 sub route_listing {
-    my ($destination, $option, $view, $order) = @_;
+    my ($destination, $option, $view, $order, $c) = @_;
     my $sql = q{
         SELECT i.itinerary_id, i.title, i.description, i.duration, i.difficulty
         FROM itineraries i
@@ -30,41 +30,41 @@ sub route_listing {
         AND i.option_type = ?
         ORDER BY ?
     };
-    return _fetch_all($sql, [$destination, $option, $order]);
+    return fetch_all($sql, [$destination, $option, $order], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Itinerary details (single row)
 # -----------------------------
 sub itinerary_details {
-    my ($itinerary_id) = @_;
+    my ($itinerary_id, $c) = @_;
     my $sql = q{
         SELECT i.itinerary_id, i.title, i.description, i.duration, i.difficulty, i.price
         FROM itineraries i
         WHERE i.itinerary_id = ?
     };
-    return _fetch_row($sql, [$itinerary_id], 'NAME_lc');
+    return fetch_row($sql, [$itinerary_id], 'NAME_lc', 'jadoo', $c);
 }
 
 # -----------------------------
 # Day-by-day breakdown for an itinerary
 # -----------------------------
 sub itinerary_days {
-    my ($itinerary_id) = @_;
+    my ($itinerary_id, $c) = @_;
     my $sql = q{
         SELECT day_no, title, description
         FROM daybyday
         WHERE itinerary_id = ?
         ORDER BY day_no
     };
-    return _fetch_all($sql, [$itinerary_id]);
+    return fetch_all($sql, [$itinerary_id], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Modules associated with an itinerary
 # -----------------------------
 sub itinerary_modules {
-    my ($itinerary_id) = @_;
+    my ($itinerary_id, $c) = @_;
     my $sql = q{
         SELECT m.module_name, m.module_code
         FROM modules m
@@ -72,14 +72,14 @@ sub itinerary_modules {
         WHERE im.itinerary_id = ?
         ORDER BY m.module_name
     };
-    return _fetch_all($sql, [$itinerary_id]);
+    return fetch_all($sql, [$itinerary_id], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Regions covered in an itinerary
 # -----------------------------
 sub itinerary_regions {
-    my ($itinerary_id) = @_;
+    my ($itinerary_id, $c) = @_;
     my $sql = q{
         SELECT DISTINCT r.region_name
         FROM regions r
@@ -87,14 +87,14 @@ sub itinerary_regions {
         WHERE ir.itinerary_id = ?
         ORDER BY r.region_name
     };
-    return _fetch_all($sql, [$itinerary_id]);
+    return fetch_all($sql, [$itinerary_id], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Themes associated with an itinerary
 # -----------------------------
 sub itinerary_themes {
-    my ($itinerary_id) = @_;
+    my ($itinerary_id, $c) = @_;
     my $sql = q{
         SELECT t.theme_name
         FROM themes t
@@ -102,14 +102,14 @@ sub itinerary_themes {
         WHERE it.itinerary_id = ?
         ORDER BY t.theme_name
     };
-    return _fetch_all($sql, [$itinerary_id]);
+    return fetch_all($sql, [$itinerary_id], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Search itineraries by keyword
 # -----------------------------
 sub itinerary_search {
-    my ($keyword) = @_;
+    my ($keyword, $c) = @_;
     my $sql = q{
         SELECT i.itinerary_id, i.title, i.description, i.duration, i.difficulty
         FROM itineraries i
@@ -118,7 +118,7 @@ sub itinerary_search {
         ORDER BY i.title
     };
     my $like = "%$keyword%";
-    return _fetch_all($sql, [$like, $like]);
+    return fetch_all($sql, [$like, $like], 'NAME', 'jadoo', $c);
 }
 
 1;

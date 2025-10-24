@@ -21,7 +21,7 @@ sub show_destination ($self) {
 
     $self->render(
         template    => 'destination',
-        metatags    => TravellersPalm::Database::General::metatags($destination),
+        metatags    => TravellersPalm::Database::General::metatags($destination, $self),
         destination => $destination,
         crumb       => $crumb,
         page_title  => url2text($destination),
@@ -40,7 +40,7 @@ sub show_region_list ($self) {
               . "<li><a href='" . $self->req->url->base . "/destinations/" . url2text(REGIONS) . "/$dest'>"
               . url2text($dest) . "</a></li>";
 
-    my $metatags = TravellersPalm::Database::General::metatags(REGIONS);
+    my $metatags = TravellersPalm::Database::General::metatags(REGIONS, $self);
 
     $self->render(
         template   => 'regions',

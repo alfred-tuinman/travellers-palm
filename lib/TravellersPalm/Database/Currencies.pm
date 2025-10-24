@@ -3,10 +3,9 @@ package TravellersPalm::Database::Currencies;
 use strict;
 use warnings;
 
-use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
-use TravellersPalm::Database::Helpers qw(_fetch_row _fetch_all _execute);
 use Data::Dumper;
+use Exporter 'import';
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row insert_row);
 
 our @EXPORT_OK = qw(
     currencies
@@ -21,7 +20,7 @@ our @EXPORT_OK = qw(
 # List currencies
 # -----------------------------
 sub currencies {
-    my ($currencycode) = @_;
+    my ($currencycode, $c) = @_;
     $currencycode = '' unless defined $currencycode;
     $currencycode = uc $currencycode;
 
@@ -43,14 +42,14 @@ sub currencies {
     }
 
     $sql .= ' ORDER BY currencycode';
-    return _fetch_all($sql, \@bind);
+    return fetch_all($sql, \@bind, 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Get or default currency
 # -----------------------------
 sub currency {
-    my ($newcurrency) = @_;
+    my ($newcurrency, $c) = @_;
     my $currency = 'USD';
 
     if (defined $newcurrency) {
@@ -65,7 +64,7 @@ sub currency {
 # Latest exchange rate for a currency
 # -----------------------------
 sub exchangerate {
-    my ($currencycode) = @_;
+    my ($currencycode, $c) = @_;
     return 0 unless $currencycode;
 
     my $sql = q{
@@ -77,7 +76,7 @@ sub exchangerate {
         LIMIT 1
     };
 
-    my $row = _fetch_row($sql, [$currencycode]);
+    my $row = fetch_row($sql, [$currencycode], 'NAME', 'jadoo', $c);
     return $row ? $row->{exchangerate} : 0;
 }
 
@@ -85,6 +84,7 @@ sub exchangerate {
 # Today's exchange rates
 # -----------------------------
 sub exchange_rates {
+    my ($c) = @_;
     my $sql = q{
         SELECT currency, exchange_rate, strftime('%d/%m/%Y', datetime(date, 'unixepoch')) AS date
         FROM exchange_rates
@@ -92,13 +92,14 @@ sub exchange_rates {
         ORDER BY currency DESC
     };
 
-    return _fetch_all($sql, []);
+    return fetch_all($sql, [], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Historical exchange rates for key currencies
 # -----------------------------
 sub exchange_rates_historical {
+    my ($c) = @_;
     my $sql = q{
         SELECT currency, strftime('%d/%m/%Y', datetime(date, 'unixepoch')) AS date, exchange_rate
         FROM exchange_rates
@@ -110,7 +111,7 @@ sub exchange_rates_historical {
     my %data;
 
     foreach my $cur (@currencies) {
-        $data{$cur} = _fetch_all($sql, [$cur]);
+        $data{$cur} = fetch_all($sql, [$cur], 'NAME', 'jadoo', $c);
     }
 
     return \%data;
@@ -120,15 +121,13 @@ sub exchange_rates_historical {
 # Insert new exchange rates
 # -----------------------------
 sub exchange_rates_update {
-    my ($rates) = @_;
-
-    my $sql = q{
-        INSERT INTO exchange_rates (currency, date, exchange_rate)
-        VALUES (?, strftime('%s','now'), ?)
-    };
+    my ($rates, $c) = @_;
 
     foreach my $cur (qw(AUD EUR GBP USD)) {
-        _execute($sql, [$cur, $rates->{$cur}]);
+      TravellersPalm::Database::Connector::insert_row(
+        "INSERT INTO exchange_rates (currency, date, exchange_rate) VALUES (?, strftime('%s','now'), ?)", 
+        [$cur, $rates->{$cur}], 'NAME', 'jadoo', $c
+      );
     }
 
     return exchange_rates();

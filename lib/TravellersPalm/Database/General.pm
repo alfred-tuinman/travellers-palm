@@ -2,10 +2,10 @@ package TravellersPalm::Database::General;
 
 use strict;
 use warnings;
-use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row execute);
-use TravellersPalm::Database::Helpers qw(_fetch_row _fetch_all);
+
 use Data::Dumper;
+use Exporter 'import';
+use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
 
 our @EXPORT_OK = qw(
     categories
@@ -26,6 +26,7 @@ our @EXPORT_OK = qw(
 # Categories (example multi-row)
 # -----------------------------
 sub categories {
+    my ($c) = @_;
     my $sql = q{
         SELECT DISTINCT c.description,
                a2.categories_id,
@@ -42,52 +43,53 @@ sub categories {
           AND a2.categories_id IN (23,36,8)
         ORDER BY 3
     };
-    return _fetch_all($sql);
+    return fetch_all($sql, [],'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Countries URL mapping
 # -----------------------------
 sub countries_url {
+    my ($c) = @_;
     my $sql = q{
         SELECT country_name, url
         FROM countries
     };
-    return _fetch_all($sql);
+    return fetch_all($sql,[], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Day-by-day itinerary info
 # -----------------------------
 sub daybyday {
-    my ($itinerary_id) = @_;
+    my ($itinerary_id, $c) = @_;
     my $sql = q{
         SELECT day_no, description
         FROM itinerary_days
         WHERE itinerary_id = ?
         ORDER BY day_no
     };
-    return _fetch_all($sql, [$itinerary_id]);
+    return fetch_all($sql, [$itinerary_id], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Hotel info
 # -----------------------------
 sub hotel {
-    my ($hotel_id) = @_;
+    my ($hotel_id, $c) = @_;
     my $sql = q{
         SELECT *
         FROM hotels
         WHERE hotel_id = ?
     };
-    return _fetch_row($sql, [$hotel_id], 'NAME_lc');
+    return fetch_row($sql, [$hotel_id], 'NAME_lc', 'jadoo', $c);
 }
 
 # -----------------------------
 # Meta tags (single row)
 # -----------------------------
 sub metatags {
-    my ($url) = @_;
+    my ($url, $c) = @_;
     return {} unless defined $url;
 
     my $sql = q{
@@ -95,71 +97,76 @@ sub metatags {
         FROM webpages
         WHERE url = ?
     };
-    return _fetch_row($sql, [$url], 'NAME_lc');
+    return fetch_row($sql, [$url], 'NAME_lc', 'jadoo', $c);
 }
 
 # -----------------------------
 # Modules info
 # -----------------------------
 sub modules {
+    my ($c) = @_;
     my $sql = q{
         SELECT *
         FROM modules
         ORDER BY module_name
     };
-    return _fetch_all($sql);
+    return fetch_all($sql,[], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Region names
 # -----------------------------
 sub regionnames {
+    my ($c) = @_;
     my $sql = q{
         SELECT region_id, region
         FROM regions
     };
-    return _fetch_all($sql);
+    return fetch_all($sql,[], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Regions (example for listing)
 # -----------------------------
 sub regions {
+    my ($c) = @_;
     my $sql = q{
         SELECT DISTINCT region
         FROM regions
         ORDER BY region
     };
-    return _fetch_all($sql);
+    return fetch_all($sql,[], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Regions URL mapping
 # -----------------------------
 sub regionsurl {
+    my ($c) = @_;
     my $sql = q{
         SELECT region, url
         FROM regions
     };
-    return _fetch_all($sql);
+    return fetch_all($sql,[], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Total trains (example)
 # -----------------------------
 sub totaltrains {
+    my ($c) = @_;
     my $sql = q{
         SELECT COUNT(*) AS total
         FROM trains
     };
-    return _fetch_row($sql, [], 'NAME_lc');
+    return fetch_row($sql, [], 'NAME_lc', 'jadoo', $c);
 }
 
 # -----------------------------
 # Webpages (single row)
 # -----------------------------
 sub webpages {
-    my ($id) = @_;
+    my ($id, $c) = @_;
     return {} unless defined $id;
 
     my $sql = q{
@@ -167,14 +174,14 @@ sub webpages {
         FROM webpages
         WHERE webpages_id = ?
     };
-    return _fetch_row($sql, [$id], 'NAME_lc');
+    return fetch_row($sql, [$id], 'NAME_lc', 'jadoo', $c);
 }
 
 # -----------------------------
 # Web entry (single row)
 # -----------------------------
 sub web {
-    my ($id) = @_;
+    my ($id, $c) = @_;
     return {} unless defined $id;
 
     my $sql = q{
@@ -182,7 +189,7 @@ sub web {
         FROM Web
         WHERE Web_id = ?
     };
-    return _fetch_row($sql, [$id], 'NAME_lc');
+    return fetch_row($sql, [$id], 'NAME_lc', 'jadoo', $c);
 }
 
 1;

@@ -5,10 +5,10 @@
 
 use strict;
 use warnings;
+
 use FindBin;
 use lib "$FindBin::Bin/../lib";
-
-use TravellersPalm;
 use Mojolicious::Commands;
+use TravellersPalm;
 
 Mojolicious::Commands->start_app('TravellersPalm');

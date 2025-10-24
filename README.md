@@ -309,3 +309,6 @@ You can feed these logs into logrotate, grep, or external tools like ELK, Loki, 
 Keeps container images stateless
 A good Docker image shouldn’t depend on internal state (like growing log files).
 Externalizing logs keeps the image clean and portable.
+
+## Set time
+```ln -sf /usr/share/zoneinfo/Asia/Bangkok /etc/localtime```

@@ -3,9 +3,9 @@ package TravellersPalm::Database::Cities;
 use strict;
 use warnings;
 
+use Data::Dumper;
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
-use TravellersPalm::Database::Helpers qw(_fetch_row _fetch_all);
 
 our @EXPORT_OK = qw(
     airports
@@ -24,7 +24,7 @@ our @EXPORT_OK = qw(
 # Airports
 # -----------------------------
 sub airports {
-    my ($country) = @_;
+    my ($country, $c) = @_;
     return [] unless defined $country;
 
     my $sql = q{
@@ -35,11 +35,11 @@ sub airports {
         ORDER BY c.city
     };
 
-    return fetch_row($sql, [$country]);
+    return fetch_row($sql, [$country], 'NAME', 'jadoo', $c);
 }
 
 sub get_airports_by_country {
-    my ($country) = @_;
+    my ($country, $c) = @_;
     $country = 0 unless defined $country;
 
     my $sql = q{
@@ -50,14 +50,14 @@ sub get_airports_by_country {
         ORDER BY c.city
     };
 
-    return fetch_all($sql, [$country]);
+    return fetch_all($sql, [$country], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # City Details
 # -----------------------------
 sub city {
-    my ($cities_id) = @_;
+    my ($cities_id, $c) = @_;
     return [] unless defined $cities_id;
 
     my $sql = q{
@@ -103,14 +103,14 @@ sub city {
         WHERE cities_id = ?
     };
 
-    return fetch_row($sql, [$cities_id], 'NAME_lc');
+    return fetch_row($sql, [$cities_id], 'NAME_lc', 'jadoo', $c);
 }
 
 # -----------------------------
 # Hotels in a city
 # -----------------------------
 sub cityhotels {
-    my ($cityid) = @_;
+    my ($cityid, $c) = @_;
 
     my $sql = q{
         SELECT wh.hotel_id, wh.hotel, wh.description, wh.category, wh.categoryname, dh.addressbook_id AS isdefault
@@ -142,23 +142,23 @@ sub cityhotels {
         ORDER BY category
     };
     
-    return fetch_all($sql, [$cityid]);
+    return fetch_all($sql, [$cityid], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # City ID lookup
 # -----------------------------
 sub cityid {
-    my ($city) = @_;
+    my ($city, $c) = @_;
     my $sql = q{SELECT cities_id FROM cities WHERE city = ?};
-    return fetch_row($sql, [$city]);
+    return fetch_row($sql, [$city], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Themes in a city
 # -----------------------------
 sub citythemes {
-    my ($subthemes_id) = @_;
+    my ($subthemes_id, $c) = @_;
     my $sql = q{
         SELECT s.cities_id AS id,
                c.city AS name,
@@ -169,42 +169,42 @@ sub citythemes {
         JOIN cities c ON c.cities_id = s.cities_id
         WHERE s.subthemes_id = ?
     };
-    return fetch_all($sql, [$subthemes_id]);
+    return fetch_all($sql, [$subthemes_id], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Ideas in a city
 # -----------------------------
 sub cityidea {
-    my ($cities_id) = @_;
+    my ($cities_id, $c) = @_;
     my $sql = q{
         SELECT idea_id, title, description, pic1, pic2
         FROM cityideas
         WHERE cities_id = ?
         ORDER BY title
     };
-    return fetch_all($sql, [$cities_id]);
+    return fetch_all($sql, [$cities_id], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Nearby cities
 # -----------------------------
 sub nearcities {
-    my ($cityid) = @_;
+    my ($cityid, $c) = @_;
     my $sql = q{
         SELECT c.cities_id, c.city, c.oneliner, c.writeup, c.latitude, c.longitude
         FROM cities c
         JOIN nearcities n ON c.cities_id = n.cities_id
         WHERE c.display = 1 AND n.maincities_id = ?
     };
-    return fetch_all($sql, [$cityid]);
+    return fetch_all($sql, [$cityid], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
 # Random cities (excluding main and nearby)
 # -----------------------------
 sub randomcities {
-    my ($cityid) = @_;
+    my ($cityid, $c) = @_;
     
     my $sql = q{
         SELECT DISTINCT c.cities_id, c.city
@@ -214,7 +214,7 @@ sub randomcities {
         ORDER BY c.city
     };
     
-    my $all_cities = fetch_all($sql, []);
+    my $all_cities = fetch_all($sql, [], 'NAME', 'jadoo', $c);
     my %seen = map { $_ => 1 } ($cityid, map { $_->{cities_id} } @{ nearcities($cityid) });
     my @rndcities = grep { !$seen{ $_->{cities_id} } } @$all_cities;
 
@@ -225,13 +225,15 @@ sub randomcities {
 # Total cities count
 # -----------------------------
 sub totalcities {
+    my ($c) = @_;
+
     my $sql = q{
         SELECT DISTINCT c.cities_id
         FROM cities c
         JOIN defaulthotels dh ON dh.cities_id = c.cities_id
         WHERE c.nighthalt = 1 AND c.display = 1 AND c.countries_id = 200
     };
-    my $rows = fetch_all($sql, []);
+    my $rows = fetch_all($sql, [], 'NAME', 'jadoo', $c);
     return scalar @$rows;
 }
 
