@@ -1,0 +1,287 @@
+[1761279898.41854] [pid:7] [36mDEBUG[0m Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[1761279898.67621] [pid:7] [36mDEBUG[0m Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[1761280031.22666] [pid:7] [36mDEBUG[0m Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[1761280856.11756] [pid:7] [36mDEBUG[0m SQL: 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+[1761280856.12341] [pid:7] [36mDEBUG[0m Binds: [explore-by-region]
+[1761280856.28836] [pid:7] [36mDEBUG[0m Connected to DB [users] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/users.db
+[1761280856.29047] [pid:7] [31mERROR[0m [mWkd26wRa9eF]DBD::SQLite::db prepare failed: no such table: webpages at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 77.
+[1761280856.35219] [pid:7] [36mDEBUG[0m Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[1761292968.67722] [pid:7] [36mDEBUG[0m SQL: 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+[1761292968.67847] [pid:7] [36mDEBUG[0m Binds: [explore-by-region]
+[1761292968.67862] [pid:7] [36mDEBUG[0m db is users
+[1761292968.72166] [pid:7] [36mDEBUG[0m Connected to DB [users] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/users.db
+[1761292968.72325] [pid:7] [31mERROR[0m [JU-_0JjEyOi8]DBD::SQLite::db prepare failed: no such table: webpages at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 79.
+[1761292968.76499] [pid:7] [36mDEBUG[0m Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[1761294269.75656] [pid:7] [36mDEBUG[0m Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[1761294269.76236] [pid:7] [36mDEBUG[0m [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region
+[1761294269.76471] [pid:7] [36mDEBUG[0m [SQL] 
+        SELECT DISTINCT region
+        FROM regions
+        ORDER BY region
+     | binds: (none)
+[1761294269.87038] [pid:7] [36mDEBUG[0m Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[1761295025.03635] [pid:7] [36mDEBUG[0m [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region
+[1761295025.04825] [pid:7] [36mDEBUG[0m [SQL] 
+        SELECT DISTINCT region
+        FROM regions
+        ORDER BY region
+     | binds: (none)
+[1761295025.09234] [pid:7] [36mDEBUG[0m Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[2025-10-24 08:43:09.14063] [8] [debug] Connected to DB [users] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/users.db
+[2025-10-24 08:43:09.14343] [8] [debug] [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region
+[2025-10-24 08:43:09.14483] [8] [debug] DB ERROR: DBD::SQLite::db prepare failed: no such table: webpages at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 93.
+ | SQL: 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+    
+[2025-10-24 08:43:09.14574] [8] [error] [aEOESb4-tG4D] Died at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 96.
+
+[2025-10-24 08:43:09.19018] [8] [debug] Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[2025-10-24 08:43:12.30582] [8] [debug] [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region
+[2025-10-24 08:43:12.30716] [8] [debug] DB ERROR: DBD::SQLite::db prepare failed: no such table: webpages at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 93.
+ | SQL: 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+    
+[2025-10-24 08:43:12.30877] [8] [error] [eDQvbYa4fGtM] Died at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 96.
+
+[2025-10-24 08:43:12.32453] [8] [debug] Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[2025-10-24 08:43:13.94574] [8] [debug] [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region
+[2025-10-24 08:43:13.94646] [8] [debug] DB ERROR: DBD::SQLite::db prepare failed: no such table: webpages at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 93.
+ | SQL: 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+    
+[2025-10-24 08:43:13.94711] [8] [error] [NBXN0p-7oQO9] Died at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 96.
+
+[2025-10-24 08:43:14.00364] [8] [debug] Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[2025-10-24 08:51:48.69719] [7] [debug] Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-24 08:51:48.69800] [7] [debug] [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region
+[2025-10-24 08:51:48.70029] [7] [debug] [SQL] 
+        SELECT DISTINCT region
+        FROM regions
+        ORDER BY region
+     | binds: (none)
+[2025-10-24 08:51:48.84162] [7] [debug] Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[2025-10-24 09:16:07.35485] [7] [debug] Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-24 09:16:07.35523] [7] [debug] [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region
+[2025-10-24 09:16:07.35799] [7] [debug] [SQL] 
+        SELECT DISTINCT region
+        FROM regions
+        ORDER BY region
+     | binds: (none)
+[2025-10-24 09:16:07.56044] [7] [debug] Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[2025-10-24 09:17:24.59215] [7] [debug] [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region
+[2025-10-24 09:17:24.59349] [7] [debug] [SQL] 
+        SELECT DISTINCT region
+        FROM regions
+        ORDER BY region
+     | binds: (none)
+[2025-10-24 09:17:24.59824] [7] [debug] Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[2025-10-24 16:47:54.00421] [7] [debug] App home directory: /usr/src/app
+[2025-10-24 16:47:54.00960] [7] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-24 16:47:54.00978] [7] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-24 17:44:07.83433] [7] [debug] Connected to DB [users] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/users.db
+[2025-10-24 17:44:07.84039] [7] [debug] [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region
+[2025-10-24 17:44:07.85715] [7] [debug] DB error on fetch_row: DBD::SQLite::db prepare failed: no such table: webpages at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 105.
+
+[2025-10-24 17:44:07.86119] [7] [error] [l3fczp4NdYX9] DB error: DBD::SQLite::db prepare failed: no such table: webpages at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 105.
+
+[2025-10-24 17:44:08.10014] [7] [debug] Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[2025-10-24 17:55:27.43071] [7] [debug] App home directory: /usr/src/app
+[2025-10-24 17:55:27.43279] [7] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-24 17:55:27.43291] [7] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-24 18:09:30.18780] [7] [debug] Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-24 18:09:30.18796] [7] [debug] DB default is 'jadoo'
+[2025-10-24 18:09:30.18812] [7] [debug] [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region
+[2025-10-24 18:09:30.19032] [7] [debug] [SQL] 
+        SELECT DISTINCT region
+        FROM regions
+        ORDER BY region
+     | binds: (none)
+[2025-10-24 18:09:30.27518] [7] [debug] Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[2025-10-24 18:10:41.73468] [7] [debug] [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region
+[2025-10-24 18:10:41.73534] [7] [debug] [SQL] 
+        SELECT DISTINCT region
+        FROM regions
+        ORDER BY region
+     | binds: (none)
+[2025-10-24 18:10:41.73985] [7] [debug] Matched route: (?^ups:^\/destinations\/explore\-by\-region/([^/.]+)/([^/.]+))
+[2025-10-24 18:30:11.36344] [8] [debug] App home directory: /usr/src/app
+[2025-10-24 18:30:11.36434] [8] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-24 18:30:11.36444] [8] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-24 18:34:24.11088] [8] [debug] Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-24 18:34:24.11113] [8] [debug] DB default is 'jadoo'
+[2025-10-24 18:34:24.11258] [8] [error] [kermnHc5DPWF] Can't locate object method "current_request" via package "Mojolicious::Renderer" at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 64.
+
+[2025-10-24 18:34:24.27617] [8] [debug] Matched route: Mojolicious::Routes::Route=HASH(0x571bdaca69f0)
+[2025-10-24 18:34:29.48981] [8] [error] [zJkmWOzC5qS_] Can't locate object method "current_request" via package "Mojolicious::Renderer" at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 64.
+
+[2025-10-24 18:34:29.51778] [8] [debug] Matched route: Mojolicious::Routes::Route=HASH(0x571bdaca69f0)
+[2025-10-24 21:48:00.91930] [7] [debug] App home directory: /usr/src/app
+[2025-10-24 21:48:00.91990] [7] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-24 21:48:00.92000] [7] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-24 21:51:13.87172] [6] [debug] App home directory: /usr/src/app
+[2025-10-24 21:51:13.87209] [6] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-24 21:51:13.87216] [6] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-24 21:54:33.46706] [7] [debug] App home directory: /usr/src/app
+[2025-10-24 21:54:33.46753] [7] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-24 21:54:33.46762] [7] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-24 22:04:50.11903] [7] [debug] App home directory: /usr/src/app
+[2025-10-24 22:04:50.12104] [7] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-24 22:04:50.12119] [7] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-24 22:05:18.30985] [7] [debug] Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-24 22:05:18.31069] [7] [debug] [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region | called from: TravellersPalm::Database::Connector::fetch_row at /usr/src/app/lib/TravellersPalm/Database/General.pm line 100
+[2025-10-24 22:05:18.32154] [7] [debug] [SQL] 
+        SELECT DISTINCT region
+        FROM regions
+        ORDER BY region
+     | binds: (none) | called from: TravellersPalm::Database::Connector::fetch_all at /usr/src/app/lib/TravellersPalm/Database/General.pm line 138
+[2025-10-24 22:05:18.64475] [7] [debug] Matched route: Mojolicious::Routes::Route=HASH(0x55e4900732d8)
+[2025-10-24 22:22:31.23308] [6] [debug] App home directory: /usr/src/app
+[2025-10-24 22:22:31.23371] [6] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-24 22:22:31.23387] [6] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-24 22:22:42.03908] [6] [debug] Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-24 22:22:42.11530] [6] [debug] Matched route: Mojolicious::Routes::Route=HASH(0x5801b7b00d70)
+[2025-10-24 22:22:48.52776] [6] [debug] Matched route: Mojolicious::Routes::Route=HASH(0x5801b7b00d70)
+[2025-10-24 22:45:30.99467] [8] [debug] App home directory: /usr/src/app
+[2025-10-24 22:45:30.99517] [8] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-24 22:45:30.99529] [8] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-24 22:46:41.59950] [8] [debug] Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-24 22:46:41.60079] [8] [error] [ZGRNrLWca8zM] Undefined subroutine &TravellersPalm::Database::Connector::strftime called at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 31.
+
+[2025-10-24 22:46:41.63787] [8] [debug] Matched route: Mojolicious::Routes::Route=HASH(0x60b98b24b648)
+[2025-10-24 23:05:47.08672] [8] [debug] App home directory: /usr/src/app
+[2025-10-24 23:05:47.15321] [8] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-24 23:05:47.15338] [8] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-24 23:08:41.29588] [8] [debug] App home directory: /usr/src/app
+[2025-10-24 23:08:41.33084] [8] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-24 23:08:41.33101] [8] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-24 23:08:48.73049] [8] [debug] Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-24 23:08:48.73069] [8] [debug] [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region | called from: TravellersPalm::Database::Connector::_log_sql at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 110
+[2025-10-24 23:08:48.73228] [8] [debug] [SQL] 
+        SELECT DISTINCT region
+        FROM regions
+        ORDER BY region
+     | binds: (none) | called from: TravellersPalm::Database::Connector::_log_sql at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 124
+[2025-10-24 23:08:48.80292] [8] [debug] Matched route: Mojolicious::Routes::Route=HASH(0x63d50c724ac0)
+[2025-10-24 23:09:34.91580] [8] [debug] [SQL] 
+        SELECT meta_title, meta_descr, meta_keywords
+        FROM webpages
+        WHERE url = ?
+     | binds: explore-by-region | called from: TravellersPalm::Database::Connector::_log_sql at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 110
+[2025-10-24 23:09:34.91628] [8] [debug] [SQL] 
+        SELECT DISTINCT region
+        FROM regions
+        ORDER BY region
+     | binds: (none) | called from: TravellersPalm::Database::Connector::_log_sql at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 124
+[2025-10-24 23:09:34.92647] [8] [debug] Matched route: Mojolicious::Routes::Route=HASH(0x63d50c724ac0)
+[2025-10-24 23:16:09.73148] [7] [debug] App home directory: /usr/src/app
+[2025-10-24 23:16:09.79678] [7] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-24 23:16:09.79692] [7] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-24 23:16:22.45611] [7] [debug] Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-24 23:16:22.45828] [7] [debug] [SQL]
+    
+            SELECT meta_title, meta_descr, meta_keywords
+            FROM webpages
+            WHERE url = ?
+        
+ | binds: explore-by-region | called from: TravellersPalm::Database::Connector::fetch_row at /usr/src/app/lib/TravellersPalm/Database/General.pm line 100 | route: /destinations/explore-by-region/rajasthan-the-north/list
+[2025-10-24 23:16:22.46009] [7] [debug] [SQL]
+    
+            SELECT DISTINCT region
+            FROM regions
+            ORDER BY region
+        
+ | binds: (none) | called from: TravellersPalm::Database::Connector::fetch_all at /usr/src/app/lib/TravellersPalm/Database/General.pm line 138
+[2025-10-24 23:16:22.54630] [7] [debug] Matched route: Mojolicious::Routes::Route=HASH(0x558705f67230)
+[2025-10-24 23:47:48.87755] [6] [debug] App home directory: /usr/src/app
+[2025-10-24 23:47:48.94483] [6] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-24 23:47:48.94496] [6] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-25 08:38:32.29214] [7] [debug] App home directory: /usr/src/app
+[2025-10-25 08:38:32.30610] [7] [debug] Configured log path: /usr/src/app/log/app.log
+[2025-10-25 08:38:32.30628] [7] [debug] Logging initialized at /usr/src/app/log/app.log (level=debug)
+[2025-10-25 08:39:44.11043] [7] [debug] Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-25 08:39:44.11110] [7] [debug] [SQL]
+    
+            SELECT srno, title, pagename, writeup, webpages_id
+            FROM Web
+            WHERE Web_id = ?
+        
+ | binds: 7 | called from: TravellersPalm::Database::Connector::fetch_row at /usr/src/app/lib/TravellersPalm/Database/General.pm line 205 | route: /destinations/explore-by-region/rajasthan-the-north/list
+[2025-10-25 08:39:44.11299] [7] [debug] [SQL]
+    
+            SELECT meta_title, meta_descr, meta_keywords
+            FROM webpages
+            WHERE url = ?
+        
+ | binds: explore-by-region | called from: TravellersPalm::Database::Connector::fetch_row at /usr/src/app/lib/TravellersPalm/Database/General.pm line 101 | route: /destinations/explore-by-region/rajasthan-the-north/list
+[2025-10-25 08:39:44.11361] [7] [debug] [SQL]
+    
+            SELECT DISTINCT region
+            FROM regions
+            ORDER BY region
+        
+ | binds: (none) | called from: TravellersPalm::Database::Connector::fetch_all at /usr/src/app/lib/TravellersPalm/Database/General.pm line 139
+[2025-10-25 08:39:44.18801] [7] [debug] Matched route: Mojolicious::Routes::Route=HASH(0x5d85caec8000)

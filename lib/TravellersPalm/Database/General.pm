@@ -3,27 +3,11 @@ package TravellersPalm::Database::General;
 use strict;
 use warnings;
 
-use Data::Dumper;
-use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
-
-our @EXPORT_OK = qw(
-    categories
-    countries_url
-    daybyday
-    hotel
-    metatags
-    modules
-    regionnames
-    regions
-    regionsurl
-    totaltrains
-    webpages
-    web
-);
+use TravellersPalm::Functions qw(boldify addptags);
 
 # -----------------------------
-# Categories (example multi-row)
+# Categories
 # -----------------------------
 sub categories {
     my ($c) = @_;
@@ -43,7 +27,7 @@ sub categories {
           AND a2.categories_id IN (23,36,8)
         ORDER BY 3
     };
-    return fetch_all($sql, [],'NAME', 'jadoo', $c);
+    return fetch_all($sql, [], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
@@ -51,18 +35,16 @@ sub categories {
 # -----------------------------
 sub countries_url {
     my ($c) = @_;
-    my $sql = q{
-        SELECT country_name, url
-        FROM countries
-    };
-    return fetch_all($sql,[], 'NAME', 'jadoo', $c);
+    my $sql = q{ SELECT country_name, url FROM countries };
+    return fetch_all($sql, [], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
-# Day-by-day itinerary info
+# Day-by-day itinerary
 # -----------------------------
 sub daybyday {
     my ($itinerary_id, $c) = @_;
+    return [] unless defined $itinerary_id;
     my $sql = q{
         SELECT day_no, description
         FROM itinerary_days
@@ -77,21 +59,17 @@ sub daybyday {
 # -----------------------------
 sub hotel {
     my ($hotel_id, $c) = @_;
-    my $sql = q{
-        SELECT *
-        FROM hotels
-        WHERE hotel_id = ?
-    };
+    return {} unless defined $hotel_id;
+    my $sql = q{ SELECT * FROM hotels WHERE hotel_id = ? };
     return fetch_row($sql, [$hotel_id], 'NAME_lc', 'jadoo', $c);
 }
 
 # -----------------------------
-# Meta tags (single row)
+# Meta tags
 # -----------------------------
 sub metatags {
     my ($url, $c) = @_;
     return {} unless defined $url;
-
     my $sql = q{
         SELECT meta_title, meta_descr, meta_keywords
         FROM webpages
@@ -105,70 +83,46 @@ sub metatags {
 # -----------------------------
 sub modules {
     my ($c) = @_;
-    my $sql = q{
-        SELECT *
-        FROM modules
-        ORDER BY module_name
-    };
-    return fetch_all($sql,[], 'NAME', 'jadoo', $c);
+    my $sql = q{ SELECT * FROM modules ORDER BY module_name };
+    return fetch_all($sql, [], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
-# Region names
+# Regions
 # -----------------------------
 sub regionnames {
     my ($c) = @_;
-    my $sql = q{
-        SELECT region_id, region
-        FROM regions
-    };
-    return fetch_all($sql,[], 'NAME', 'jadoo', $c);
+    my $sql = q{ SELECT region_id, region FROM regions };
+    return fetch_all($sql, [], 'NAME', 'jadoo', $c);
 }
 
-# -----------------------------
-# Regions (example for listing)
-# -----------------------------
 sub regions {
     my ($c) = @_;
-    my $sql = q{
-        SELECT DISTINCT region
-        FROM regions
-        ORDER BY region
-    };
-    return fetch_all($sql,[], 'NAME', 'jadoo', $c);
+    my $sql = q{ SELECT DISTINCT region FROM regions ORDER BY region };
+    return fetch_all($sql, [], 'NAME', 'jadoo', $c);
 }
 
-# -----------------------------
-# Regions URL mapping
-# -----------------------------
 sub regionsurl {
     my ($c) = @_;
-    my $sql = q{
-        SELECT region, url
-        FROM regions
-    };
-    return fetch_all($sql,[], 'NAME', 'jadoo', $c);
+    my $sql = q{ SELECT region, url FROM regions };
+    return fetch_all($sql, [], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
-# Total trains (example)
+# Total trains
 # -----------------------------
 sub totaltrains {
     my ($c) = @_;
-    my $sql = q{
-        SELECT COUNT(*) AS total
-        FROM trains
-    };
+    my $sql = q{ SELECT COUNT(*) AS total FROM trains };
     return fetch_row($sql, [], 'NAME_lc', 'jadoo', $c);
 }
 
 # -----------------------------
-# Webpages (single row)
+# Webpages
 # -----------------------------
 sub webpages {
     my ($id, $c) = @_;
     return {} unless defined $id;
-
     my $sql = q{
         SELECT pagename, url, meta_title, meta_descr, meta_keywords
         FROM webpages
@@ -178,9 +132,23 @@ sub webpages {
 }
 
 # -----------------------------
-# Web entry (single row)
+# Single Web entry
 # -----------------------------
 sub web {
+    my ($id, $c) = @_;
+    return {} unless defined $id;
+    my $sql = q{
+        SELECT srno, title, pagename, writeup, webpages_id
+        FROM Web
+        WHERE Web_id = ?
+    };
+    return fetch_row($sql, [$id], 'NAME_lc', 'jadoo', $c);
+}
+
+# -----------------------------
+# Single Web entry with formatted writeup
+# -----------------------------
+sub webtext {
     my ($id, $c) = @_;
     return {} unless defined $id;
 
@@ -189,7 +157,48 @@ sub web {
         FROM Web
         WHERE Web_id = ?
     };
-    return fetch_row($sql, [$id], 'NAME_lc', 'jadoo', $c);
+
+    my $data = fetch_row($sql, [$id], 'NAME_lc', 'jadoo', $c);
+
+    # Ensure hashref
+    $data = {} unless ref $data eq 'HASH';
+    $data->{writeup} = '' unless defined $data->{writeup};
+
+    # Format writeup safely
+    $data->{writeup} = boldify(addptags($data->{writeup})) if $data->{writeup};
+
+    return $data;
+}
+
+# -----------------------------
+# Fetch multiple webtext entries at once
+# Returns a hashref keyed by Web_id
+# -----------------------------
+sub webtext_multi {
+    my ($ids, $c) = @_;
+    return {} unless $ids && ref $ids eq 'ARRAY' && @$ids;
+
+    my $placeholders = join ',', ('?') x @$ids;
+
+    my $sql = qq{
+        SELECT Web_id, srno, title, pagename, writeup, webpages_id
+        FROM Web
+        WHERE Web_id IN ($placeholders)
+    };
+
+    my $rows = fetch_all($sql, $ids, 'NAME_lc', 'jadoo', $c);
+
+    my %result;
+    for my $row (@$rows) {
+        # Ensure writeup is processed like webtext
+        my $writeup = defined $row->{writeup} ? boldify(addptags($row->{writeup})) : '';
+        $result{$row->{Web_id}} = {
+            %$row,
+            writeup => $writeup,
+        };
+    }
+
+    return \%result;
 }
 
 1;

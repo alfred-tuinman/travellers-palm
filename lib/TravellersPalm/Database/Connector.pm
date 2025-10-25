@@ -5,6 +5,7 @@ use warnings;
 use DBI;
 use Data::Dumper;
 use Exporter 'import';
+use POSIX qw(strftime);
 
 our @EXPORT_OK = qw(setup dbh fetch_row fetch_all insert_row update_row delete_row);
 
@@ -21,34 +22,69 @@ sub setup {
     return 1;
 }
 
-# -----------------------------------
+# -----------------------------
 # Internal SQL logging utility
-# -----------------------------------
+# -----------------------------
 sub _log_sql {
-    my ($sql, $bind_ref, $c) = @_;
-    my $timestamp = scalar localtime;
-    my $binds = $bind_ref && @$bind_ref ? join(", ", map { defined $_ ? $_ : 'NULL' } @$bind_ref) : '(none)';
+    my ($sql, $bind_ref, $caller_self) = @_;
+    $bind_ref ||= [];
 
-    # Get DB subroutine caller
-    my ($package, $filename, $line, $subroutine) = caller(1);
-    $subroutine //= 'unknown_db_sub';
+    # Get calling subroutine info
+    my ($subroutine, $filename, $line) = _get_caller_info();
 
-    # Get route info if $c is provided
+    # Attempt to get route info from controller if passed
     my $route_info = '';
-    if ($c && $c->match) {
-        my $pattern = eval { $c->match->endpoint->pattern->uncompiled } // '';
-        $route_info = $pattern ? " | route: $pattern" : '';
+    if ($caller_self && ref $caller_self && $caller_self->can('req')) {
+        my $req = $caller_self->req;
+        $route_info = sprintf(" | route: %s", $req->url->to_string) if $req;
     }
 
-    my $msg = sprintf("[SQL] %s | binds: %s | called from: %s at %s line %d%s",
-                      $sql, $binds, $subroutine, $filename, $line, $route_info);
+    # Format bind values
+    my $binds = @$bind_ref ? join(", ", map { defined $_ ? $_ : 'NULL' } @$bind_ref) : '(none)';
 
+    # Multi-line SQL formatting (indent lines)
+    my $sql_formatted = $sql;
+    $sql_formatted =~ s/^/    /mg;
+
+    # Prepare log message
+    my $msg = sprintf(
+        "[SQL]\n%s\n | binds: %s | called from: %s at %s line %d%s",
+        $sql_formatted,
+        $binds,
+        $subroutine,
+        $filename,
+        $line,
+        $route_info
+    );
+
+    # Send to app log if available, else STDERR
     if ($app && $app->can('log')) {
         $app->log->debug($msg);
     } else {
+        my $timestamp = scalar localtime;
         print STDERR "[$timestamp] [pid:$$] $msg\n";
     }
 }
+
+# -----------------------------
+# Helper: Get caller info
+# -----------------------------
+sub _get_caller_info {
+    my $skip_frames = 1;  # skip _log_sql itself
+    while (my @caller = caller($skip_frames++)) {
+        my ($package, $filename, $line, $subroutine) = @caller;
+
+        # Skip internal frames: _log_sql, DBI, Mojo/Mojolicious
+        next if $subroutine =~ /::_log_sql$/;
+        next if $package =~ /^(Mojo|Mojolicious|DBI)/;
+        next if $subroutine =~ /^(Mojo|Mojolicious|DBI)/;
+
+        return ($subroutine, $filename, $line);
+    }
+
+    return ('unknown', 'unknown', 0);
+}
+
 
 # -----------------------------------
 # Get DB handle safely

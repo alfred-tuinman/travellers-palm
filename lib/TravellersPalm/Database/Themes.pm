@@ -6,6 +6,7 @@ use warnings;
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
 
+=pod
 our @EXPORT_OK = qw(
     subthemes
     subthemes_id
@@ -14,7 +15,7 @@ our @EXPORT_OK = qw(
     themes_url
     themetrips
     themeurl
-);
+=cut
 
 # -------------------------------------------------
 # Get subthemes for a given theme

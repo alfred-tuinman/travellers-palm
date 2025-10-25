@@ -1,11 +1,11 @@
 package TravellersPalm;
 
 use Cache::Memcached;
+use File::Spec;
 use Mojo::Base 'Mojolicious', -signatures;
 use Mojo::File 'path';
 use Mojo::JSON qw(encode_json);
 use Mojo::Log;
-use File::Spec;
 use POSIX qw(strftime);
 use Term::ANSIColor;
 use Time::HiRes qw(gettimeofday tv_interval);
@@ -50,7 +50,7 @@ sub startup ($self) {
     TravellersPalm::Database::Connector->setup($self);
 
     # ----------------------
-    # 1. Config
+    # 1. Configuration and secrets
     # ----------------------
 
     my $config = $self->plugin('yaml_config' => {
@@ -58,25 +58,21 @@ sub startup ($self) {
         stash_key => 'conf',
         class     => 'YAML::XS',
     });
-    
+
     $self->helper(config => sub { $config });
     $self->secrets($config->{secrets});
+    $self->config($config);   
 
-    #----------------------------------
-    # Log directory setup (from config.yml)
-    #----------------------------------
-
+    # ----------------------
+    #  Log setup
+    # ----------------------
     my $log_conf = $self->config->{log} // {};
-
-    # Use config.yml values if available, otherwise fall back to defaults
-    $log_conf->{path}  //= path($self->home)->child('log', 'travellers_palm.log')->stringify;
+    $log_conf->{path}  //= path($self->home, 'log', 'travellers_palm.log')->to_string;
     $log_conf->{level} //= 'debug';
 
-    # Ensure log directory exists
     my $log_path = path($log_conf->{path});
     $log_path->dirname->make_path;
 
-    # Create the logger
     my $logger = Mojo::Log->new(
         path  => $log_conf->{path},
         level => $log_conf->{level},

@@ -1,7 +1,8 @@
 package TravellersPalm::Controller::MyAccount;
 
 use Mojo::Base 'Mojolicious::Controller', -signatures;
-use TravellersPalm::Database::Users qw(register_user send_password);
+
+BEGIN { require TravellersPalm::Database::Users; }
 
 # -----------------------------
 # Controller Actions

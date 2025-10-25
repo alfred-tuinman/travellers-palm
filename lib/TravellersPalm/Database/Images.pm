@@ -7,6 +7,7 @@ use Data::Dumper;
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw( delete_row fetch_all fetch_row insert_row update_row);
 
+=pod
 our @EXPORT_OK = qw(
     imageproperties
     imageproperties_id
@@ -17,7 +18,7 @@ our @EXPORT_OK = qw(
     images_dropdown
     images_update
     imgupload_type
-);
+=cut
 
 
 # -----------------------------

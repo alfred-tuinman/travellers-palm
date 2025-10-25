@@ -6,11 +6,12 @@ use warnings;
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
 
+=pod
 our @EXPORT_OK = qw(
     state
     states
     statesurl
-);
+=cut
 
 # -----------------------------
 # Get a single state by ID

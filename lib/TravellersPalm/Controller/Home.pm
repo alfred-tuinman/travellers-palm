@@ -1,83 +1,105 @@
 package TravellersPalm::Controller::Home;
 
 use Mojo::Base 'Mojolicious::Controller', -signatures;
-use TravellersPalm::Functions qw(email_request user_is_registered user_email webtext);
-use TravellersPalm::Database::Themes qw(themes);
-use TravellersPalm::Database::Cities qw(totalcities);
-use TravellersPalm::Database::Itineraries qw(totalitineraries);
-use TravellersPalm::Database::General qw(metatags web webpages totaltrains);
+use TravellersPalm::Functions qw(email_request user_is_registered user_email );
 use Data::Dumper;
 
-# → home page
+BEGIN { require TravellersPalm::Database::General; }
+
+# -----------------------------
+# Utility to get last path segment
+# -----------------------------
+sub _last_path_segment ($self) {
+    my $path = $self->req->url->path->to_string;
+    my ($last) = reverse grep { length } split('/', $path);
+    return $last;
+}
+
+# -----------------------------
+# Home page
+# -----------------------------
 sub index ($self) {
-    my $page = (split '/', $self->req->url->path)[-1];
-
-    my $tags = metatags($page);
-    my $slidetext = web(163);
-
-    my @slides = $slidetext->{writeup} ? split /\n/, $slidetext->{writeup} : ();
+    my $tags      = TravellersPalm::Database::General::metatags(6, $self);
+    my $slidetext = TravellersPalm::Database::General::web(163, $self);
+    my @slides    = $slidetext->{writeup} ? split /\n/, $slidetext->{writeup} : ();
     unshift @slides, 'dummy item';
+
+    # Batch webtext IDs for home page
+    my @ids = (119,120,121,187,188,189,60);
+    my $webtexts = TravellersPalm::Database::General::webtext_multi(\@ids, $self);
 
     $self->render(
         template             => 'home',
-        metatags             => webpages(6),
-        themes               => themes('LIMIT'),
-        tripideas            => themes('TRIPIDEAS'),
+        metatags             => $tags,
+        themes               => TravellersPalm::Database::Themes::themes('LIMIT', $self),
+        tripideas            => TravellersPalm::Database::Themes::themes('TRIPIDEAS', $self),
         country              => 'india',
         slides               => \@slides,
-        the_travel_experts1  => webtext(119),
-        the_travel_experts2  => webtext(120),
-        the_travel_experts3  => webtext(121),
-        tailor_made_tours    => webtext(187),
-        mini_itineraries     => webtext(188),
-        best_places_to_visit => webtext(189),
-        about                => webtext(60),
+        the_travel_experts1  => $webtexts->{119},
+        the_travel_experts2  => $webtexts->{120},
+        the_travel_experts3  => $webtexts->{121},
+        tailor_made_tours    => $webtexts->{187},
+        mini_itineraries     => $webtexts->{188},
+        best_places_to_visit => $webtexts->{189},
+        about                => $webtexts->{60},
         home                 => 1,
     );
 }
 
-# → about page
+# -----------------------------
+# About page
+# -----------------------------
 sub about ($self) {
-    my $tags = metatags((split '/', $self->req->url->path)[-1]);
+    my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
+
+    my @ids = (9, 170, 171, 172, 8, 12, 31, 164, 165, 166, 167);
+    my $webtexts = TravellersPalm::Database::General::webtext_multi(\@ids, $self);
 
     $self->render(
         template               => 'about',
         metatags               => $tags,
-        totalcities            => totalcities(),
-        totalitineraries       => totalitineraries(),
-        totaltrains            => totaltrains(),
-        intro                  => webtext(9),
-        philosophy             => webtext(170),
-        sustainable_tourism    => webtext(171),
-        responsible_tourism    => webtext(172),
-        meet_the_team          => webtext(31),
-        why_travel_with_us     => webtext(12),
-        what_is_travellers_palm=> webtext(8),
-        hans                   => webtext(164),
-        sucheta                => webtext(165),
-        phil                   => webtext(166),
-        shalome                => webtext(167),
+        intro                  => $webtexts->{9},
+        philosophy             => $webtexts->{170},
+        sustainable_tourism    => $webtexts->{171},
+        responsible_tourism    => $webtexts->{172},
+        what_is_travellers_palm=> $webtexts->{8},
+        why_travel_with_us     => $webtexts->{12},
+        meet_the_team          => $webtexts->{31},
+        hans                   => $webtexts->{164},
+        sucheta                => $webtexts->{165},
+        phil                   => $webtexts->{166},
+        shalome                => $webtexts->{167},
+        totalcities            => TravellersPalm::Database::Cities::totalcities($self),
+        totalitineraries       => TravellersPalm::Database::Itineraries::totalitineraries($self),
+        totaltrains            => TravellersPalm::Database::Itineraries::totaltrains($self),
         crumb                  => '<li class="active">About Us</li>',
         page_title             => 'About Us',
     );
 }
 
-# → before_you_go page
+# -----------------------------
+# Before You Go
+# -----------------------------
 sub before_you_go ($self) {
-    my $tags = metatags((split '/', $self->req->url->path)[-1]);
+    my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
+
+    my @ids = (17,168,169);
+    my $webtexts = TravellersPalm::Database::General::webtext_multi(\@ids, $self);
 
     $self->render(
         template       => 'before_you_go',
         metatags       => $tags,
-        before_you_go  => webtext(17),
-        getting_ready  => webtext(168),
-        right_attitude => webtext(169),
+        before_you_go  => $webtexts->{17},
+        getting_ready  => $webtexts->{168},
+        right_attitude => $webtexts->{169},
         page_title     => 'Before You Go',
         crumb          => '<li class="active">Before You Go</li>',
     );
 }
 
-# → contact form
+# -----------------------------
+# Contact form
+# -----------------------------
 sub contact_us ($self) {
     my $params = $self->req->params->to_hash;
     my $error = 0;
@@ -94,10 +116,12 @@ sub contact_us ($self) {
     );
 }
 
-# → enquiry page
+# -----------------------------
+# Enquiry page
+# -----------------------------
 sub get_enquiry ($self) {
-    my $email = user_is_registered() ? user_email() : "";
-    my $tags  = metatags((split '/', $self->req->url->path)[-1]);
+    my $email  = TravellersPalm::Database::Users::user_is_registered($self) ? user_email() : "";
+    my $tags   = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     $self->render(
         template => 'enquiry',
@@ -107,8 +131,8 @@ sub get_enquiry ($self) {
 }
 
 sub post_enquiry ($self) {
-    my $email  = user_is_registered() ? user_email() : "";
-    my $tags   = metatags((split '/', $self->req->url->path)[-1]);
+    my $email  = TravellersPalm::Database::Users::user_is_registered($self) ? user_email() : "";
+    my $tags   = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
     my $params = $self->req->params->to_hash;
 
     email_request($params);
@@ -121,9 +145,11 @@ sub post_enquiry ($self) {
     );
 }
 
-# → faq page
+# -----------------------------
+# FAQ page
+# -----------------------------
 sub faq ($self) {
-    my $tags = metatags((split '/', $self->req->url->path)[-1]);
+    my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     $self->render(
         template => 'faq',
@@ -131,46 +157,58 @@ sub faq ($self) {
     );
 }
 
-# → policies page
+# -----------------------------
+# Policies
+# -----------------------------
 sub policies ($self) {
-    my @fields = map { webtext($_) } (124..146, 191, 208);
-    my $tags = metatags((split '/', $self->req->url->path)[-1]);
+    my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
+
+    # batch fields for page
+    my @field_ids = (124..146, 191, 208);
+    my $fields = TravellersPalm::Database::General::webtext_multi(\@field_ids, $self);
 
     $self->render(
         template   => 'policies',
         metatags   => $tags,
-        conditions => webtext(15),
-        terms      => webtext(35),
-        privacy    => webtext(16),
-        fields     => \@fields,
-        about      => webtext(208),
+        conditions => $fields->{15},
+        terms      => $fields->{35},
+        privacy    => $fields->{16},
+        fields     => [ map { $fields->{$_} } (124..146, 191, 208) ],
+        about      => $fields->{208},
         crumb      => '<li class="active">Our Policies</li>',
         page_title => 'Our Policies',
     );
 }
 
-# → search results page
+# -----------------------------
+# Search results
+# -----------------------------
 sub search_results ($self) {
-    my $tags = metatags((split '/', $self->req->url->path)[-1]);
+    my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
+
+    my @ids = (12,153,154,155,156,157,158);
+    my $webtexts = TravellersPalm::Database::General::webtext_multi(\@ids, $self);
 
     $self->render(
         template             => 'search_results',
         metatags             => $tags,
-        why_travel_with_us   => webtext(12),
-        extensive_knowledge  => webtext(153),
-        highly_selective     => webtext(154),
-        unbiased             => webtext(155),
-        unrivalled_coverage  => webtext(156),
-        in_charge            => webtext(157),
-        value_for_money      => webtext(158),
+        why_travel_with_us   => $webtexts->{12},
+        extensive_knowledge  => $webtexts->{153},
+        highly_selective     => $webtexts->{154},
+        unbiased             => $webtexts->{155},
+        unrivalled_coverage  => $webtexts->{156},
+        in_charge            => $webtexts->{157},
+        value_for_money      => $webtexts->{158},
         page_title           => 'Search Results',
         crumb                => '<li class="active">Search Results</li>',
     );
 }
 
-# → site map page
+# -----------------------------
+# Site map
+# -----------------------------
 sub site_map ($self) {
-    my $tags = metatags((split '/', $self->req->url->path)[-1]);
+    my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
     my $textfile = $self->config->{root}.'/url-report.txt';
     my @report;
 
@@ -192,20 +230,12 @@ sub site_map ($self) {
     );
 }
 
-# → state page
-sub state ($self) {
-    my $tags = metatags((split '/', $self->req->url->path)[-1]);
-
-    $self->render(
-        template => 'state',
-        metatags => $tags,
-    );
-}
-
-# → sustainable tourism page
+# -----------------------------
+# Sustainable tourism
+# -----------------------------
 sub sustainable_tourism ($self) {
-    my $tags       = metatags((split '/', $self->req->url->path)[-1]);
-    my $sustainable = webtext(13);
+    my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
+    my $sustainable = TravellersPalm::Database::General::webtext(13, $self);
 
     $self->render(
         template    => 'sustainable_tourism',
@@ -216,9 +246,11 @@ sub sustainable_tourism ($self) {
     );
 }
 
-# → testimonials page
+# -----------------------------
+# Testimonials
+# -----------------------------
 sub testimonials ($self) {
-    my $tags = metatags((split '/', $self->req->url->path)[-1]);
+    my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     $self->render(
         template    => 'testimonials',
@@ -229,9 +261,11 @@ sub testimonials ($self) {
     );
 }
 
-# → travel ideas
+# -----------------------------
+# Travel ideas
+# -----------------------------
 sub travel_ideas ($self) {
-    my $tags = metatags((split '/', $self->req->url->path)[-1]);
+    my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     $self->render(
         template    => 'travel_ideas',
@@ -241,33 +275,41 @@ sub travel_ideas ($self) {
     );
 }
 
-# → what to expect
+# -----------------------------
+# What to expect
+# -----------------------------
 sub what_to_expect ($self) {
-    my $tags   = metatags((split '/', $self->req->url->path)[-1]);
-    my $expect = webtext(21);
+    my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
+
+    my @ids = (17,168,169,21,147,148,149,150,151,152);
+    my $webtexts = TravellersPalm::Database::General::webtext_multi(\@ids, $self);
+
+    my $expect = $webtexts->{21};
     my $title  = $expect->{title} // 'What to Expect';
 
     $self->render(
         template        => 'what_to_expect',
         metatags        => $tags,
-        what_to_expect  => $expect,
-        special_hotels  => webtext(147),
-        eat_drink       => webtext(148),
-        private_car     => webtext(149),
-        travel_by_train => webtext(150),
-        fly_in_comfort  => webtext(151),
-        delays          => webtext(152),
-        before_you_go   => webtext(17),
-        getting_ready   => webtext(168),
-        right_attitude  => webtext(169),
+        what_to_expect  => $webtexts->{21},
+        special_hotels  => $webtexts->{147},
+        eat_drink       => $webtexts->{148},
+        private_car     => $webtexts->{149},
+        travel_by_train => $webtexts->{150},
+        fly_in_comfort  => $webtexts->{151},
+        delays          => $webtexts->{152},
+        before_you_go   => $webtexts->{17},
+        getting_ready   => $webtexts->{168},
+        right_attitude  => $webtexts->{169},
         crumb           => '<li class="active">'.$title.'</li>',
         page_title      => $title,
     );
 }
 
-# → why travel with us
+# -----------------------------
+# Why travel with us
+# -----------------------------
 sub why_travel_with_us ($self) {
-    my $tags = metatags((split '/', $self->req->url->path)[-1]);
+    my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     $self->render(
         template => 'why_travel_with_us',

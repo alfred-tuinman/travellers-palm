@@ -7,6 +7,7 @@ use Data::Dumper;
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
 
+=pod
 our @EXPORT_OK = qw(
     route_listing
     itinerary_details
@@ -15,7 +16,7 @@ our @EXPORT_OK = qw(
     itinerary_regions
     itinerary_themes
     itinerary_search
-);
+=cut
 
 # -----------------------------
 # Route listing for a destination

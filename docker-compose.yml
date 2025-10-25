@@ -8,6 +8,7 @@ services:
     volumes:
       - ./data:/usr/src/app/data       # <— host:container
       - ./log:/usr/src/app/log
+    restart: always     
     expose:
       - "3000"
 

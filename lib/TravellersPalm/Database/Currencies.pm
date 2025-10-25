@@ -7,6 +7,7 @@ use Data::Dumper;
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row insert_row);
 
+=pod
 our @EXPORT_OK = qw(
     currencies
     currency
@@ -14,7 +15,7 @@ our @EXPORT_OK = qw(
     exchange_rates
     exchange_rates_historical
     exchange_rates_update
-);
+=cut
 
 # -----------------------------
 # List currencies

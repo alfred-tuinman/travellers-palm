@@ -3,15 +3,9 @@ package TravellersPalm::Controller::Itineraries;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
 use POSIX qw(strftime);
 use TravellersPalm::Constants qw(:all);
-use TravellersPalm::Database::Itineraries qw(
-    itineraries itinerary itinerary_cost placesyouwillvisit similartours toursinstate youraccommodation
-);
-use TravellersPalm::Database::Themes qw(themes themes_url);
-use TravellersPalm::Database::General qw(daybyday modules regions regionsurl hotel metatags);
-use TravellersPalm::Database::States qw(states statesurl);
-use TravellersPalm::Database::Cities qw(city);
-use TravellersPalm::Database::Images qw(images);
-use TravellersPalm::Functions qw(ourtime webtext addptags linkify url2text);
+use TravellersPalm::Functions qw(ourtime addptags linkify url2text);
+
+BEGIN { require TravellersPalm::Database::General; }
 
 my $session_currency = 'USD';
 
@@ -40,9 +34,9 @@ sub route_listing ($self) {
 
     if ($option eq TAILOR) {
         $itineraries = TravellersPalm::Database::Itineraries::itineraries(
-          option => 'itin', 
+          option   => 'itin', 
           currency => $session_currency, 
-          order => $order,
+          order    => $order,
           $self
         );
         $filter = 'tailor';
@@ -50,9 +44,9 @@ sub route_listing ($self) {
     }
     elsif ($option eq REGIONS) {
         $itineraries = TravellersPalm::Database::General::modules(
-          region => $region, 
+          region   => $region, 
           currency => $session_currency, 
-          order => $order,
+          order    => $order,
           $self
         );
         $regioninfo  = TravellersPalm::Database::General::regionsurl($region, $self);
@@ -72,9 +66,9 @@ sub route_listing ($self) {
         $state       = $region;
         $stateinfo   = TravellersPalm::Database::States::statesurl($state, $self);
         $itineraries = TravellersPalm::Database::States::toursinstate(
-          state => $state, 
+          state    => $state, 
           currency => $session_currency, 
-          order => $order,
+          order    => $order,
           $self
         );
         $states      = TravellersPalm::Database::States::states($destination, $self);
@@ -92,6 +86,7 @@ sub route_listing ($self) {
         ($state_writeup, $places) = linkify(addptags($stateinfo->{webwriteup}));
     }
 
+    # Min/max calculations
     my ($min_duration, $max_duration, $min_cost, $max_cost) = (30, 0, 1_000_000, 0);
     for my $trip (@$itineraries) {
         $min_duration = $trip->{numdays} if $trip->{numdays} < $min_duration;
@@ -100,27 +95,30 @@ sub route_listing ($self) {
         $max_cost     = $trip->{cost}    if $trip->{cost}    > $max_cost;
     }
 
+    # Batch webtexts for this template
+    my $webtexts = TravellersPalm::Database::General::webtext_multi([190, 118, 176, 73, 184, 185]);
+
     if ($option eq STATES) {
         return $self->render(
-            template      => 'states',
-            metatags      => $stateinfo,
-            country       => $destination,
-            itineraries   => $itineraries,
-            states        => $states,
-            crumb         => $crumb,
-            stateinfo     => $stateinfo,
-            filter        => $filter,
-            pathname      => STATES,
-            state         => $state,
-            display       => $view,
-            order         => $order,
-            state_intro   => addptags($stateinfo->{writeup}),
-            state_writeup => $state_writeup,
-            cities        => $places,
-            min_cost      => $min_cost,
-            max_cost      => $max_cost,
-            min_duration  => $min_duration,
-            max_duration  => $max_duration,
+            template        => 'states',
+            metatags        => $stateinfo,
+            country         => $destination,
+            itineraries     => $itineraries,
+            states          => $states,
+            crumb           => $crumb,
+            stateinfo       => $stateinfo,
+            filter          => $filter,
+            pathname        => STATES,
+            state           => $state,
+            display         => $view,
+            order           => $order,
+            state_intro     => addptags($stateinfo->{writeup}),
+            state_writeup   => $state_writeup,
+            cities          => $places,
+            min_cost        => $min_cost,
+            max_cost        => $max_cost,
+            min_duration    => $min_duration,
+            max_duration    => $max_duration,
         );
     }
 
@@ -141,7 +139,7 @@ sub route_listing ($self) {
         max_duration      => $max_duration,
         page_title        => ($option eq REGIONS) ? $regioninfo->{title} : url2text($option),
         regionname        => $region,
-        special_interests => webtext(190),
+        special_interests => $webtexts->{190},
         regions           => $regions,
         currency          => $session_currency,
     );
@@ -154,37 +152,28 @@ sub route_itinerary ($self) {
     my $destination = $self->stash('destination');
     my $tour        = $self->stash('tour');
     my $option      = $self->stash('option');
-    my $theme       = $self->stash('theme');
 
     my $itinerary = itinerary($tour);
 
-    unless (ref $itinerary eq 'HASH') {
-        return $self->render(
-            template => 'special_404',
-            message  => "$tour has been misspelled or is not on file.",
-            url      => $self->req->url->path,
-        );
-    }
+    return $self->render(
+        template => 'special_404',
+        message  => "$tour has been misspelled or is not on file.",
+        url      => $self->req->url->path,
+    ) unless ref $itinerary eq 'HASH';
 
-    my $cost = TravellersPalm::Database::Itineraries::itinerary_cost(
-      $itinerary->{fixeditin_id}, 
-      $session_currency, 
-      $self
-    );
-    my $startcity     = $itinerary->{startcity} ? TravellersPalm::Database::Cities::city($itinerary->{startcity}, $self) : '';
-    my $endcity       = TravellersPalm::Database::Cities::city($itinerary->{endcity}, $self);
-    my $category      = $itinerary->{readytours} ? 'ready tour' : 'module';
-    my $inclusions    = $itinerary->{inclusions};
-    my $ourtime       = ourtime();
-    my $daybyday      = TravellersPalm::Database::General::daybyday($tour, $self);
-    my $accommodation = TravellersPalm::Database::Itineraries::youraccommodation($tour, $self);
-    my $similartours  = $startcity ? TravellersPalm::Database::Itineraries::similartours($startcity->{cities_id}, $session_currency, $self) : [];
-    my $placesyou     = TravellersPalm::Database::Itineraries::placesyouwillvisit($tour, $self);
-    my $itin          = $itinerary->{itinerary};
+    my $cost           = TravellersPalm::Database::Itineraries::itinerary_cost($itinerary->{fixeditin_id}, $session_currency, $self);
+    my $startcity      = $itinerary->{startcity} ? TravellersPalm::Database::Cities::city($itinerary->{startcity}, $self) : '';
+    my $endcity        = TravellersPalm::Database::Cities::city($itinerary->{endcity}, $self);
+    my $inclusions     = $itinerary->{inclusions};
+    my $itin           = $itinerary->{itinerary};
+    my $ourtime        = ourtime();
 
     $inclusions =~ s/\{/<br><h4>/g;
     $inclusions =~ s/\}/<\/h4>/g;
     $itin       =~ s/\{/<br><b>/g;
+
+    # Batch webtexts for itinerary page
+    my $webtexts = TravellersPalm::Database::General::webtext_multi([118, 176, 73, 184, 185]);
 
     my $crumb = sprintf(
         "<li>Destinations</li><li><a href='%s/destinations/%s'>%s</a></li>",
@@ -203,20 +192,20 @@ sub route_itinerary ($self) {
         endcity         => $endcity,
         itinerary       => $itin,
         country         => $destination,
-        tours           => $similartours,
-        days            => $daybyday,
-        places          => $placesyou,
-        accommodation   => $accommodation,
+        tours           => $startcity ? TravellersPalm::Database::Itineraries::similartours($startcity->{cities_id}, $session_currency, $self) : [],
+        days            => TravellersPalm::Database::General::daybyday($tour, $self),
+        places          => TravellersPalm::Database::Itineraries::placesyouwillvisit($tour, $self),
+        accommodation   => TravellersPalm::Database::Itineraries::youraccommodation($tour, $self),
         ourtime         => $ourtime->strftime('%H:%M'),
         ourdate         => $ourtime->strftime('%d %B,%Y'),
         timediff        => 0,
         pathname        => $option,
         crumb           => $crumb,
-        tweak           => webtext(118),
-        need_help       => webtext(176),
-        plan_your_trip  => webtext(73),
-        plan_and_refine => webtext(184),
-        arrangements    => webtext(185),
+        tweak           => $webtexts->{118},
+        need_help       => $webtexts->{176},
+        plan_your_trip  => $webtexts->{73},
+        plan_and_refine => $webtexts->{184},
+        arrangements    => $webtexts->{185},
         page_title      => $itinerary->{title},
     );
 }

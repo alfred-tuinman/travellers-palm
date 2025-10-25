@@ -24,6 +24,7 @@ RUN cpanm --notest Carton
 
 # Set work directory
 WORKDIR /usr/src/app
+RUN mkdir -p /usr/src/app/log
 
 # Copy cpanfile first (so Docker can cache dependencies)
 COPY cpanfile cpanfile

@@ -9,6 +9,7 @@ use Digest::MD5 qw(md5_hex);
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row insert_row update_row);
 
+=pod
 our @EXPORT_OK = qw(
     generate_password
     register_email
@@ -18,7 +19,7 @@ our @EXPORT_OK = qw(
     user_exist
     user_ok
     user_update
-);
+=cut
 
 #--------------------------------------------------
 # Send password placeholder (stub)

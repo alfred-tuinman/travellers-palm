@@ -7,6 +7,7 @@ use Data::Dumper;
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
 
+=pod
 our @EXPORT_OK = qw(
     isquoted
     itincost
@@ -21,7 +22,7 @@ our @EXPORT_OK = qw(
     totalitineraries
     toursinstate
     youraccommodation
-);
+=cut
 
 # -----------------------------
 # Check if itinerary is quoted

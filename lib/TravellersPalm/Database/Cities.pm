@@ -7,6 +7,7 @@ use Data::Dumper;
 use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
 
+=pod
 our @EXPORT_OK = qw(
     airports
     get_airports_by_country
@@ -18,7 +19,7 @@ our @EXPORT_OK = qw(
     nearcities
     randomcities
     totalcities
-);
+=cut
 
 # -----------------------------
 # Airports

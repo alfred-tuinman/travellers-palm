@@ -18,10 +18,7 @@ use HTTP::Request;
 use LWP::UserAgent;
 use POSIX qw(strftime);
 use Time::Local qw(timelocal);
-use TravellersPalm::Model::Cities;
-use TravellersPalm::Database::General qw(web);
 # use URI;
-
 
 our @EXPORT = qw{
     addptags
@@ -43,7 +40,6 @@ our @EXPORT = qw{
     user_email
     validate_date
     valid_email
-    webtext
     weeknumber
 };
 
@@ -54,28 +50,6 @@ my $has_cities;
 my $cities_module;
 my $has_web;
 my $web_module;
-
-eval {
-    TravellersPalm::Model::Cities->import(qw(city));
-    $has_cities = 1;
-    $cities_module = 'TravellersPalm::Model::Cities';
-
-    if ($@) {
-        warn "Model::Cities not available: $@";
-        $has_cities = 0;
-    }
-};
-
-eval {
-    TravellersPalm::Model::Web->import(qw(web));
-    $has_web = 1;
-    $web_module = 'TravellersPalm::Model::Web';
-
-    if ($@) {
-        warn "Model::Web not available: $@";
-        $has_web = 0;
-    }
-};
 
 # -----------------------------
 # Text Utilities
@@ -250,7 +224,7 @@ sub linkExtor {
 # Linkify with safe city lookup
 # -----------------------------
 sub linkify {
-    my ($c, $str) = @_;
+    my ($str, $c) = @_;
     my $lstr   = '';
     my $cities = [];
 
@@ -258,7 +232,7 @@ sub linkify {
         my ($name, $id) = split /-/, $2;
 
         # Safe call: stub if Cities module not available
-        my $city = eval { TravellersPalm::Database::Cities::city($id) } || {
+        my $city = eval { TravellersPalm::Database::Cities::city($id, $c) } || {
             id   => $id,
             name => $name,
             url  => "#",
@@ -329,7 +303,7 @@ sub validate_date {
 }
 
 sub valid_email {
-    my ($address) = @_;
+    my ($address, $c) = @_;
     return 0 unless defined $address ;
     return Email::Valid->address($address) ? 1 : 0;
 }
@@ -352,7 +326,7 @@ sub user_is_registered {
 }
 
 sub user_register {
-    my ($c, $email) = @_;          # $c is the Mojolicious controller
+    my ($email, $c) = @_;          # $c is the Mojolicious controller
     return unless valid_email($email);
     $c->session(username => $email);  # set session in Mojolicious
 }
@@ -361,35 +335,6 @@ sub user_email {
     my ($c) = @_;
     return $c->session('username') // '';
 }
-
-
-sub webtext {
-    my ($id, $c) = @_;  # ID first, controller optional
-
-    # Fetch from DB; pass $c only if defined
-    my $data = defined $c 
-             ? TravellersPalm::Database::General::web($c, $id)
-             : TravellersPalm::Database::General::web(undef, $id);
-
-    # Log if controller provided and has dump_log
-    if (defined $c && ref $c && $c->can('dump_log')) {
-        $c->dump_log("Webtext($id) returned:", $data);
-    }
-
-    # Ensure hashref
-    $data = {} unless ref $data eq 'HASH';
-
-    my $rows = $data->{rows} // 0;
-    my $text = $data->{data} // {};
-
-    # Ensure writeup is defined before processing
-    $text->{writeup} = $rows > 0 && defined $text->{writeup} 
-                     ? boldify(addptags($text->{writeup})) 
-                     : '';
-
-    return $text;
-}
-
 
 sub weeknumber {
     my $date = shift // '';
