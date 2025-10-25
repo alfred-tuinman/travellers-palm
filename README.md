@@ -1,3 +1,181 @@
+````markdown
+# TravellersPalm – Quick Reference
+
+## 1. Quick Start
+
+```bash
+# Install dependencies
+cp .env.example .env
+cp config.yml.example config.yml
+cp config/development.yml config.yml  # optional
+cpanm --installdeps .
+
+# Run in development
+morbo script/travellerspalm
+````
+
+* Default dev port: `http://127.0.0.1:3000`
+* Logging in `log/travellers_palm.log`
+* Email tests use SMTP configured in `.env` or `config.yml`
+
+---
+
+## 2. Configuration
+
+### Environment Variables (`.env`)
+
+```text
+EMAIL_HOST=smtp.example.com
+EMAIL_PORT=587
+EMAIL_USER=user@example.com
+EMAIL_PASS=secret
+EMAIL_TLS=1
+```
+
+### Config File (`config.yml`)
+
+```yaml
+secrets: ['supersecretkey']
+appname: TravellersPalm
+email:
+  smtp:
+    host: smtp.example.com
+    port: 587
+    sasl_username: user@example.com
+    sasl_password: secret
+    ssl: 1
+  error:
+    from: noreply@travellerspalm.com
+    subject: "[TravellersPalm] Error"
+log:
+  path: log/travellers_palm.log
+  level: debug
+memcached:
+  servers:
+    - 127.0.0.1:11211
+template_tokens:
+  BRAND: TravellersPalm
+```
+
+---
+
+## 3. Core App Structure
+
+* **Helpers**
+
+  * `dd($var)` – debug dump and render
+  * `debug_footer($msg)` – store footer debug info
+  * `session_currency` – get/set current session currency
+  * `dump_log($msg, $var?)` – detailed logging for dev
+
+* **Hooks**
+
+  * `before` – initializes session defaults
+  * `before_dispatch` – rotates log daily, sets session country
+  * `after_dispatch` – sends email on server errors
+  * `around_dispatch` – catches route errors and renders 404/500
+  * `before_render` – injects template tokens (YEAR, COUNTRY, CURRENCY)
+
+* **Plugins**
+
+  * `yaml_config` – load configuration from YAML
+  * `TtRenderer` – Template Toolkit for rendering `.tt` templates
+
+---
+
+## 4. Routes Overview
+
+### Home & Pages
+
+```text
+/                -> home#index
+/about-us        -> home#about
+/contact-us      -> home#contact_us
+/faq             -> home#faq
+/sitemap         -> home#site_map
+/search-results  -> home#search_results
+```
+
+### Destinations
+
+```text
+/destinations/:country/ideas/:destination/list       -> destinations#show_idea_list
+/destinations/:country/regions                        -> destinations#regions
+/destinations/india/states                             -> destinations#states
+/destinations/:country/themes/:destination/:list      -> destinations#show_theme_list
+```
+
+### Itineraries
+
+```text
+/itineraries/:option                -> itineraries#route_listing
+/itineraries/:option/:tour          -> itineraries#route_itinerary
+```
+
+### Hotels
+
+```text
+/hotel-categories      -> hotels#show_hotel_categories
+/hand-picked-hotels    -> hotels#show_hand_picked_hotels
+```
+
+### Account
+
+```text
+/login           -> my_account#login
+/register        -> my_account#register
+/mail-password   -> my_account#mail_password
+```
+
+### Misc
+
+```text
+/currency/:currency    -> switch session currency
+/images/*filepath      -> images#serve_image
+/api/ping              -> api#ping
+/api/user/:id          -> api#user_info
+/plan-your-trip        -> destinations#plan_your_trip
+*                      -> 404 fallback
+```
+
+---
+
+## 5. Maintenance & Monitoring
+
+* **Logs**: Rotates daily, debug/info/warn/error levels
+
+* **Memcached**: Default `127.0.0.1:11211`, compresses values >10 KB
+
+* **Email Alerts**: Sends on `500` server errors with template `mail/error_email.tt`
+
+* **Development Checkpoints**
+
+  * `/memcache/test` – tests caching and benchmarks
+  * `dump_log()` – development-only debug logging
+
+---
+
+## 6. Best Practices
+
+* Split large `TravellersPalm.pm` into modules:
+
+  * `TravellersPalm::Routes` – routes setup
+  * `TravellersPalm::Hooks` – hooks setup
+  * `TravellersPalm::Helpers` – helper functions
+* Keep `.env` and `config.yml` out of Git (`.gitignore`)
+* Use consistent logging and template token injection
+* Rotate logs to avoid huge files
+
+```
+
+---
+
+```
+
+
+
+
+
 # Our project
 We opted here to now move to Mojolicious, modern, non-blocking web framework for Perl, inspired by Ruby.
 
@@ -22,57 +200,68 @@ Templates and public assets are cleanly separated
 Catch-all 404 page handles missing pages
 
 # Project structure
-TravellersPalm/
-├─ bin/
-│   └─ travellerspalm  # Mojolicious app runner (morbo/hypnotoad)
-├─ lib/
-│   └─ TravellersPalm/
-│       ├─ Controller/
-│       │   ├─ Home.pm
-│       │   ├─ Destinations.pm
-│       │   ├─ Hotels.pm
-│       │   └─ MyAccount.pm
-│       ├─ Constants.pm
-│       ├─ Functions.pm
-│       └─ Database/
-│           ├─ Connector.pm
-│           ├─ General.pm
-│           ├─ States.pm
-│           └─ Themes.pm
-├─ localdb/
-│   └─ Jadoo_2006.db
-├─ public/
-│   ├─ css/
-│   ├─ js/
-│   └─ images/
-├─ templates/
-│   ├─ layouts/
-│   │   └─ default.html.tt
-│   ├─ home/
-│   │   ├─ index.html.tt
-│   │   ├─ about.html.tt
-│   │   └─ contact.html.tt
-│   ├─ destinations/
-│   │   ├─ destination.html.tt
-│   │   ├─ regions.html.tt
-│   │   ├─ state.html.tt
-│   │   ├─ theme.html.tt
-│   │   └─ plan_your_trip.html.tt
-│   ├─ hotels/
-│   │   ├─ hotel_categories.html.tt
-│   │   └─ hand_picked_hotels.html.tt
-│   └─ my_account/
-│       ├─ login.html.tt
-│       └─ register.html.tt
-├─ travelllerspalm.conf
-└─ TravellersPalm.pm
-├─ config.yml
-├─ cpanfile
-├─ docker-compose.yml
-├─ Dockerfile
-├─ nginx.conf
-├─ README.md
-├─ restart.sh
+travellers-palm/
+│
+├── lib/
+│   ├── TravellersPalm.pm                      ← main app (startup)
+│   │
+│   ├── TravellersPalm/
+│   │   ├── Logger.pm                          ← handles log setup
+│   │   ├── Database/
+│   │   │   └── Connector.pm                   ← DBI / DBIx::Connector logic
+│   │   ├── Mailer.pm                          ← Email::Sender transport
+│   │   ├── Cache.pm                           ← CHI (memcached) setup
+│   │   ├── Helpers.pm                         ← app-wide helper subs
+│   │   ├── Hooks.pm                           ← before/after_dispatch hooks
+│   │   ├── Routes.pm                          ← all app routes
+│   │   ├── Controller/
+│   │   │   ├── Home.pm                        ← standard Mojolicious controllers
+│   │   │   ├── Destinations.pm
+│   │   │   ├── Pages.pm
+│   │   │   └── Cache.pm
+│   │   └── Model/                             ← optional for future expansion
+│   │       ├── Destination.pm
+│   │       └── User.pm
+│   │
+│   └── TravellersPalm/Plugin/                 ← optional custom Mojolicious plugins
+│       └── ...
+│
+├── templates/
+│   ├── layouts/
+│   │   └── default.html.ep
+│   ├── home/
+│   │   └── index.html.ep
+│   ├── destinations/
+│   │   ├── index.html.ep
+│   │   └── show_state_list.html.ep
+│   ├── pages/
+│   │   ├── about.html.ep
+│   │   └── contact.html.ep
+│   └── cache/
+│       └── test.html.ep
+│
+├── public/
+│   ├── css/
+│   ├── js/
+│   ├── images/
+│   └── favicon.ico
+│
+├── log/
+│   ├── app.log
+│   └── ...
+│
+├── config.yml                                 ← app config (db, smtp, log, etc.)
+├── .env                                       ← environment secrets (EMAIL_*, DB_*)
+├── .gitignore                                 ← ignore log/, local/, etc.
+├── Dockerfile
+├── docker-compose.yml
+├── script/
+│   ├── travellers_palm                       ← executable to start app (like `morbo` or `hypnotoad`)
+│   └── setup_db.pl                            ← any custom setup script
+│
+└── README.md
+
+
 
 # cpanfile
 Put all Perl module dependencies in cpanfile. That way, Docker rebuilds dependencies only when they change.
