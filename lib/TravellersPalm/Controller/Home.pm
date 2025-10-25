@@ -1,16 +1,20 @@
 package TravellersPalm::Controller::Home;
 
 use Mojo::Base 'Mojolicious::Controller', -signatures;
-use TravellersPalm::Functions qw(email_request user_is_registered user_email );
+use TravellersPalm::Functions qw(email_request user_is_registered user_email);
 use Data::Dumper;
 
-BEGIN { require TravellersPalm::Database::General; }
+BEGIN {
+    require TravellersPalm::Database::General;
+    require TravellersPalm::Database::Themes;
+}
 
 # -----------------------------
 # Utility to get last path segment
 # -----------------------------
 sub _last_path_segment ($self) {
-    my $path = $self->req->url->path->to_string;
+    my $req = $self->req;
+    my $path = $req->url->path->to_string;
     my ($last) = reverse grep { length } split('/', $path);
     return $last;
 }
@@ -19,12 +23,13 @@ sub _last_path_segment ($self) {
 # Home page
 # -----------------------------
 sub index ($self) {
+    my $country   = $self->stash('country');  
+    my $req       = $self->req;
     my $tags      = TravellersPalm::Database::General::metatags(6, $self);
     my $slidetext = TravellersPalm::Database::General::web(163, $self);
     my @slides    = $slidetext->{writeup} ? split /\n/, $slidetext->{writeup} : ();
     unshift @slides, 'dummy item';
 
-    # Batch webtext IDs for home page
     my @ids = (119,120,121,187,188,189,60);
     my $webtexts = TravellersPalm::Database::General::webtext_multi(\@ids, $self);
 
@@ -50,6 +55,7 @@ sub index ($self) {
 # About page
 # -----------------------------
 sub about ($self) {
+    my $req = $self->req;
     my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     my @ids = (9, 170, 171, 172, 8, 12, 31, 164, 165, 166, 167);
@@ -81,6 +87,7 @@ sub about ($self) {
 # Before You Go
 # -----------------------------
 sub before_you_go ($self) {
+    my $req = $self->req;
     my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     my @ids = (17,168,169);
@@ -101,12 +108,12 @@ sub before_you_go ($self) {
 # Contact form
 # -----------------------------
 sub contact_us ($self) {
-    my $params = $self->req->params->to_hash;
-    my $error = 0;
+    my $req    = $self->req;
+    my $params = $req->params->to_hash;
+    my $error  = 0;
 
-    if ($self->req->method eq 'POST') {
-        my $ok = email_request($params);
-        $error = $ok ? 0 : 1;
+    if ($req->method eq 'POST') {
+        $error = email_request($params) ? 0 : 1;
     }
 
     $self->render(
@@ -120,8 +127,9 @@ sub contact_us ($self) {
 # Enquiry page
 # -----------------------------
 sub get_enquiry ($self) {
-    my $email  = TravellersPalm::Database::Users::user_is_registered($self) ? user_email() : "";
-    my $tags   = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
+    my $req   = $self->req;
+    my $email = TravellersPalm::Database::Users::user_is_registered($self) ? user_email() : "";
+    my $tags  = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     $self->render(
         template => 'enquiry',
@@ -131,9 +139,10 @@ sub get_enquiry ($self) {
 }
 
 sub post_enquiry ($self) {
+    my $req    = $self->req;
+    my $params = $req->params->to_hash;
     my $email  = TravellersPalm::Database::Users::user_is_registered($self) ? user_email() : "";
     my $tags   = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
-    my $params = $self->req->params->to_hash;
 
     email_request($params);
 
@@ -149,6 +158,7 @@ sub post_enquiry ($self) {
 # FAQ page
 # -----------------------------
 sub faq ($self) {
+    my $req  = $self->req;
     my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     $self->render(
@@ -161,9 +171,9 @@ sub faq ($self) {
 # Policies
 # -----------------------------
 sub policies ($self) {
+    my $req  = $self->req;
     my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
-    # batch fields for page
     my @field_ids = (124..146, 191, 208);
     my $fields = TravellersPalm::Database::General::webtext_multi(\@field_ids, $self);
 
@@ -173,7 +183,7 @@ sub policies ($self) {
         conditions => $fields->{15},
         terms      => $fields->{35},
         privacy    => $fields->{16},
-        fields     => [ map { $fields->{$_} } (124..146, 191, 208) ],
+        fields     => [ map { $fields->{$_} } @field_ids ],
         about      => $fields->{208},
         crumb      => '<li class="active">Our Policies</li>',
         page_title => 'Our Policies',
@@ -184,6 +194,7 @@ sub policies ($self) {
 # Search results
 # -----------------------------
 sub search_results ($self) {
+    my $req  = $self->req;
     my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     my @ids = (12,153,154,155,156,157,158);
@@ -208,7 +219,8 @@ sub search_results ($self) {
 # Site map
 # -----------------------------
 sub site_map ($self) {
-    my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
+    my $req      = $self->req;
+    my $tags     = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
     my $textfile = $self->config->{root}.'/url-report.txt';
     my @report;
 
@@ -234,7 +246,8 @@ sub site_map ($self) {
 # Sustainable tourism
 # -----------------------------
 sub sustainable_tourism ($self) {
-    my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
+    my $req         = $self->req;
+    my $tags        = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
     my $sustainable = TravellersPalm::Database::General::webtext(13, $self);
 
     $self->render(
@@ -250,6 +263,7 @@ sub sustainable_tourism ($self) {
 # Testimonials
 # -----------------------------
 sub testimonials ($self) {
+    my $req  = $self->req;
     my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     $self->render(
@@ -265,6 +279,7 @@ sub testimonials ($self) {
 # Travel ideas
 # -----------------------------
 sub travel_ideas ($self) {
+    my $req  = $self->req;
     my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     $self->render(
@@ -279,6 +294,7 @@ sub travel_ideas ($self) {
 # What to expect
 # -----------------------------
 sub what_to_expect ($self) {
+    my $req  = $self->req;
     my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     my @ids = (17,168,169,21,147,148,149,150,151,152);
@@ -309,6 +325,7 @@ sub what_to_expect ($self) {
 # Why travel with us
 # -----------------------------
 sub why_travel_with_us ($self) {
+    my $req  = $self->req;
     my $tags = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
     $self->render(

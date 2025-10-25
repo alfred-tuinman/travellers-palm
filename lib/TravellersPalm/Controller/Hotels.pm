@@ -9,7 +9,8 @@ BEGIN { require TravellersPalm::Database::General; }
 # Utility to get last path segment
 # -----------------------------
 sub _last_path_segment ($self) {
-    my $path = $self->req->url->path->to_string;
+    my $req  = $self->req;
+    my $path = $req->url->path->to_string;
     my ($last) = reverse grep { length } split('/', $path);
     return $last;
 }
@@ -33,8 +34,8 @@ sub show_hand_picked_hotels ($self) {
     my $path_segment = $self->_last_path_segment;
 
     # Batch fetch all webtexts needed for this page
-    my @ids = (18, 19, 20, 208);
-    my $webtexts = TravellersPalm::Database::General::webtext_multi(\@ids);
+    my @ids      = (18, 19, 20, 208);
+    my $webtexts = TravellersPalm::Database::General::webtext_multi(\@ids, $self);
 
     $self->render(
         template         => 'hand_picked_hotels',

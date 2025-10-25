@@ -13,19 +13,19 @@ my $session_currency = 'USD';
 # Listing routes
 # -----------------------------
 sub route_listing ($self) {
+    my $req         = $self->req;
     my $destination = $self->stash('destination');
     my $option      = $self->stash('option');
     my $view        = $self->stash('view') // 'list';
     my $order       = $self->stash('order') // 'days';
     my $region      = $self->stash('region');
 
-    my %valid = map { $_ => 1 } qw(grid block list);
     return $self->render(status => 400, text => "Invalid view '$view'")
-        unless $valid{$view};
+        unless $view =~ /^(grid|block|list)$/;
 
     my $crumb = sprintf(
         "<li>Destinations</li><li><a href='%s/destinations/%s'>%s</a></li>",
-        $self->req->url->base,
+        $req->url->base,
         $destination,
         url2text($destination)
     );
@@ -34,28 +34,28 @@ sub route_listing ($self) {
 
     if ($option eq TAILOR) {
         $itineraries = TravellersPalm::Database::Itineraries::itineraries(
-          option   => 'itin', 
-          currency => $session_currency, 
-          order    => $order,
-          $self
+            option   => 'itin',
+            currency => $session_currency,
+            order    => $order,
+            $self
         );
         $filter = 'tailor';
         $crumb .= "<li class='active'>" . url2text(TAILOR) . "</li>";
     }
     elsif ($option eq REGIONS) {
         $itineraries = TravellersPalm::Database::General::modules(
-          region   => $region, 
-          currency => $session_currency, 
-          order    => $order,
-          $self
+            region   => $region,
+            currency => $session_currency,
+            order    => $order,
+            $self
         );
-        $regioninfo  = TravellersPalm::Database::General::regionsurl($region, $self);
-        $regions     = TravellersPalm::Database::General::regions($self);
-        $filter      = 'regions';
+        $regioninfo = TravellersPalm::Database::General::regionsurl($region, $self);
+        $regions    = TravellersPalm::Database::General::regions($self);
+        $filter     = 'regions';
 
         $crumb .= sprintf(
             "<li><a href='%s/destinations/%s/%s'>%s</a></li><li class='active'>%s</li>",
-            $self->req->url->base,
+            $req->url->base,
             $destination,
             REGIONS,
             url2text(REGIONS),
@@ -66,17 +66,17 @@ sub route_listing ($self) {
         $state       = $region;
         $stateinfo   = TravellersPalm::Database::States::statesurl($state, $self);
         $itineraries = TravellersPalm::Database::States::toursinstate(
-          state    => $state, 
-          currency => $session_currency, 
-          order    => $order,
-          $self
+            state    => $state,
+            currency => $session_currency,
+            order    => $order,
+            $self
         );
-        $states      = TravellersPalm::Database::States::states($destination, $self);
-        $filter      = 'states';
+        $states = TravellersPalm::Database::States::states($destination, $self);
+        $filter = 'states';
 
         $crumb .= sprintf(
             "<li><a href='%s/destinations/%s/%s'>%s</a></li><li class='active'>%s</li>",
-            $self->req->url->base,
+            $req->url->base,
             $destination,
             STATES,
             url2text(STATES),
@@ -95,8 +95,8 @@ sub route_listing ($self) {
         $max_cost     = $trip->{cost}    if $trip->{cost}    > $max_cost;
     }
 
-    # Batch webtexts for this template
-    my $webtexts = TravellersPalm::Database::General::webtext_multi([190, 118, 176, 73, 184, 185]);
+    # Batch webtexts for templates
+    my $webtexts = TravellersPalm::Database::General::webtext_multi([190, 118, 176, 73, 184, 185], $self);
 
     if ($option eq STATES) {
         return $self->render(
@@ -149,35 +149,34 @@ sub route_listing ($self) {
 # Single itinerary route
 # -----------------------------
 sub route_itinerary ($self) {
+    my $req         = $self->req;
     my $destination = $self->stash('destination');
     my $tour        = $self->stash('tour');
     my $option      = $self->stash('option');
 
     my $itinerary = itinerary($tour);
-
     return $self->render(
         template => 'special_404',
         message  => "$tour has been misspelled or is not on file.",
-        url      => $self->req->url->path,
+        url      => $req->url->path,
     ) unless ref $itinerary eq 'HASH';
 
-    my $cost           = TravellersPalm::Database::Itineraries::itinerary_cost($itinerary->{fixeditin_id}, $session_currency, $self);
-    my $startcity      = $itinerary->{startcity} ? TravellersPalm::Database::Cities::city($itinerary->{startcity}, $self) : '';
-    my $endcity        = TravellersPalm::Database::Cities::city($itinerary->{endcity}, $self);
-    my $inclusions     = $itinerary->{inclusions};
-    my $itin           = $itinerary->{itinerary};
-    my $ourtime        = ourtime();
+    my $cost        = TravellersPalm::Database::Itineraries::itinerary_cost($itinerary->{fixeditin_id}, $session_currency, $self);
+    my $startcity   = $itinerary->{startcity} ? TravellersPalm::Database::Cities::city($itinerary->{startcity}, $self) : '';
+    my $endcity     = TravellersPalm::Database::Cities::city($itinerary->{endcity}, $self);
+    my $inclusions  = $itinerary->{inclusions};
+    my $itin        = $itinerary->{itinerary};
+    my $ourtime     = ourtime();
 
     $inclusions =~ s/\{/<br><h4>/g;
     $inclusions =~ s/\}/<\/h4>/g;
     $itin       =~ s/\{/<br><b>/g;
 
-    # Batch webtexts for itinerary page
-    my $webtexts = TravellersPalm::Database::General::webtext_multi([118, 176, 73, 184, 185]);
+    my $webtexts = TravellersPalm::Database::General::webtext_multi([118, 176, 73, 184, 185], $self);
 
     my $crumb = sprintf(
         "<li>Destinations</li><li><a href='%s/destinations/%s'>%s</a></li>",
-        $self->req->url->base,
+        $req->url->base,
         $destination,
         url2text($destination)
     );

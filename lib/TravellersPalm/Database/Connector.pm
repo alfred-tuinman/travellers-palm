@@ -6,8 +6,11 @@ use DBI;
 use Data::Dumper;
 use Exporter 'import';
 use POSIX qw(strftime);
+use Dotenv -load;
+use Email::Sender::Transport::SMTP;
+use Email::Stuffer;
 
-our @EXPORT_OK = qw(setup dbh fetch_row fetch_all insert_row update_row delete_row);
+our @EXPORT_OK = qw(fetch_row fetch_all insert_row update_row delete_row);
 
 my ($app, %handles);
 
@@ -85,7 +88,6 @@ sub _get_caller_info {
     return ('unknown', 'unknown', 0);
 }
 
-
 # -----------------------------------
 # Get DB handle safely
 # -----------------------------------
@@ -120,10 +122,16 @@ sub dbh {
 }
 
 # -----------------------------------
-# Generic DB operations
+# Generic DB operations with email error
 # -----------------------------------
-sub fetch_row {
-    my ($sql, $bind_ref, $key_style, $dbkey, $c) = @_;
+sub fetch_row  { _execute_db('fetch_row', @_) }
+sub fetch_all  { _execute_db('fetch_all', @_) }
+sub insert_row { _execute_db('insert_row', @_) }
+sub update_row { _execute_db('update_row', @_) }
+sub delete_row { _execute_db('delete_row', @_) }
+
+sub _execute_db {
+    my ($op, $sql, $bind_ref, $key_style, $dbkey, $c) = @_;
     $bind_ref  //= [];
     $key_style //= 'NAME';
     my $dbh = dbh($dbkey);
@@ -131,65 +139,57 @@ sub fetch_row {
     _log_sql($sql, $bind_ref, $c);
 
     my $sth;
-    eval { $sth = $dbh->prepare($sql); $sth->execute(@$bind_ref); };
-    die "DB error: $@" if $@;
-    return $sth->fetchrow_hashref($key_style);
+    eval {
+        $sth = $dbh->prepare($sql);
+        $sth->execute(@$bind_ref);
+    };
+    if ($@) {
+        _handle_db_error($@, $sql, $bind_ref, $op, $c);
+    }
+
+    return $op eq 'fetch_row' ? $sth->fetchrow_hashref($key_style)
+         : $op eq 'fetch_all' ? do { my @rows; push @rows, $_ while my $r = $sth->fetchrow_hashref($key_style); \@rows }
+         : 1;
 }
 
-sub fetch_all {
-    my ($sql, $bind_ref, $key_style, $dbkey, $c) = @_;
-    $bind_ref  //= [];
-    $key_style //= 'NAME';
-    my $dbh = dbh($dbkey);
+# -----------------------------------
+# DB error handler with email
+# -----------------------------------
+sub _handle_db_error {
+    my ($error, $sql, $bind_ref, $op, $c) = @_;
 
-    _log_sql($sql, $bind_ref, $c);
+    my $caller_info = join("\n", map { "\t$_" } _get_stack_trace());
 
-    my $sth;
-    eval { $sth = $dbh->prepare($sql); $sth->execute(@$bind_ref); };
-    die "DB error: $@" if $@;
+    my $body = "<p>Database operation <b>$op</b> failed.</p>"
+             . "<p>Error: $error</p>"
+             . "<p>SQL: $sql</p>"
+             . "<p>Binds: " . join(", ", @$bind_ref) . "</p>"
+             . "<p>Stack trace:<br>$caller_info</p>";
 
-    my @rows;
-    while (my $r = $sth->fetchrow_hashref($key_style)) { push @rows, $r; }
-    return \@rows;
+    if ($c && $c->config->{email}) {
+        require Email::Stuffer;
+        my $from    = $self->config->{email}{error}{from}    // 'noreply@travellerspalm.com';
+        my $subject = $self->config->{email}{error}{subject} // "[" . ($self->config->{appname} // 'TravellersPalm') . "] Error at $url";
+
+        Email::Stuffer->from($from)
+                      ->to($ENV{EMAIL_USER})
+                      ->subject($subject)
+                      ->html_body($body)
+                      ->transport($c->app->email_transport)
+                      ->send;
+    }
+
+    die "Database error: $error";  # propagate
 }
 
-sub insert_row {
-    my ($sql, $bind_ref, $dbkey, $c) = @_;
-    $bind_ref ||= [];
-    my $dbh = dbh($dbkey);
-
-    _log_sql($sql, $bind_ref, $c);
-
-    my $sth;
-    eval { $sth = $dbh->prepare($sql); $sth->execute(@$bind_ref); };
-    die "DB error: $@" if $@;
-    return 1;
-}
-
-sub update_row {
-    my ($sql, $bind_ref, $dbkey, $c) = @_;
-    $bind_ref ||= [];
-    my $dbh = dbh($dbkey);
-
-    _log_sql($sql, $bind_ref, $c);
-
-    my $sth;
-    eval { $sth = $dbh->prepare($sql); $sth->execute(@$bind_ref); };
-    die "DB error: $@" if $@;
-    return 1;
-}
-
-sub delete_row {
-    my ($sql, $bind_ref, $dbkey, $c) = @_;
-    $bind_ref ||= [];
-    my $dbh = dbh($dbkey);
-
-    _log_sql($sql, $bind_ref, $c);
-
-    my $sth;
-    eval { $sth = $dbh->prepare($sql); $sth->execute(@$bind_ref); };
-    die "DB error: $@" if $@;
-    return 1;
+sub _get_stack_trace {
+    my @trace;
+    my $i = 1;
+    while (my @caller = caller($i++)) {
+        my ($package, $filename, $line, $subroutine) = @caller;
+        push @trace, "$subroutine at $filename line $line";
+    }
+    return @trace;
 }
 
 1;

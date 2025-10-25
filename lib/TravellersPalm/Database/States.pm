@@ -36,6 +36,7 @@ sub state {
 # -----------------------------
 sub states {
     my ($country, $order, $c) = @_;
+    $country //= 'IN';
     $order //= 'state';
 
     # sanitize order column to prevent SQL injection

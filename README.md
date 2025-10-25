@@ -312,3 +312,23 @@ Externalizing logs keeps the image clean and portable.
 
 ## Set time
 ```ln -sf /usr/share/zoneinfo/Asia/Bangkok /etc/localtime```
+
+# Email
+
+## Sending an email anywhere in a controller
+
+use Email::Stuffer;
+use Dotenv -load;
+use Email::Sender::Transport::SMTP;
+
+my $from    = $self->config->{email}{from} // 'noreply@travellerspalm.com';
+my $subject = $self->config->{email}{subject} // "[". $self->config->{email} . "] Error at $url";
+
+Use .env to obtain the secured email details for
+
+Email::Stuffer->from($from)
+              ->to($to)
+              ->subject($subject)
+              ->html_body($body)
+              ->transport($self->email_transport)  # Use helper
+              ->send;

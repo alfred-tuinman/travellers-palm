@@ -4,6 +4,8 @@ services:
     command: morbo -l http://*:3000 script/travellers_palm
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     container_name: travellers_palm_app
     volumes:
       - ./data:/usr/src/app/data       # <— host:container

@@ -10,6 +10,11 @@ log:
   level: debug
   path: /usr/src/app/log/app.log
 
+email:
+  error:
+    from:    'system@travellerspalm.com'
+    subject: '500 Error Notification'
+
 template_tokens:
   PHONE1: "+91 88051 22221"
   PHONE2: "+91 90111 55551"

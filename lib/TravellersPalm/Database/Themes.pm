@@ -7,60 +7,17 @@ use Exporter 'import';
 use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
 
 =pod
+
 our @EXPORT_OK = qw(
-    subthemes
-    subthemes_id
     themes
     themes_subthemes
     themes_url
     themetrips
     themeurl
+    subthemes
+    subthemes_id
+
 =cut
-
-# -------------------------------------------------
-# Get subthemes for a given theme
-# -------------------------------------------------
-sub subthemes {
-    my ($themes_id, $c) = @_;
-    return undef unless defined $themes_id;
-
-    my $sql = q{
-        SELECT  subthemes_id,
-                themes_id,
-                title,
-                oneliner,
-                introduction,
-                subtheme,
-                url
-        FROM    subthemes
-        WHERE   themes_id = ?
-        ORDER BY title
-    };
-
-    return fetch_all($sql, [$themes_id], 'NAME', 'jadoo', $c);
-}
-
-# -------------------------------------------------
-# Get subtheme details by ID
-# -------------------------------------------------
-sub subthemes_id {
-    my ($subthemes_id, $c) = @_;
-    return undef unless defined $subthemes_id;
-
-    my $sql = q{
-        SELECT  subthemes_id,
-                themes_id,
-                title,
-                oneliner,
-                introduction,
-                subtheme,
-                url
-        FROM    subthemes
-        WHERE   subthemes_id = ?
-    };
-
-    return fetch_row($sql, [$subthemes_id], 'NAME_lc', 'jadoo', $c);
-}
 
 # -------------------------------------------------
 # List all themes, optionally limited or extended
@@ -96,6 +53,7 @@ sub themes {
 
     return fetch_all($sql, [], 'NAME', 'jadoo', $c);
 }
+
 
 # -------------------------------------------------
 # Get cities associated with a theme (via subthemes)
@@ -242,6 +200,51 @@ sub themeurl {
     };
 
     return fetch_row($sql, [$url], 'NAME_lc', 'jadoo', $c);
+}
+
+# -------------------------------------------------
+# Get subthemes for a given theme
+# -------------------------------------------------
+sub subthemes {
+    my ($themes_id, $c) = @_;
+    return undef unless defined $themes_id;
+
+    my $sql = q{
+        SELECT  subthemes_id,
+                themes_id,
+                title,
+                oneliner,
+                introduction,
+                subtheme,
+                url
+        FROM    subthemes
+        WHERE   themes_id = ?
+        ORDER BY title
+    };
+
+    return fetch_all($sql, [$themes_id], 'NAME', 'jadoo', $c);
+}
+
+# -------------------------------------------------
+# Get subtheme details by ID
+# -------------------------------------------------
+sub subthemes_id {
+    my ($subthemes_id, $c) = @_;
+    return undef unless defined $subthemes_id;
+
+    my $sql = q{
+        SELECT  subthemes_id,
+                themes_id,
+                title,
+                oneliner,
+                introduction,
+                subtheme,
+                url
+        FROM    subthemes
+        WHERE   subthemes_id = ?
+    };
+
+    return fetch_row($sql, [$subthemes_id], 'NAME_lc', 'jadoo', $c);
 }
 
 1;

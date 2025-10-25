@@ -1,0 +1,31 @@
+% my $title = '[TravellersPalm] 500 Internal Error';
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><%= $title %></title>
+  <style>
+    body { font-family: sans-serif; background: #fafafa; color: #333; }
+    h1 { color: #b00; }
+    pre { background: #eee; padding: 10px; border-radius: 4px; }
+    .meta { font-size: 0.9em; color: #666; margin-bottom: 1em; }
+  </style>
+</head>
+<body>
+  <h1>🚨 Internal Server Error</h1>
+  <div class="meta">
+    <p><strong>Time:</strong> <%= $time %></p>
+    <p><strong>Host:</strong> <%= $host %></p>
+    <p><strong>URL:</strong> <%= $url %></p>
+    <p><strong>Method:</strong> <%= $method %></p>
+    <p><strong>IP:</strong> <%= $ip %></p>
+    <p><strong>User Agent:</strong> <%= $agent %></p>
+  </div>
+
+  <h2>Exception</h2>
+  <pre><%= $exception %></pre>
+
+  <h2>Response Body</h2>
+  <pre><%= $body || '(none)' %></pre>
+</body>
+</html>
