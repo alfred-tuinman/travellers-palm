@@ -26,6 +26,8 @@ template_tokens:
   IMAGE: "http://images.travellers-palm.com"
   domain: "www.travellers-palm.com"
   
+main_database: jadoo
+
 databases:
   jadoo:
     dsn: "dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db"

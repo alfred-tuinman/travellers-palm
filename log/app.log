@@ -14,3 +14,256 @@
 [2025-10-26 16:13:07 +07] [pid:7] DEBUG Hooks registered
 [2025-10-26 16:13:07 +07] [pid:7] DEBUG All routes registered successfully
 [2025-10-26 16:13:07 +07] [pid:7] DEBUG TravellersPalm application started with database 'Jadoo_2006.db'
+[2025-10-26 16:30:55 +07] [pid:7] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-26 16:30:55 +07] [pid:7] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x62f1956512f8)
+[2025-10-26 16:30:55 +07] [pid:7] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-26 16:30:56 +07] [pid:7] DEBUG Cache system initialized
+[2025-10-26 16:30:56 +07] [pid:7] DEBUG Helpers registered
+[2025-10-26 16:30:56 +07] [pid:7] DEBUG Hooks registered
+[2025-10-26 16:30:56 +07] [pid:7] DEBUG All routes registered successfully
+[2025-10-26 16:30:56 +07] [pid:7] DEBUG TravellersPalm application started with database 'Jadoo_2006.db'
+[2025-10-26 16:38:56 +07] [pid:7] DEBUG Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-26 16:38:56 +07] [pid:7] DEBUG [SQL]
+    
+            SELECT meta_title, meta_descr, meta_keywords
+            FROM webpages
+            WHERE url = ?
+        
+ | binds: explore-by-state | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
+[2025-10-26 16:38:56 +07] [pid:7] DEBUG [SQL]
+    
+            SELECT srno, title, pagename, writeup, webpages_id
+            FROM Web
+            WHERE Web_id = ?
+        
+ | binds: 122 | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
+[2025-10-26 16:38:56 +07] [pid:7] DEBUG [SQL]
+    
+            SELECT s.states_id, s.statecode, s.state, s.countries_id, s.printstate,
+                   s.oneliner, s.writeup, s.webwriteup, s.latitude, s.longitude,
+                   s.meta_title, s.meta_descr, s.meta_keywords, s.url
+            FROM states s
+            INNER JOIN countries c ON c.countries_id = s.countries_id
+            WHERE s.states_id IN (
+                SELECT DISTINCT st.states_id
+                FROM vw_hoteldetails h
+                JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
+                JOIN states st ON h.states_id = st.states_id
+                WHERE a.categories_id = ?
+            )
+            AND c.url LIKE ?
+            ORDER BY order
+        
+ | binds: 27, IN% | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 128 | route: /destinations/india/states
+[2025-10-26 16:38:56 +07] [pid:7] ERROR Dispatch error: Database error: DBD::SQLite::db prepare failed: near "order": syntax error at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 143.
+[2025-10-26 16:38:56 +07] [pid:7] ERROR [zbZ8WgtQTTmF]No handler for "tt" found
+[2025-10-26 16:38:56 +07] [pid:7] ERROR [zbZ8WgtQTTmF]Could not render a response at /usr/src/app/lib/TravellersPalm/Hooks.pm line 95.
+[2025-10-26 16:38:56 +07] [pid:7] ERROR [zbZ8WgtQTTmF]No handler for "tt" found
+[2025-10-26 16:38:56 +07] [pid:7] ERROR 500 error email sent for http://localhost:3000/destinations/india/states
+[2025-10-26 16:43:13 +07] [pid:7] DEBUG [SQL]
+    
+            SELECT meta_title, meta_descr, meta_keywords
+            FROM webpages
+            WHERE url = ?
+        
+ | binds: explore-by-state | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
+[2025-10-26 16:43:13 +07] [pid:7] DEBUG [SQL]
+    
+            SELECT srno, title, pagename, writeup, webpages_id
+            FROM Web
+            WHERE Web_id = ?
+        
+ | binds: 122 | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
+[2025-10-26 16:43:13 +07] [pid:7] DEBUG [SQL]
+    
+            SELECT s.states_id, s.statecode, s.state, s.countries_id, s.printstate,
+                   s.oneliner, s.writeup, s.webwriteup, s.latitude, s.longitude,
+                   s.meta_title, s.meta_descr, s.meta_keywords, s.url
+            FROM states s
+            INNER JOIN countries c ON c.countries_id = s.countries_id
+            WHERE s.states_id IN (
+                SELECT DISTINCT st.states_id
+                FROM vw_hoteldetails h
+                JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
+                JOIN states st ON h.states_id = st.states_id
+                WHERE a.categories_id = ?
+            )
+            AND c.url LIKE ?
+            ORDER BY order
+        
+ | binds: 27, IN% | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 128 | route: /destinations/india/states
+[2025-10-26 16:43:13 +07] [pid:7] ERROR Dispatch error: Database error: DBD::SQLite::db prepare failed: near "order": syntax error at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 143.
+[2025-10-26 16:43:13 +07] [pid:7] ERROR [JHGVBy88Kjty]No handler for "tt" found
+[2025-10-26 16:43:13 +07] [pid:7] ERROR [JHGVBy88Kjty]Could not render a response at /usr/src/app/lib/TravellersPalm/Hooks.pm line 95.
+[2025-10-26 16:43:13 +07] [pid:7] ERROR [JHGVBy88Kjty]No handler for "tt" found
+[2025-10-26 16:43:13 +07] [pid:7] ERROR 500 error email sent for http://localhost:3000/destinations/india/states
+[2025-10-26 17:12:48 +07] [pid:9] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-26 17:12:48 +07] [pid:9] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c8040b7c9c0)
+[2025-10-26 17:12:48 +07] [pid:9] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-26 17:12:49 +07] [pid:9] DEBUG Cache system initialized
+[2025-10-26 17:12:49 +07] [pid:9] DEBUG Helpers registered
+[2025-10-26 17:12:49 +07] [pid:9] DEBUG Hooks registered safely
+[2025-10-26 17:12:49 +07] [pid:9] DEBUG All routes registered successfully
+[2025-10-26 17:12:49 +07] [pid:9] DEBUG TravellersPalm application started with database 'Jadoo_2006.db'
+[2025-10-26 17:14:28 +07] [pid:9] DEBUG Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-26 17:14:28 +07] [pid:9] DEBUG [SQL]
+    
+            SELECT meta_title, meta_descr, meta_keywords
+            FROM webpages
+            WHERE url = ?
+        
+ | binds: explore-by-state | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
+[2025-10-26 17:14:28 +07] [pid:9] DEBUG [SQL]
+    
+            SELECT srno, title, pagename, writeup, webpages_id
+            FROM Web
+            WHERE Web_id = ?
+        
+ | binds: 122 | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
+[2025-10-26 17:14:28 +07] [pid:9] DEBUG [SQL]
+    
+            SELECT s.states_id, s.statecode, s.state, s.countries_id, s.printstate,
+                   s.oneliner, s.writeup, s.webwriteup, s.latitude, s.longitude,
+                   s.meta_title, s.meta_descr, s.meta_keywords, s.url
+            FROM states s
+            INNER JOIN countries c ON c.countries_id = s.countries_id
+            WHERE s.states_id IN (
+                SELECT DISTINCT st.states_id
+                FROM vw_hoteldetails h
+                JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
+                JOIN states st ON h.states_id = st.states_id
+                WHERE a.categories_id = ?
+            )
+            AND c.url LIKE ?
+            ORDER BY order
+        
+ | binds: 27, IN% | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 128 | route: /destinations/india/states
+[2025-10-26 17:14:28 +07] [pid:9] ERROR Dispatch error: Database error: DBD::SQLite::db prepare failed: near "order": syntax error at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 143.
+[2025-10-26 17:14:28 +07] [pid:9] ERROR [LWUI4FfiTFII]No handler for "tt" found
+[2025-10-26 17:14:28 +07] [pid:9] ERROR Failed to render 500 template: Could not render a response at /usr/src/app/lib/TravellersPalm/Hooks.pm line 121.
+[2025-10-26 17:15:00 +07] [pid:9] DEBUG [SQL]
+    
+            SELECT meta_title, meta_descr, meta_keywords
+            FROM webpages
+            WHERE url = ?
+        
+ | binds: explore-by-state | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
+[2025-10-26 17:15:00 +07] [pid:9] DEBUG [SQL]
+    
+            SELECT srno, title, pagename, writeup, webpages_id
+            FROM Web
+            WHERE Web_id = ?
+        
+ | binds: 122 | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
+[2025-10-26 17:15:00 +07] [pid:9] DEBUG [SQL]
+    
+            SELECT s.states_id, s.statecode, s.state, s.countries_id, s.printstate,
+                   s.oneliner, s.writeup, s.webwriteup, s.latitude, s.longitude,
+                   s.meta_title, s.meta_descr, s.meta_keywords, s.url
+            FROM states s
+            INNER JOIN countries c ON c.countries_id = s.countries_id
+            WHERE s.states_id IN (
+                SELECT DISTINCT st.states_id
+                FROM vw_hoteldetails h
+                JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
+                JOIN states st ON h.states_id = st.states_id
+                WHERE a.categories_id = ?
+            )
+            AND c.url LIKE ?
+            ORDER BY order
+        
+ | binds: 27, IN% | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 128 | route: /destinations/india/states
+[2025-10-26 17:15:01 +07] [pid:9] ERROR Dispatch error: Database error: DBD::SQLite::db prepare failed: near "order": syntax error at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 143.
+[2025-10-26 17:15:01 +07] [pid:9] ERROR [z7FN_IbV2MoU]No handler for "tt" found
+[2025-10-26 17:15:01 +07] [pid:9] ERROR Failed to render 500 template: Could not render a response at /usr/src/app/lib/TravellersPalm/Hooks.pm line 121.
+[2025-10-26 17:15:39 +07] [pid:9] DEBUG [SQL]
+    
+            SELECT meta_title, meta_descr, meta_keywords
+            FROM webpages
+            WHERE url = ?
+        
+ | binds: explore-by-state | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
+[2025-10-26 17:15:39 +07] [pid:9] DEBUG [SQL]
+    
+            SELECT srno, title, pagename, writeup, webpages_id
+            FROM Web
+            WHERE Web_id = ?
+        
+ | binds: 122 | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
+[2025-10-26 17:15:39 +07] [pid:9] DEBUG [SQL]
+    
+            SELECT s.states_id, s.statecode, s.state, s.countries_id, s.printstate,
+                   s.oneliner, s.writeup, s.webwriteup, s.latitude, s.longitude,
+                   s.meta_title, s.meta_descr, s.meta_keywords, s.url
+            FROM states s
+            INNER JOIN countries c ON c.countries_id = s.countries_id
+            WHERE s.states_id IN (
+                SELECT DISTINCT st.states_id
+                FROM vw_hoteldetails h
+                JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
+                JOIN states st ON h.states_id = st.states_id
+                WHERE a.categories_id = ?
+            )
+            AND c.url LIKE ?
+            ORDER BY order
+        
+ | binds: 27, IN% | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 128 | route: /destinations/india/states
+[2025-10-26 17:15:39 +07] [pid:9] ERROR Dispatch error: Database error: DBD::SQLite::db prepare failed: near "order": syntax error at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 143.
+[2025-10-26 17:15:39 +07] [pid:9] ERROR [txtFrEyU-yZH]No handler for "tt" found
+[2025-10-26 17:15:39 +07] [pid:9] ERROR Failed to render 500 template: Could not render a response at /usr/src/app/lib/TravellersPalm/Hooks.pm line 121.
+[2025-10-26 17:55:54 +07] [pid:8] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-26 17:55:54 +07] [pid:8] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4e1ce0)
+[2025-10-26 17:55:54 +07] [pid:8] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-26 17:55:55 +07] [pid:8] DEBUG Cache system initialized
+[2025-10-26 17:55:55 +07] [pid:8] DEBUG Helpers registered
+[2025-10-26 17:55:55 +07] [pid:8] DEBUG Hooks registered safely
+[2025-10-26 17:55:55 +07] [pid:8] DEBUG All routes registered successfully
+[2025-10-26 17:55:55 +07] [pid:8] DEBUG TravellersPalm application started with database 'users.db'
+[2025-10-26 17:57:44 +07] [pid:11] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-26 17:57:44 +07] [pid:11] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4de7f0)
+[2025-10-26 17:57:44 +07] [pid:11] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-26 17:57:45 +07] [pid:11] DEBUG Cache system initialized
+[2025-10-26 17:57:45 +07] [pid:11] DEBUG Helpers registered
+[2025-10-26 17:57:45 +07] [pid:11] DEBUG Hooks registered safely
+[2025-10-26 17:57:45 +07] [pid:11] DEBUG All routes registered successfully
+[2025-10-26 17:57:45 +07] [pid:11] DEBUG TravellersPalm application started with database 'users.db'
+[2025-10-26 18:07:03 +07] [pid:14] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-26 18:07:03 +07] [pid:14] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4ec6c0)
+[2025-10-26 18:07:03 +07] [pid:14] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-26 18:07:04 +07] [pid:14] DEBUG Cache system initialized
+[2025-10-26 18:07:04 +07] [pid:14] DEBUG Helpers registered
+[2025-10-26 18:07:04 +07] [pid:14] DEBUG Hooks registered safely
+[2025-10-26 18:07:04 +07] [pid:14] DEBUG All routes registered successfully
+[2025-10-26 18:07:04 +07] [pid:14] DEBUG TravellersPalm application started with database 'Jadoo_2006.db'
+[2025-10-26 18:17:49 +07] [pid:17] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-26 18:17:49 +07] [pid:17] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4ce4b0)
+[2025-10-26 18:17:49 +07] [pid:17] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-26 18:17:50 +07] [pid:17] DEBUG Cache system initialized
+[2025-10-26 18:17:50 +07] [pid:17] DEBUG Helpers registered
+[2025-10-26 18:17:50 +07] [pid:17] DEBUG Hooks registered safely
+[2025-10-26 18:17:50 +07] [pid:17] DEBUG All routes registered successfully
+[2025-10-26 18:17:50 +07] [pid:17] DEBUG TravellersPalm application started with database 'Jadoo_2006.db'
+[2025-10-26 18:19:21 +07] [pid:20] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-26 18:19:21 +07] [pid:20] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4ec618)
+[2025-10-26 18:19:21 +07] [pid:20] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-26 18:19:21 +07] [pid:20] DEBUG Cache system initialized
+[2025-10-26 18:19:21 +07] [pid:20] DEBUG Helpers registered
+[2025-10-26 18:19:21 +07] [pid:20] DEBUG Hooks registered safely
+[2025-10-26 18:19:21 +07] [pid:20] DEBUG All routes registered successfully
+[2025-10-26 18:19:21 +07] [pid:20] DEBUG TravellersPalm application started with database 'Jadoo_2006.db'
+[2025-10-26 18:19:38 +07] [pid:23] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-26 18:19:38 +07] [pid:23] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4ce018)
+[2025-10-26 18:19:38 +07] [pid:23] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-26 18:19:39 +07] [pid:23] DEBUG Cache system initialized
+[2025-10-26 18:19:39 +07] [pid:23] DEBUG Helpers registered
+[2025-10-26 18:19:39 +07] [pid:23] DEBUG Hooks registered safely
+[2025-10-26 18:19:39 +07] [pid:23] DEBUG All routes registered successfully
+[2025-10-26 18:19:39 +07] [pid:23] DEBUG TravellersPalm application started with database 'users.db'
+[2025-10-26 18:19:45 +07] [pid:26] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-26 18:19:45 +07] [pid:26] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4ecd80)
+[2025-10-26 18:19:45 +07] [pid:26] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-26 18:19:46 +07] [pid:26] DEBUG Cache system initialized
+[2025-10-26 18:19:46 +07] [pid:26] DEBUG Helpers registered
+[2025-10-26 18:19:46 +07] [pid:26] DEBUG Hooks registered safely
+[2025-10-26 18:19:46 +07] [pid:26] DEBUG All routes registered successfully
+[2025-10-26 18:19:46 +07] [pid:26] DEBUG TravellersPalm application started with database 'users.db'

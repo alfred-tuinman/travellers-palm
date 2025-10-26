@@ -45,21 +45,21 @@ sub states {
 
     my $category_hotel = 27;
 
+    # whitelist allowed columns for ordering
+    my %allowed_columns = map { $_ => 1 } qw(statecode state printstate oneliner);
+    $order = 'statecode' unless $allowed_columns{$order};
+
     my $sql = qq{
-        SELECT s.states_id, s.statecode, s.state, s.countries_id, s.printstate,
-               s.oneliner, s.writeup, s.webwriteup, s.latitude, s.longitude,
-               s.meta_title, s.meta_descr, s.meta_keywords, s.url
+        SELECT DISTINCT s.states_id, s.statecode, s.state, s.countries_id, s.printstate,
+              s.oneliner, s.writeup, s.webwriteup, s.latitude, s.longitude,
+              s.meta_title, s.meta_descr, s.meta_keywords, s.url
         FROM states s
         INNER JOIN countries c ON c.countries_id = s.countries_id
-        WHERE s.states_id IN (
-            SELECT DISTINCT st.states_id
-            FROM vw_hoteldetails h
-            JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
-            JOIN states st ON h.states_id = st.states_id
-            WHERE a.categories_id = ?
-        )
-        AND c.url LIKE ?
-        ORDER BY $order
+        INNER JOIN vw_hoteldetails h ON h.states_id = s.states_id
+        INNER JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
+        WHERE a.categories_id = ?
+          AND c.url LIKE ?
+        ORDER BY s."$order"
     };
 
     return fetch_all($sql, [$category_hotel, "$country%"], 'NAME', 'jadoo', $c);

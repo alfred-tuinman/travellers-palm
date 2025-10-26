@@ -9,14 +9,10 @@ use POSIX qw(strftime);
 use Email::Sender::Transport::SMTP;
 use Email::Stuffer;
 
-
 our @EXPORT_OK = qw(fetch_row fetch_all insert_row update_row delete_row);
 
 my ($app, %handles);
 
-# -----------------------------------
-# setup($app)
-# -----------------------------------
 sub setup {
     my ($class, $app_ref) = @_;
     die "No app reference provided to Connector" unless $app_ref;
@@ -25,42 +21,38 @@ sub setup {
     return 1;
 }
 
-# -----------------------------
-# Internal SQL logging utility
-# -----------------------------
 sub _log_sql {
     my ($sql, $bind_ref, $caller_self) = @_;
     $bind_ref ||= [];
 
-    # Get calling subroutine info
+    my @binds_escaped = map {
+        defined $_ ? ( $_ =~ /^\d+(\.\d+)?$/ ? $_ : "'$_'" ) : 'NULL'
+    } @$bind_ref;
+    my $binds_str = @binds_escaped ? join(", ", @binds_escaped) : '(none)';
+
     my ($subroutine, $filename, $line) = _get_caller_info();
 
-    # Attempt to get route info from controller if passed
     my $route_info = '';
     if ($caller_self && ref $caller_self && $caller_self->can('req')) {
         my $req = $caller_self->req;
         $route_info = sprintf(" | route: %s", $req->url->to_string) if $req;
     }
 
-    # Format bind values
-    my $binds = @$bind_ref ? join(", ", map { defined $_ ? $_ : 'NULL' } @$bind_ref) : '(none)';
-
-    # Multi-line SQL formatting (indent lines)
     my $sql_formatted = $sql;
-    $sql_formatted =~ s/^/    /mg;
+    $sql_formatted =~ s/^\s+|\s+$//g;
+    $sql_formatted =~ s/\s+/ /g;
+    $sql_formatted = "    $sql_formatted";
 
-    # Prepare log message
     my $msg = sprintf(
         "[SQL]\n%s\n | binds: %s | called from: %s at %s line %d%s",
         $sql_formatted,
-        $binds,
+        $binds_str,
         $subroutine,
         $filename,
         $line,
         $route_info
     );
 
-    # Send to app log if available, else STDERR
     if ($app && $app->can('log')) {
         $app->log->debug($msg);
     } else {
@@ -69,36 +61,29 @@ sub _log_sql {
     }
 }
 
-# -----------------------------
-# Helper: Get caller info
-# -----------------------------
 sub _get_caller_info {
-    my $skip_frames = 1;  # skip _log_sql itself
+    my $skip_frames = 1;
     while (my @caller = caller($skip_frames++)) {
         my ($package, $filename, $line, $subroutine) = @caller;
-
-        # Skip internal frames: _log_sql, DBI, Mojo/Mojolicious
         next if $subroutine =~ /::_log_sql$/;
         next if $package =~ /^(Mojo|Mojolicious|DBI)/;
         next if $subroutine =~ /^(Mojo|Mojolicious|DBI)/;
-
         return ($subroutine, $filename, $line);
     }
-
     return ('unknown', 'unknown', 0);
 }
 
-# -----------------------------------
-# Get DB handle safely
-# -----------------------------------
 sub dbh {
     my ($dbkey) = @_;
     die "Connector not setup" unless $app;
 
-    my $databases = $app->config->{databases} || {};
+    my $config    = $app->config;
+    my $databases = $config->{databases} || {};
     die "No databases in config" unless %$databases;
 
-    $dbkey //= (keys %$databases)[0];
+    # Determine which DB to use
+    $dbkey //= $config->{main_database};
+    $dbkey //= (keys %$databases)[0];  # fallback: first in config.yml
     die "No database config for '$dbkey'" unless exists $databases->{$dbkey};
 
     # Return cached handle if exists
@@ -109,7 +94,13 @@ sub dbh {
     my $user   = $dbconf->{username} // '';
     my $pass   = $dbconf->{password} // '';
     my $params = $dbconf->{dbi_params} || {};
-    $params->{sqlite_unicode} = 1 unless exists $params->{sqlite_unicode};
+
+    # Default SQLite settings
+    if ($dsn =~ /^dbi:SQLite/i) {
+        $params->{sqlite_unicode} = 1 unless exists $params->{sqlite_unicode};
+        $params->{RaiseError}     = 1 unless exists $params->{RaiseError};
+        $params->{PrintError}     = 0 unless exists $params->{PrintError};
+    }
 
     my $dbh = DBI->connect($dsn, $user, $pass, $params)
         or die "DB connect failed for '$dbkey': $DBI::errstr";
@@ -121,9 +112,6 @@ sub dbh {
     return $dbh;
 }
 
-# -----------------------------------
-# Generic DB operations with email error
-# -----------------------------------
 sub fetch_row  { _execute_db('fetch_row', @_) }
 sub fetch_all  { _execute_db('fetch_all', @_) }
 sub insert_row { _execute_db('insert_row', @_) }
@@ -152,9 +140,6 @@ sub _execute_db {
          : 1;
 }
 
-# -----------------------------------
-# DB error handler with email
-# -----------------------------------
 sub _handle_db_error {
     my ($error, $sql, $bind_ref, $op, $c) = @_;
 
@@ -181,7 +166,7 @@ sub _handle_db_error {
                       ->send;
     }
 
-    die "Database error: $error";  # propagate
+    die "Database error: $error";
 }
 
 sub _get_stack_trace {

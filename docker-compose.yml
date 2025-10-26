@@ -4,14 +4,13 @@ services:
   travellers_palm_app:
     build: .
     container_name: travellers_palm_app
-    ports:
-      - "3000:3000"
     env_file:
       - .env
     volumes:
-      - ./data:/usr/src/app/data            # Persistent DB & runtime data
-      - ./log:/usr/src/app/log              # Logs
-      - ./carton_cache:/usr/src/app/carton_cache  # Persist Carton modules & snapshot
+      - .:/usr/src/app
+      - /usr/src/app/local  # preserve installed modules
+    ports:
+      - "3000:3000"
     restart: always
 
   nginx:

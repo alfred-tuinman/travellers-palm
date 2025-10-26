@@ -26,10 +26,15 @@ sub register {
         my $date = strftime('%Y-%m-%d', localtime);
 
         # Rotate daily log
-        my $log_path = $self->config->{log}{path};
-        my $log_dir  = Mojo::File->new($log_path)->dirname;
-        my $current_log = $log_dir->child("travellers_palm.log.$date");
-        rename $log_path, $current_log if -f $log_path && !-f $current_log;
+        eval {
+            my $log_path = $self->config->{log}{path};
+            my $log_dir  = Mojo::File->new($log_path)->dirname;
+            my $current_log = $log_dir->child("travellers_palm.log.$date");
+            rename $log_path, $current_log if -f $log_path && !-f $current_log;
+            1;
+        } or do {
+            $self->log->error("Failed to rotate log: $@");
+        };
 
         my $country = lc($c->stash('country') || $c->session('country') || 'india');
         $c->session(country => $country);
@@ -43,43 +48,55 @@ sub register {
         my $status = $c->res->code // 200;
         return unless $status == 500;
 
-        my $exception  = $c->stash('exception') || '(unknown error)';
-        my $req        = $c->req;
-        my $url        = $req->url->to_abs;
-        my $method     = $req->method;
-        my $ip         = $c->tx->remote_address;
-        my $agent      = $req->headers->user_agent // '(no UA)';
-        my $time       = scalar localtime;
-        my $hostname   = hostname();
+        my $exception = $c->stash('exception') // '(unknown error)';
+        my $req       = $c->req;
+        my $url       = $req->url->to_abs;
+        my $method    = $req->method;
+        my $ip        = eval { $c->tx->remote_address } // '(unknown)';
+        my $agent     = $req->headers->user_agent // '(no UA)';
+        my $time      = scalar localtime;
+        my $hostname  = hostname();
 
-        my $body = $c->render_to_string(
-            template => 'mail/error_email',
-            format   => 'html',
-            handler  => 'tt',
-            vars     => {
-                url       => $url,
-                method    => $method,
-                ip        => $ip,
-                agent     => $agent,
-                time      => $time,
-                host      => $hostname,
-                exception => $exception,
-                body      => $c->res->body,
-            },
-        );
+        my $body;
+        eval {
+            $body = $c->render_to_string(
+                template => 'mail/error_email',
+                format   => 'html',
+                handler  => 'tt',
+                vars => {
+                    url       => $url,
+                    method    => $method,
+                    ip        => $ip,
+                    agent     => $agent,
+                    time      => $time,
+                    host      => $hostname,
+                    exception => $exception,
+                    body      => $c->res->body // '',
+                },
+            );
+            1;
+        } or do {
+            $body = "<p>Could not render error_email template: $@</p>";
+            $self->log->error("Failed to render error_email template: $@");
+        };
 
         my $from    = $self->config->{email}{error}{from}    // 'noreply@travellerspalm.com';
-        my $subject = $self->config->{email}{error}{subject} // "[" . ($self->config->{appname} // 'TravellersPalm') . "] Error at $url";
+        my $subject = $self->config->{email}{error}{subject} // "[TravellersPalm] Error at $url";
 
-        Email::Stuffer
-            ->from($from)
-            ->to($ENV{EMAIL_USER})
-            ->subject($subject)
-            ->html_body($body)
-            ->transport($self->app->email_transport)
-            ->send;
+        eval {
+            Email::Stuffer
+                ->from($from)
+                ->to($ENV{EMAIL_USER})
+                ->subject($subject)
+                ->html_body($body)
+                ->transport($self->app->email_transport)
+                ->send;
+            1;
+        } or do {
+            $self->log->error("Failed to send 500 error email: $@");
+        };
 
-        $self->log->error("500 error email sent for $url");
+        $self->log->error("500 error email processed for $url");
     });
 
     # --- Around dispatch for 404/500 handling ---
@@ -90,9 +107,25 @@ sub register {
             $c->app->log->error("Dispatch error: $error");
 
             if ($error =~ /Route without action/) {
-                return $c->render(template => '4042', status => 404, message => 'Page not found');
+                eval {
+                    $c->render(template => '4042', status => 404, message => 'Page not found');
+                    1;
+                } or do {
+                    $c->app->log->error("Failed to render 4042 template: $@");
+                    $c->res->code(404);
+                    $c->res->body('Page not found');
+                };
             }
-            return $c->render(template => '500', status => 500, message => 'Internal server error');
+            else {
+                eval {
+                    $c->render(template => '500', status => 500, message => 'Internal server error');
+                    1;
+                } or do {
+                    $c->app->log->error("Failed to render 500 template: $@");
+                    $c->res->code(500);
+                    $c->res->body('Internal server error');
+                };
+            }
         };
     });
 
@@ -105,14 +138,14 @@ sub register {
         my $tokens = $c->app->config->{template_tokens} // {};
         my %stash_tokens = map { uc($_) => $tokens->{$_} } keys %$tokens;
 
-        $stash_tokens{COUNTRY}  = $c->session('country');
-        $stash_tokens{CURRENCY} = $c->session('currency');
+        $stash_tokens{COUNTRY}  = $c->session('country') // 'IN';
+        $stash_tokens{CURRENCY} = $c->session('currency') // 'EUR';
         $stash_tokens{YEAR}     = $year;
 
         $c->stash(%stash_tokens);
     });
 
-    $self->log->debug('Hooks registered');
+    $self->log->debug('Hooks registered safely');
 }
 
 1;

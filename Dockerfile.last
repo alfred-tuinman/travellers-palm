@@ -1,0 +1,45 @@
+FROM perl:5.38
+
+ENV PERL_MM_USE_DEFAULT=1
+ENV PERL_CPANM_OPT="--notest"
+ENV CARTON_HOME=/usr/src/app/carton_cache
+
+# Set timezone and install build tools
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      tzdata build-essential make gcc libsqlite3-dev libssl-dev unzip wget && \
+    ln -sf /usr/share/zoneinfo/Asia/Bangkok /etc/localtime && \
+    echo "Asia/Bangkok" > /etc/timezone && \
+    dpkg-reconfigure -f noninteractive tzdata && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install cpanminus and Carton
+RUN cpanm --notest Carton
+
+WORKDIR /usr/src/app
+
+# Create folders for logs, runtime data, persistent carton cache
+RUN mkdir -p log data carton_cache
+
+# Copy only cpanfile & snapshot to leverage Docker cache
+COPY cpanfile cpanfile
+# COPY cpanfile.snapshot cpanfile.snapshot
+
+# Install Perl modules (cached unless cpanfile changes)
+RUN carton install --without development
+
+# Copy application code
+COPY lib/ lib/
+COPY script/ script/
+COPY templates/ templates/
+COPY public/ public/
+COPY config.yml config.yml
+COPY localdb/ localdb/
+
+# Make main script executable
+RUN chmod +x script/travellers_palm
+
+EXPOSE 3000
+
+# Start the app (no reinstall)
+CMD carton exec -- morbo -l http://*:3000 script/travellers_palm
