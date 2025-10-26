@@ -6,9 +6,9 @@ use DBI;
 use Data::Dumper;
 use Exporter 'import';
 use POSIX qw(strftime);
-use Dotenv -load;
 use Email::Sender::Transport::SMTP;
 use Email::Stuffer;
+
 
 our @EXPORT_OK = qw(fetch_row fetch_all insert_row update_row delete_row);
 
@@ -167,9 +167,11 @@ sub _handle_db_error {
              . "<p>Stack trace:<br>$caller_info</p>";
 
     if ($c && $c->config->{email}) {
-        require Email::Stuffer;
-        my $from    = $self->config->{email}{error}{from}    // 'noreply@travellerspalm.com';
-        my $subject = $self->config->{email}{error}{subject} // "[" . ($self->config->{appname} // 'TravellersPalm') . "] Error at $url";
+        my $url     = $c->req->url->path->to_string;
+        my $from    = $c->config->{email}{error}{from}    // 'noreply@travellerspalm.com';
+        my $subject = $c->config->{email}{error}{subject} 
+            // "[" . ($c->config->{appname} 
+            // 'TravellersPalm') . "] Error at $url";
 
         Email::Stuffer->from($from)
                       ->to($ENV{EMAIL_USER})

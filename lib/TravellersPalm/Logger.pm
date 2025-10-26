@@ -1,6 +1,8 @@
 package TravellersPalm::Logger;
+
 use strict;
 use warnings;
+
 use Mojo::File 'path';
 use Mojo::Log;
 use POSIX qw(strftime);

@@ -7,38 +7,33 @@ use Data::Dumper;
 sub register {
     my ($self) = @_;
 
-    # Simple data dumper (for development)
-    $self->helper(dd => sub ($c, $var) {
-        local $Data::Dumper::Terse  = 1;
-        local $Data::Dumper::Indent = 1;
-        my $dump = Dumper($var);
-        $c->app->log->debug($dump);
-        $c->render(text => "<pre>$dump</pre>");
-        $c->finish;
-    });
-
-    # Debug footer helper
-    $self->helper(debug_footer => sub ($c, $msg) {
-        push @{$c->stash->{debug_footer} ||= []}, $msg;
-        $c->app->log->debug($msg);
-    });
-
     # Session-based currency helper
-    $self->helper(session_currency => sub ($c) {
+    $self->helper(session_currency => sub {
+        my ($c) = @_;
         my $cur = $c->session('currency') // 'USD';
         $c->stash(session_currency => $cur);
         return $cur;
     });
 
-    # General debug logger
-    $self->helper(dump_log => sub ($c, $msg, $var = undef) {
+    # Debug footer helper
+    $self->helper(debug_footer => sub {
+        my ($c, $msg) = @_;
+        push @{$c->stash->{debug_footer} ||= []}, $msg;
+        $c->app->log->debug($msg);
+    });
+
+    # Simplified general debug logger
+    $self->helper(dump_log => sub {
+        my ($c, $msg, $var) = @_;
         my $full = $msg;
-        $full .= "\n" . Dumper($var) if $var;
+        $full .= "\n" . Dumper($var) if defined $var;
+
+        # Log to console
         $c->app->log->debug($full);
 
+        # Store for debug footer in development mode
         if ($c->app->mode eq 'development') {
-            $c->stash->{_debug_dumps} //= [];
-            push @{$c->stash->{_debug_dumps}}, $full;
+            push @{$c->stash->{debug_footer} ||= []}, $full;
         }
     });
 

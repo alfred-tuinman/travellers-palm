@@ -22,6 +22,17 @@
     [% content %]
   </main>
 
+  [% IF debug_footer && debug_footer.size %]
+    <div id="debug-footer" style="background:#f8f8f8; border-top:1px solid #ccc; padding:10px; font-size:0.9em;">
+      <h4>Debug messages:</h4>
+      <ul>
+        [% FOREACH msg IN debug_footer %]
+          <li><pre>[% msg | html %]</pre></li>
+        [% END %]
+      </ul>
+    </div>
+  [% END %]
+
   <footer>
     <p>&copy; 2025 Travelo</p>
   </footer>

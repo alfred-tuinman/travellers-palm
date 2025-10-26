@@ -18,7 +18,6 @@ use HTTP::Request;
 use LWP::UserAgent;
 use POSIX qw(strftime);
 use Time::Local qw(timelocal);
-# use URI;
 
 our @EXPORT = qw{
     addptags

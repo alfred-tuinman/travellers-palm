@@ -2,6 +2,8 @@
 # See https://metacpan.org/pod/distribution/cpanminus/bin/cpanfile
 
 requires 'Cache::Memcached';
+requires 'CHI';
+requires 'CHI::Driver::Memcached';
 requires 'DateTime';
 requires 'Date::Calc';
 requires 'Date::Manip::Date';
@@ -12,6 +14,7 @@ requires 'DBD::SQLite';
 requires 'Email::Stuffer';
 requires 'Email::Valid';
 requires 'Exporter';
+requires 'File::Copy';
 requires 'File::Spec';
 requires 'Geo::Location::TimeZone';
 requires 'HTML::LinkExtor';

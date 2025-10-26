@@ -2,22 +2,27 @@ package TravellersPalm::Hooks;
 
 use strict;
 use warnings;
+
+use Email::Stuffer;
+use Mojo::File;
 use POSIX qw(strftime);
 use Sys::Hostname 'hostname';
-use Email::Stuffer;
 
 sub register {
     my ($self) = @_;
 
     # --- Session defaults ---
-    $self->hook(before => sub ($c) {
+    $self->hook(before => sub {
+        my ($c) = @_;
         $c->session(currency => $c->session('currency') // 'EUR');
         $c->session(country  => $c->session('country')  // 'IN');
         $c->stash(session_currency => $c->session('currency'));
     });
 
     # --- Before dispatch ---
-    $self->hook(before_dispatch => sub ($c) {
+    $self->hook(before_dispatch => sub {
+        my ($c) = @_;
+
         my $date = strftime('%Y-%m-%d', localtime);
 
         # Rotate daily log
@@ -32,7 +37,9 @@ sub register {
     });
 
     # --- After dispatch (errors + notifications) ---
-    $self->hook(after_dispatch => sub ($c) {
+    $self->hook(after_dispatch => sub {
+        my ($c) = @_;
+
         my $status = $c->res->code // 200;
         return unless $status == 500;
 
@@ -76,7 +83,8 @@ sub register {
     });
 
     # --- Around dispatch for 404/500 handling ---
-    $self->hook(around_dispatch => sub ($next, $c) {
+    $self->hook(around_dispatch => sub {
+        my ($next, $c) = @_;
         eval { $next->(); 1 } or do {
             my $error = $@ || 'Unknown error';
             $c->app->log->error("Dispatch error: $error");
@@ -89,14 +97,18 @@ sub register {
     });
 
     # --- Before render ---
-    $self->hook(before_render => sub ($c, $args) {
+    $self->hook(before_render => sub {
+        my ($c, $args) = @_;
         my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
         $year += 1900;
+
         my $tokens = $c->app->config->{template_tokens} // {};
         my %stash_tokens = map { uc($_) => $tokens->{$_} } keys %$tokens;
+
         $stash_tokens{COUNTRY}  = $c->session('country');
         $stash_tokens{CURRENCY} = $c->session('currency');
         $stash_tokens{YEAR}     = $year;
+
         $c->stash(%stash_tokens);
     });
 

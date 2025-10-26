@@ -32,3 +32,6 @@ Thumbs.db
 # Ignore log files
 log/
 *.log
+
+# Ignore the Carton directory
+local/

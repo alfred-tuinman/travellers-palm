@@ -1,39 +1,43 @@
+# Base Perl image
 FROM perl:5.38
 
-# Install tzdata (Debian/Ubuntu style)
+ENV PERL_MM_USE_DEFAULT=1
+ENV PERL_CPANM_OPT="--notest"
+ENV CARTON_HOME=/usr/src/app/carton_cache
+
+# Install system packages
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      tzdata build-essential make gcc \
+      libsqlite3-dev libssl-dev unzip wget && \
     ln -sf /usr/share/zoneinfo/Asia/Bangkok /etc/localtime && \
     echo "Asia/Bangkok" > /etc/timezone && \
     dpkg-reconfigure -f noninteractive tzdata && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install basic build tools and SQLite development headers
-RUN apt-get update && apt-get install -y \
-      build-essential \
-      make \
-      gcc \
-      libsqlite3-dev \
-      libssl-dev \
-      unzip \
-      wget \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install cpanminus modules
+# Install Carton
 RUN cpanm --notest Carton
 
-# Set work directory
+# Set working directory
 WORKDIR /usr/src/app
-RUN mkdir -p /usr/src/app/log
 
-# Copy cpanfile first (so Docker can cache dependencies)
-COPY cpanfile cpanfile
-RUN cpanm --notest --installdeps .
+# Create runtime folders
+RUN mkdir -p log data carton_cache
 
-# Install all modules in cpanfile
-# RUN carton install --deployment
+# ----------------------------
+# Install dependencies (cacheable)
+# ----------------------------
 
-# Copy app code
+# Copy only cpanfile & snapshot first (this layer rebuilds only if they change)
+COPY cpanfile ./ 
+COPY cpanfile.snapshot ./ 
+
+# Install modules using the snapshot
+RUN carton install --deployment --without development
+
+# ----------------------------
+# Copy application code (separate layer)
+# ----------------------------
 COPY lib/ lib/
 COPY script/ script/
 COPY templates/ templates/
@@ -41,22 +45,11 @@ COPY public/ public/
 COPY config.yml config.yml
 COPY localdb/ localdb/
 
-# COPY localdb/Jadoo_2006.db localdb/Jadoo_2006.db
-
-# Install all modules in cpanfile
-# RUN carton install --deployment
-
 # Make startup script executable
 RUN chmod +x script/travellers_palm
 
-# create directory for db
-RUN mkdir -p /usr/src/app/data
-
-# Expose the Mojolicious port
+# Expose port
 EXPOSE 3000
 
-# development mode with morbo
-CMD ["morbo", "script/travellers_palm"]
-
-# Run hypnotoad in production
-# CMD ["hypnotoad", "script/travellers_palm"]
+# Default command: development mode with hot reload
+CMD ["carton", "exec", "--", "morbo", "-l", "http://*:3000", "script/travellers_palm"]

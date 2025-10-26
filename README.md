@@ -1,3 +1,243 @@
+Here is a **README.md** for your project, formatted for Markdown and tailored to the latest setup changes. You can adjust wording or sections as needed.
+
+---
+
+````markdown
+# Travellers Palm Application
+
+A travel & tourism web application built with Mojolicious and SQLite, designed for managing destinations, itineraries, hotels and related content.
+
+---
+
+## Table of Contents
+
+- [Features](#features)  
+- [Prerequisites](#prerequisites)  
+- [Installation & Setup](#installation--setup)  
+- [Configuration](#configuration)  
+- [Database Initialization & Persistence](#database-initialization--persistence)  
+- [Development Workflow](#development-workflow)  
+- [Deployment with Docker](#deployment-with-docker)  
+- [Directory Structure](#directory-structure)  
+- [Contributing](#contributing)  
+- [License](#license)  
+
+---
+
+## Features
+
+- Modular architecture: logging, email / mailer, caching, helpers, hooks, routes.  
+- Safe deployment of seed databases with version-aware initialization.  
+- Persistent volumes for database, logs and dependency cache — safe to rebuild container without data loss.  
+- Flexible configuration via `config.yml`: multiple databases, memcached, template tokens, etc.  
+- Development mode support with hot-reload (`morbo`) and full production readiness.
+
+---
+
+## Prerequisites
+
+- Perl 5.38 (or compatible)  
+- SQLite (if using SQLite databases)  
+- Memcached (optional, if using caching)  
+- Docker & Docker Compose (if deploying with containers)  
+- Basic understanding of Mojolicious, Perl modules and Docker.
+
+---
+
+## Installation & Setup
+
+1. **Clone the repository**  
+   ```bash
+   git clone https://your.repository.url/travellers_palm.git
+   cd travellers_palm
+````
+
+2. **Install Perl dependencies** (if working outside Docker)
+
+   ```bash
+   cpanm --notest Carton
+   carton install --without=develop
+   ```
+
+3. **Edit configuration**
+   Adjust `config.yml` for your environment (database DSNs, email settings, memcached servers, template tokens, etc).
+
+4. **Initial database seed**
+   On first run, the app will copy the seed database (`localdb/...`) into the `data/` directory if it does not yet exist (or if the seed version has changed).
+   This ensures your runtime data is placed in `data/` and persists across restarts.
+
+5. **Run the application**
+
+   ```bash
+   carton exec -- morbo -l http://*:3000 script/travellers_palm
+   ```
+
+---
+
+## Configuration
+
+A sample `config.yml` includes:
+
+```yaml
+appname: "Travellers Palm"
+mode: "development"
+public_dir: "public"
+root: "/usr/src/app"
+secrets:
+  - your_secret_here
+
+log:
+  level: debug
+  path: /usr/src/app/log/app.log
+
+email:
+  error:
+    from:    'system@travellerspalm.com'
+    subject: '500 Error Notification'
+
+template_tokens:
+  PHONE1: "+91 88051 22221"
+  # … etc …
+
+databases:
+  jadoo:
+    dsn: "dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db"
+    username: ""
+    password: ""
+    dbi_params:
+      RaiseError: 1
+      AutoCommit: 1
+      PrintError: 1
+  users:
+    dsn: "dbi:SQLite:dbname=/usr/src/app/localdb/users.db"
+    # …
+```
+
+### Key points
+
+* The **first** database entry under `databases:` (in this case `jadoo`) is used for the seed-vs-runtime mechanism.
+* The DSN must include `dbname=...`, so the seed file path can be extracted.
+* Template tokens, email settings, memcached servers are all configurable here.
+
+---
+
+## Database Initialization & Persistence
+
+To preserve runtime data (e.g., new users, changes):
+
+* A **seed DB** resides in `localdb/` inside the image (read-only).
+* On startup, if `data/<dbname>` does not exist — or if a version mismatch is detected — the seed DB is copied to `data/<dbname>`.
+* Runtime database is then used from `data/`, which is a mounted volume for persistence.
+* Seed version is written to `data/db_version.txt`.
+* Future container rebuilds keep the `data/` directory intact, so user data is not overwritten unless explicitly reset.
+
+---
+
+## Development Workflow
+
+* Make code changes (templates, controllers, helpers) feature by feature.
+* If you modify `cpanfile` (adding/removing modules) or dependencies, update them via `carton update` and rebuild.
+* If you modify the seed database (schema/data) you must bump the seed version constant in `TravellersPalm.pm`, so the runtime copies the new version.
+* For quick template-only changes, Docker’s caching (see next section) ensures minimal rebuild time.
+
+---
+
+## Deployment with Docker
+
+### Dockerfile optimizations
+
+* Dependencies layer uses `COPY cpanfile` and `COPY cpanfile.snapshot` **before** copying application code, so Docker caches it unless dependencies change.
+* Environment variable `CARTON_HOME=/usr/src/app/carton_cache` holds modules and snapshot persistently.
+
+### Compose setup
+
+```yaml
+services:
+  travellers_palm_app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/usr/src/app/data
+      - ./log:/usr/src/app/log
+      - ./carton_cache:/usr/src/app/carton_cache
+    restart: always
+```
+
+### How it works
+
+* `./data` holds runtime DB & application data.
+* `./log` holds application logs.
+* `./carton_cache` holds installed Perl modules and `cpanfile.snapshot`.
+* Rebuilds will reuse modules unless dependencies changed, so changes in templates or code only trigger minimal build.
+
+---
+
+## Directory Structure
+
+```
+/
+├── config.yml
+├── cpanfile
+├── cpanfile.snapshot
+├── Dockerfile
+├── docker-compose.yml
+├── localdb/             # Seed DBs (read-only)
+│   ├── Jadoo_2006.db
+│   └── users.db
+├── data/                # Runtime data volume (mounted)
+│   ├── Jadoo_2006.db
+│   ├── users.db
+│   └── db_version.txt
+├── log/                 # Logs
+├── carton_cache/        # Persistent Perl module cache
+├── lib/
+│   └── TravellersPalm/
+│       ├── Logger.pm
+│       ├── Mailer.pm
+│       ├── Helpers.pm
+│       ├── Hooks.pm
+│       └── Routes.pm
+├── script/
+│   └── travellers_palm
+└── templates/
+    └── *.tt
+```
+
+---
+
+## Contributing
+
+We welcome contributions!
+
+* Please fork the repo and create a feature branch.
+* Follow the Perl/Mojolicious code conventions.
+* Add tests for new features when appropriate.
+* Submit a pull request with a clear description of your changes.
+
+---
+
+## License
+
+[Your Project License Here]
+(e.g., MIT, Apache 2.0, etc.)
+
+---
+
+*Last updated: YYYY-MM-DD*
+
+```
+
+---
+
+You can copy this `README.md` into your repo and update the _Last updated_ date, license and any project-specific details.
+::contentReference[oaicite:0]{index=0}
+```
+
+
+
 ````markdown
 # TravellersPalm – Quick Reference
 
@@ -521,3 +761,114 @@ Email::Stuffer->from($from)
               ->html_body($body)
               ->transport($self->email_transport)  # Use helper
               ->send;
+
+
+```$c->dump_log("Something happened", \%data);```
+…this will both log to the console and show in the footer.
+
+Simply restarting the container without rebuilding won’t update Perl modules or system packages.
+```docker-compose build travellers_palm_app```
+
+Optional automation
+
+Tools like Watchtower can automatically rebuild and restart containers when a new image is pushed.
+
+For Perl/Mojolicious apps, you typically control module versions via Carton, so rebuilds are triggered manually when cpanfile.snapshot is updated.
+
+
+## Carton
+Carton is a Perl dependency manager that locks your app to specific module versions from CPAN, ensuring reproducible installations. It keeps modules isolated and supports consistent deployment with cpanfile and cpanfile.snapshot.
+
+Only run carton update if you intentionally want to update module versions and regenerate the snapshot — ideally in Docker itself. This will update the snapshot which is being maintained.
+```bash
+carton update  # updates modules and regenerates cpanfile.snapshot
+```
+* cpanfile.snapshot copied before carton install → Docker caches dependency installation unless snapshot changes.
+
+* --deployment --without=develop ensures reproducible builds matching the snapshot.
+
+* Application code copied after dependencies → fast rebuilds if only templates or scripts change.
+
+## Check Carton snapshot works
+Perfect! Here's a simple step-by-step check to make sure your **Carton snapshot is persisted** to your host machine:
+
+---
+
+### 1. Enter the running container
+
+```bash
+docker exec -it travellers_palm_app /bin/bash
+```
+
+---
+
+### 2. Check inside the `CARTON_HOME` folder
+
+```bash
+echo $CARTON_HOME
+ls -l $CARTON_HOME
+```
+
+You should see something like:
+
+```
+cpanfile.snapshot
+local/
+bin/
+```
+
+`cpanfile.snapshot` is what Carton generated for the installed modules.
+
+---
+
+### 3. Exit the container
+
+```bash
+exit
+```
+
+---
+
+### 4. Check the mounted folder on your host
+
+Because you mapped:
+
+```yaml
+volumes:
+  - ./carton_cache:/usr/src/app/carton_cache
+```
+
+You should see the snapshot on your host:
+
+```bash
+ls -l ./carton_cache
+```
+
+Expected output:
+
+```
+cpanfile.snapshot
+local/
+bin/
+```
+
+If you see that, **the snapshot is persisted** — even if you rebuild or restart the container, Docker will keep it.
+
+---
+
+### 5. Optional: force Carton to regenerate snapshot inside the container
+
+If `cpanfile.snapshot` is missing or outdated:
+
+```bash
+docker exec -it travellers_palm_app /bin/bash
+carton install --deployment --without development
+```
+
+It will write the snapshot to `/usr/src/app/carton_cache`, which is synced to your host.
+
+---
+
+If you want, I can also show a **Dockerfile snippet that ensures the snapshot is created automatically during the first build**, so you don’t have to run it manually inside the container. This is neat for CI/CD.
+
+Do you want me to do that?

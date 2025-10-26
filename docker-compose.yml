@@ -1,18 +1,18 @@
+version: "3.9"
+
 services:
   travellers_palm_app:
     build: .
-    command: morbo -l http://*:3000 script/travellers_palm
+    container_name: travellers_palm_app
     ports:
       - "3000:3000"
     env_file:
       - .env
-    container_name: travellers_palm_app
     volumes:
-      - ./data:/usr/src/app/data       # <— host:container
-      - ./log:/usr/src/app/log
-    restart: always     
-    expose:
-      - "3000"
+      - ./data:/usr/src/app/data            # Persistent DB & runtime data
+      - ./log:/usr/src/app/log              # Logs
+      - ./carton_cache:/usr/src/app/carton_cache  # Persist Carton modules & snapshot
+    restart: always
 
   nginx:
     image: nginx:alpine

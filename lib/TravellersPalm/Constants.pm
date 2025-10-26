@@ -2,7 +2,6 @@ package TravellersPalm::Constants;
 
 use strict;
 use warnings;
-use Exporter 'import';
 
 use constant {
     TAILOR  => 'ready-tours',
@@ -11,6 +10,8 @@ use constant {
     REGIONS => 'explore-by-region',
     IDEAS   => 'trip-ideas',
 };
+
+use Exporter 'import';
 
 our @EXPORT_OK = qw(TAILOR THEMES STATES REGIONS IDEAS);
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
