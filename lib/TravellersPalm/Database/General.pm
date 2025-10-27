@@ -3,8 +3,13 @@ package TravellersPalm::Database::General;
 use strict;
 use warnings;
 
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
+use TravellersPalm::Database::Core::Connector qw(fetch_all fetch_row);
 use TravellersPalm::Functions qw(boldify addptags);
+use TravellersPalm::Database::Core::Validation qw(
+    validate_string 
+    validate_integer
+    validate_array
+);
 
 # -----------------------------
 # Categories
@@ -45,6 +50,15 @@ sub countries_url {
 sub daybyday {
     my ($itinerary_id, $c) = @_;
     return [] unless defined $itinerary_id;
+
+    eval {
+        validate_integer($itinerary_id, "itinerary_id", 1);  # Required, positive integer
+    };
+    if ($@) {
+        warn "Input validation failed in daybyday(): $@";
+        return [];
+    }
+
     my $sql = q{
         SELECT day_no, description
         FROM itinerary_days
@@ -60,6 +74,15 @@ sub daybyday {
 sub hotel {
     my ($hotel_id, $c) = @_;
     return {} unless defined $hotel_id;
+
+    eval {
+        validate_integer($hotel_id, "hotel_id", 1);  # Required, positive integer
+    };
+    if ($@) {
+        warn "Input validation failed in hotel(): $@";
+        return {};
+    }
+
     my $sql = q{ SELECT * FROM hotels WHERE hotel_id = ? };
     return fetch_row($sql, [$hotel_id], 'NAME_lc', 'jadoo', $c);
 }
@@ -70,6 +93,15 @@ sub hotel {
 sub metatags {
     my ($url, $c) = @_;
     return {} unless defined $url;
+
+    eval {
+        validate_string($url, "url", 1, 255);  # Required, reasonable URL length
+    };
+    if ($@) {
+        warn "Input validation failed in metatags(): $@";
+        return {};
+    }
+
     my $sql = q{
         SELECT meta_title, meta_descr, meta_keywords
         FROM webpages
@@ -123,6 +155,15 @@ sub totaltrains {
 sub webpages {
     my ($id, $c) = @_;
     return {} unless defined $id;
+
+    eval {
+        validate_integer($id, "webpages_id", 1);  # Required, positive integer
+    };
+    if ($@) {
+        warn "Input validation failed in webpages(): $@";
+        return {};
+    }
+
     my $sql = q{
         SELECT pagename, url, meta_title, meta_descr, meta_keywords
         FROM webpages
@@ -137,6 +178,15 @@ sub webpages {
 sub web {
     my ($id, $c) = @_;
     return {} unless defined $id;
+
+    eval {
+        validate_integer($id, "Web_id", 1);  # Required, positive integer
+    };
+    if ($@) {
+        warn "Input validation failed in web(): $@";
+        return {};
+    }
+
     my $sql = q{
         SELECT srno, title, pagename, writeup, webpages_id
         FROM Web
@@ -151,6 +201,14 @@ sub web {
 sub webtext {
     my ($id, $c) = @_;
     return {} unless defined $id;
+
+    eval {
+        validate_integer($id, "Web_id", 1);  # Required, positive integer
+    };
+    if ($@) {
+        warn "Input validation failed in webtext(): $@";
+        return {};
+    }
 
     my $sql = q{
         SELECT srno, title, pagename, writeup, webpages_id
@@ -178,6 +236,17 @@ sub webtext_multi {
     my ($ids, $c) = @_;
     return {} unless $ids && ref $ids eq 'ARRAY' && @$ids;
 
+    eval {
+        validate_array($ids, "Web_ids", sub {
+            my ($val, $idx) = @_;
+            validate_integer($val, "Web_id[$idx]", 1);
+        });
+    };
+    if ($@) {
+        warn "Input validation failed in webtext_multi(): $@";
+        return {};
+    }
+
     my $placeholders = join ',', ('?') x @$ids;
 
     my $sql = qq{
@@ -190,6 +259,7 @@ sub webtext_multi {
 
     my %result;
     for my $row (@$rows) {
+        next unless defined $row->{Web_id};   # skip invalid rows
         # Ensure writeup is processed like webtext
         my $writeup = defined $row->{writeup} ? boldify(addptags($row->{writeup})) : '';
         $result{$row->{Web_id}} = {

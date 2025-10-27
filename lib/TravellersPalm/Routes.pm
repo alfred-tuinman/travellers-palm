@@ -1,7 +1,7 @@
 package TravellersPalm::Routes;
 
 use Mojo::Base -strict;
-use TravellersPalm::Database::Connector;
+use TravellersPalm::Database::Core::Connector;
 use TravellersPalm::Constants qw(:all);
 
 sub register {
@@ -11,19 +11,19 @@ sub register {
 
     # Home
     $r->get('/')->to('home#index');
-    $r->get('/about-us')->to('home#about');
-    $r->get('/before-you-go')->to('home#before_you_go');
-    $r->get('/contact-us')->to('home#contact_us');
-    $r->get('/faq')->to('home#faq');
-    $r->get('/policies')->to('home#policies');
-    $r->get('/search-results')->to('home#search_results');
-    $r->get('/sitemap')->to('home#site_map');
-    $r->get('/state/:state')->to('home#state');
-    $r->get('/sustainable-tourism')->to('home#sustainable_tourism');
-    $r->get('/testimonials')->to('home#testimonials');
-    $r->get('/travel-ideas')->to('home#travel_ideas');
-    $r->get('/what-to-expect')->to('home#what_to_expect');
-    $r->get('/why-travel-with-us')->to('home#why_travel_with_us');
+        $r->get('/about-us')->to('staticpages#about');
+        $r->get('/before-you-go')->to('staticpages#before_you_go');
+        $r->get('/contact-us')->to('staticpages#contact_us');
+        $r->get('/faq')->to('staticpages#faq');
+        $r->get('/policies')->to('staticpages#policies');
+        $r->get('/search-results')->to('staticpages#search_results');
+        $r->get('/sitemap')->to('staticpages#site_map');
+        $r->get('/state/:state')->to('staticpages#state');
+        $r->get('/sustainable-tourism')->to('staticpages#sustainable_tourism');
+        $r->get('/testimonials')->to('staticpages#testimonials');
+        $r->get('/travel-ideas')->to('staticpages#travel_ideas');
+        $r->get('/what-to-expect')->to('staticpages#what_to_expect');
+        $r->get('/why-travel-with-us')->to('staticpages#why_travel_with_us');
 
     # Enquiry (GET + POST)
     $r->get('/enquiry')->to('home#get_enquiry');
@@ -34,7 +34,7 @@ sub register {
     $r->get('/hand-picked-hotels')->to('hotels#show_hand_picked_hotels');
 
     # Itineraries routes
-    $r->get('/itineraries/:option')->to('itineraries#route_listing');
+    $r->get('/itineraries/tailor')->to('itineraries#itineraries_tailor');
     $r->get('/itineraries/:option/:tour')->to('itineraries#route_itinerary');
 
     # Destinations routes
@@ -43,8 +43,10 @@ sub register {
     $r->get('/destinations/:country/'.IDEAS.'/:destination/:idea/:view')
         ->to('destinations#show_idea_detail');  
 
-    $r->get('/destinations/:country/'.TAILOR.'/list')
-        ->to('itineraries#route_listing');
+    $r->get('/destinations/:country/regions/:region/list')
+        ->to('itineraries#itineraries_regions');
+    $r->get('/destinations/india/states/:state/list')
+        ->to('itineraries#itineraries_states');
     $r->get('/destinations/:country/'.TAILOR.'/:destination/:view')
         ->to('itineraries#route_itinerary');
 
@@ -70,7 +72,7 @@ sub register {
         ->to('destinations#show_theme_detail');
 
     $r->get('/destinations/:country/:option/:view/:order/:region')
-        ->to('itineraries#route_listing');
+        ->to('itineraries#itineraries_option_view_order_region');
 
     # Redirect
     $r->get('/destinations/:destination')->to(cb => sub {

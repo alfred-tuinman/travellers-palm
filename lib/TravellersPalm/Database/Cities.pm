@@ -5,28 +5,28 @@ use warnings;
 
 use Data::Dumper;
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
+use TravellersPalm::Database::Core::Connector qw(fetch_all fetch_row);
+use TravellersPalm::Database::Core::Validation qw(
+    validate_string 
+    validate_integer
+    validate_order
+);
 
-=pod
-our @EXPORT_OK = qw(
-    airports
-    get_airports_by_country
-    city
-    cityhotels
-    cityid
-    citythemes
-    cityidea
-    nearcities
-    randomcities
-    totalcities
-=cut
 
 # -----------------------------
 # Airports
 # -----------------------------
 sub airports {
     my ($country, $c) = @_;
-    return [] unless defined $country;
+    
+    # Validate country
+    eval {
+        $country = validate_string($country, 1, 2);  # Required, 2-char country code
+    };
+    if ($@) {
+        warn "Input validation failed in airports(): $@";
+        return [];
+    }
 
     my $sql = q{
         SELECT city, RTRIM(citycode) AS citycode
@@ -36,12 +36,21 @@ sub airports {
         ORDER BY c.city
     };
 
-    return fetch_row($sql, [$country], 'NAME', 'jadoo', $c);
+    # This query can return multiple rows; use fetch_all to return an arrayref
+    return fetch_all($sql, [$country], 'NAME', 'jadoo', $c);
 }
 
 sub get_airports_by_country {
     my ($country, $c) = @_;
     $country = 0 unless defined $country;
+
+    eval {
+        validate_string($country, "country", 0, 2);  # Optional, 2-char country code if provided
+    };
+    if ($@) {
+        warn "Input validation failed in get_airports_by_country(): $@";
+        return [];
+    }
 
     my $sql = q{
         SELECT city, RTRIM(citycode) AS citycode
@@ -59,7 +68,15 @@ sub get_airports_by_country {
 # -----------------------------
 sub city {
     my ($cities_id, $c) = @_;
-    return [] unless defined $cities_id;
+    
+    # Validate city ID
+    eval {
+        $cities_id = validate_integer($cities_id, 1, 1, 10000);  # Required, range 1-10000
+    };
+    if ($@) {
+        warn "Input validation failed in city(): $@";
+        return [];
+    }
 
     my $sql = q{
         SELECT 
@@ -113,6 +130,14 @@ sub city {
 sub cityhotels {
     my ($cityid, $c) = @_;
 
+    eval {
+        validate_integer($cityid, "cities_id", 1);  # Required, positive integer
+    };
+    if ($@) {
+        warn "Input validation failed in cityhotels(): $@";
+        return [];
+    }
+
     my $sql = q{
         SELECT wh.hotel_id, wh.hotel, wh.description, wh.category, wh.categoryname, dh.addressbook_id AS isdefault
         FROM (
@@ -151,6 +176,15 @@ sub cityhotels {
 # -----------------------------
 sub cityid {
     my ($city, $c) = @_;
+
+    eval {
+        validate_string($city, "city", 1, 100);  # Required, max 100 chars
+    };
+    if ($@) {
+        warn "Input validation failed in cityid(): $@";
+        return {};
+    }
+
     my $sql = q{SELECT cities_id FROM cities WHERE city = ?};
     return fetch_row($sql, [$city], 'NAME', 'jadoo', $c);
 }
@@ -160,6 +194,15 @@ sub cityid {
 # -----------------------------
 sub citythemes {
     my ($subthemes_id, $c) = @_;
+
+    eval {
+        validate_integer($subthemes_id, "subthemes_id", 1);  # Required, positive integer
+    };
+    if ($@) {
+        warn "Input validation failed in citythemes(): $@";
+        return [];
+    }
+
     my $sql = q{
         SELECT s.cities_id AS id,
                c.city AS name,
@@ -178,6 +221,15 @@ sub citythemes {
 # -----------------------------
 sub cityidea {
     my ($cities_id, $c) = @_;
+
+    eval {
+        validate_integer($cities_id, "cities_id", 1);  # Required, positive integer
+    };
+    if ($@) {
+        warn "Input validation failed in cityidea(): $@";
+        return [];
+    }
+
     my $sql = q{
         SELECT idea_id, title, description, pic1, pic2
         FROM cityideas
@@ -192,6 +244,15 @@ sub cityidea {
 # -----------------------------
 sub nearcities {
     my ($cityid, $c) = @_;
+
+    eval {
+        validate_integer($cityid, "maincities_id", 1);  # Required, positive integer
+    };
+    if ($@) {
+        warn "Input validation failed in nearcities(): $@";
+        return [];
+    }
+
     my $sql = q{
         SELECT c.cities_id, c.city, c.oneliner, c.writeup, c.latitude, c.longitude
         FROM cities c
@@ -206,6 +267,14 @@ sub nearcities {
 # -----------------------------
 sub randomcities {
     my ($cityid, $c) = @_;
+
+    eval {
+        validate_integer($cityid, "cities_id", 1);  # Required, positive integer
+    };
+    if ($@) {
+        warn "Input validation failed in randomcities(): $@";
+        return [];
+    }
     
     my $sql = q{
         SELECT DISTINCT c.cities_id, c.city

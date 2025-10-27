@@ -1,7 +1,8 @@
 package TravellersPalm;
+
 use Mojo::Base 'Mojolicious', -signatures;
-use TravellersPalm::Database::Connector;
-use TravellersPalm::Database::Initializer;
+use TravellersPalm::Database::Core::Connector;
+use TravellersPalm::Database::Core::Initializer;
 use TravellersPalm::Logger;
 use TravellersPalm::Mailer;
 use TravellersPalm::Cache;
@@ -24,12 +25,12 @@ sub startup ($self) {
     });
     $self->renderer->default_handler('tt');
 
-    # Initialize database separately
-    TravellersPalm::Database::Initializer::setup($self);
+    # Initialize database
+    TravellersPalm::Database::Core::Connector->setup($self);
+    TravellersPalm::Database::Core::Initializer::setup($self);
 
     # Core services
     TravellersPalm::Logger::setup($self);
-    TravellersPalm::Database::Connector::setup($self);
     TravellersPalm::Mailer::setup($self);
     TravellersPalm::Cache::setup($self);
     TravellersPalm::Helpers::register($self);

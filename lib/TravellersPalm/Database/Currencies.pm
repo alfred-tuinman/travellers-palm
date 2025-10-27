@@ -5,25 +5,27 @@ use warnings;
 
 use Data::Dumper;
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row insert_row);
-
-=pod
-our @EXPORT_OK = qw(
-    currencies
-    currency
-    exchangerate
-    exchange_rates
-    exchange_rates_historical
-    exchange_rates_update
-=cut
+use TravellersPalm::Database::Core::Connector qw(fetch_all fetch_row insert_row);
+use TravellersPalm::Database::Core::Validation qw(
+    validate_string
+    validate_integer
+);
 
 # -----------------------------
 # List currencies
 # -----------------------------
 sub currencies {
     my ($currencycode, $c) = @_;
-    $currencycode = '' unless defined $currencycode;
-    $currencycode = uc $currencycode;
+    
+    # Validate currency code
+    eval {
+        $currencycode = validate_string($currencycode, 0, 3);  # Optional, max 3 chars
+        $currencycode = uc $currencycode if defined $currencycode;
+    };
+    if ($@) {
+        warn "Input validation failed in currencies(): $@";
+        return [];
+    }
 
     my @bind;
     my $sql = q{
@@ -51,6 +53,19 @@ sub currencies {
 # -----------------------------
 sub currency {
     my ($newcurrency, $c) = @_;
+    
+    # Validate new currency code
+    eval {
+        if (defined $newcurrency) {
+            $newcurrency = validate_string($newcurrency, 0, 3);  # Optional, max 3 chars
+            $newcurrency = uc $newcurrency if defined $newcurrency;
+        }
+    };
+    if ($@) {
+        warn "Input validation failed in currency(): $@";
+        return 'USD';  # Safe default
+    }
+    
     my $currency = 'USD';
 
     if (defined $newcurrency) {
@@ -66,7 +81,20 @@ sub currency {
 # -----------------------------
 sub exchangerate {
     my ($currencycode, $c) = @_;
-    return 0 unless $currencycode;
+    
+    # Validate currency code
+    eval {
+        $currencycode = validate_string($currencycode, 1, 3);  # Required, max 3 chars
+        $currencycode = uc $currencycode;
+        
+        # Additional validation for currency code format
+        die "Invalid currency code format (must be 3 letters)\n"
+            unless $currencycode =~ /^[A-Z]{3}$/;
+    };
+    if ($@) {
+        warn "Input validation failed in exchangerate(): $@";
+        return 0;  # Safe default for invalid input
+    }
 
     my $sql = q{
         SELECT exchangerate
@@ -125,7 +153,7 @@ sub exchange_rates_update {
     my ($rates, $c) = @_;
 
     foreach my $cur (qw(AUD EUR GBP USD)) {
-      TravellersPalm::Database::Connector::insert_row(
+    TravellersPalm::Database::Core::Connector::insert_row(
         "INSERT INTO exchange_rates (currency, date, exchange_rate) VALUES (?, strftime('%s','now'), ?)", 
         [$cur, $rates->{$cur}], 'NAME', 'jadoo', $c
       );

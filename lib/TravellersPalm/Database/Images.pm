@@ -5,21 +5,11 @@ use warnings;
 
 use Data::Dumper;
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw( delete_row fetch_all fetch_row insert_row update_row);
-
-=pod
-our @EXPORT_OK = qw(
-    imageproperties
-    imageproperties_id
-    image
-    images
-    imagesall
-    images_delete
-    images_dropdown
-    images_update
-    imgupload_type
-=cut
-
+use TravellersPalm::Database::Core::Connector qw( delete_row fetch_all fetch_row insert_row update_row);
+use TravellersPalm::Database::Core::Validation qw(
+    validate_string 
+    validate_integer
+);
 
 # -----------------------------
 # Get image properties by category and type
@@ -27,6 +17,15 @@ our @EXPORT_OK = qw(
 sub imageproperties {
     my ($imgcat, $imgtype, $c) = @_;
     return {} unless defined $imgcat && defined $imgtype;
+
+    eval {
+        validate_integer($imgcat, "imagecategories_id", 1);
+        validate_integer($imgtype, "imagetypes_id", 1);
+    };
+    if ($@) {
+        warn "Validation failed in imageproperties: $@";
+        return {};
+    }
 
     my $sql = q{
         SELECT imageproperties_id AS imagecategories_id,
@@ -48,6 +47,14 @@ sub imageproperties_id {
     my ($id, $c) = @_;
     return {} unless defined $id;
 
+    eval {
+        validate_integer($id, "imageproperties_id", 1);
+    };
+    if ($@) {
+        warn "Validation failed in imageproperties_id: $@";
+        return {};
+    }
+
     my $sql = q{
         SELECT imageproperties_id AS imagecategories_id,
                imagetypes_id,
@@ -67,6 +74,14 @@ sub imageproperties_id {
 sub image {
     my ($image_name, $c) = @_;
     return {} unless defined $image_name;
+
+    eval {
+        validate_string($image_name, "imagename", 1, 255);
+    };
+    if ($@) {
+        warn "Validation failed in image: $@";
+        return {};
+    }
 
     my $sql = q{
         SELECT images_id,
@@ -98,6 +113,15 @@ sub images {
     $category //= 0;
     $type     //= 0;
 
+    eval {
+        validate_integer($id, "imageobjectid", 0);
+        # Category and type will be validated after mapping
+    };
+    if ($@) {
+        warn "Validation failed in images: $@";
+        return [];
+    }
+
     # Map string names to category/type IDs
     my %cat_map = (
         city       => 1,
@@ -117,6 +141,15 @@ sub images {
     $category = $cat_map{lc $category} // $category;
     $type     = $type_map{lc $type}    // $type;
 
+    eval {
+        validate_integer($category, "imagecategories_id", 0, 5);
+        validate_integer($type, "imagetypes_id", 0, 6);
+    };
+    if ($@) {
+        warn "Validation failed in images after mapping: $@";
+        return [];
+    }
+
     my $sql = q{
         SELECT width, height, title, alttag, filesize, imagename,
                imageobjectid, imagecategories_id, imagetypes_id
@@ -135,6 +168,14 @@ sub imagesall {
     my ($id, $c) = @_;
     return [] unless defined $id;
 
+    eval {
+        validate_integer($id, "ImageCategories_id", 1);
+    };
+    if ($@) {
+        warn "Validation failed in imagesall: $@";
+        return [];
+    }
+
     my $sql = q{
         SELECT imagename AS imagename, ImageName2 AS imagename2
         FROM images
@@ -151,7 +192,15 @@ sub images_delete {
     my ($image_name, $c) = @_;
     return unless defined $image_name;
 
-    my $res = TravellersPalm::Database::Connector::delete_row(
+    eval {
+        validate_string($image_name, "imagename", 1, 255);
+    };
+    if ($@) {
+        warn "Validation failed in images_delete: $@";
+        return;
+    }
+
+    my $res = TravellersPalm::Database::Core::Connector::delete_row(
       "DELETE FROM images WHERE imagename LIKE ?", 
       [$image_name], 'NAME', 'jadoo', $c
     );
@@ -201,6 +250,24 @@ sub images_update {
 
     return { status => 0, message => 'Missing image name' } unless $args{imagename};
 
+    eval {
+        validate_string($args{imagename}, "imagename", 1, 255);
+        validate_integer($args{imagecategories_id}, "imagecategories_id", 0, 5);
+        validate_integer($args{imagetypes_id}, "imagetypes_id", 0, 6);
+        validate_integer($args{width}, "width", 0);
+        validate_integer($args{height}, "height", 0);
+        validate_integer($args{filesize}, "filesize", 0);
+        validate_string($args{alttag}, "alttag", 0, 255);
+        validate_string($args{title}, "title", 0, 255);
+        validate_integer($args{srno}, "srno", 0);
+        validate_integer($args{imageobjectid}, "imageobjectid", 0);
+        validate_integer($args{tineye}, "tineye", 0, 1);
+    };
+    if ($@) {
+        warn "Validation failed in images_update: $@";
+        return { status => 0, message => "Validation failed: $@" };
+    }
+
     my $onfile = image(lc $args{imagename});
 
     # -----------------------------
@@ -218,7 +285,7 @@ sub images_update {
 
         push @values, $onfile->{images_id};
 
-        my $res = TravellersPalm::Database::Connector::update_row(
+    my $res = TravellersPalm::Database::Core::Connector::update_row(
           "UPDATE images SET " . join(", ", @fields) . " WHERE images_id = ?", 
           \@values, 'NAME', 'jadoo', $c
         );
@@ -241,7 +308,7 @@ sub images_update {
     }
 
     my $sql = sprintf("INSERT INTO images (%s) VALUES (%s)", join(',', @cols), join(',', @placeholders));
-    my $res = TravellersPalm::Database::Connector::insert_row($sql, \@values, 'NAME', 'jadoo', $c);
+    my $res = TravellersPalm::Database::Core::Connector::insert_row($sql, \@values, 'NAME', 'jadoo', $c);
 
     return { status => $res, message => lc $args{imagename} . ' inserted' };
 }
@@ -252,6 +319,14 @@ sub images_update {
 sub imgupload_type {
     my ($imgcat, $c) = @_;
     return [] unless defined $imgcat;
+
+    eval {
+        validate_integer($imgcat, "imagecategories_id", 0, 5);
+    };
+    if ($@) {
+        warn "Validation failed in imgupload_type: $@";
+        return [];
+    }
 
     my $sql = qq/SELECT t.imagetypes_id, t.imagetype FROM imagetypes t/;
     if ($imgcat > 0) {

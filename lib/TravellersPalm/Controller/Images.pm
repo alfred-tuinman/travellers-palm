@@ -20,3 +20,29 @@ sub serve_image {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+TravellersPalm::Controller::Images - Controller for serving images
+
+=head1 DESCRIPTION
+
+Handles serving static images from disk.
+
+=head2 serve_image
+
+  $c->serve_image
+
+Serves an image file from disk or returns 404 if not found.
+
+=head1 AUTHOR
+
+Travellers Palm Team
+
+=head1 LICENSE
+
+See the main project LICENSE file.
+
+=cut

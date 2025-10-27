@@ -4,38 +4,49 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
+use TravellersPalm::Database::Core::Connector qw(fetch_all fetch_row);
+use TravellersPalm::Database::Core::Validation qw(
+    validate_string 
+    validate_integer
+    validate_filter
+    validate_order
+);
 
-=pod
-
-our @EXPORT_OK = qw(
-    themes
-    themes_subthemes
-    themes_url
-    themetrips
-    themeurl
-    subthemes
-    subthemes_id
-
-=cut
 
 # -------------------------------------------------
 # List all themes, optionally limited or extended
 # -------------------------------------------------
 sub themes {
     my ($filter, $order, $c) = @_;
-    $order //= 'title';
+
+    # Validate inputs
+    eval {
+        $filter = validate_filter($filter);
+        $order = validate_string($order, 0, 50);  # Order is optional, max 50 chars
+    };
+    if ($@) {
+        warn "Input validation failed in themes(): $@";
+        return undef;
+    }
 
     my $condition = '';
     if (defined $filter) {
-        if (uc($filter) eq 'LIMIT') {
+        if ($filter eq 'LIMIT') {
             $condition = 'WHERE themes_id < 7';
-        } elsif (uc($filter) eq 'EXTENDED') {
+        } elsif ($filter eq 'EXTENDED') {
             $condition = 'WHERE themes_id >= 7';
         }
     }
 
-    my $order_by = ($order =~ /url/i) ? 'url' : 'pagename';
+    # Whitelist ordering columns and qualify with table name to avoid SQL identifier injection
+    my %order_map = (
+        'url'      => 'themes.url',
+        'pagename' => 'themes.pagename',
+    );
+    
+    # Validate order against allowed columns
+    $order = validate_order($order, 'pagename', \%order_map);
+    my $order_by = $order_map{$order};
 
     my $sql = qq{
         SELECT  pagename,
@@ -60,7 +71,15 @@ sub themes {
 # -------------------------------------------------
 sub themes_subthemes {
     my ($themes_id, $c) = @_;
-    return undef unless defined $themes_id;
+    
+    # Validate theme ID
+    eval {
+        $themes_id = validate_integer($themes_id, 1, 1, 1000);  # Required, range 1-1000
+    };
+    if ($@) {
+        warn "Input validation failed in themes_subthemes(): $@";
+        return undef;
+    }
 
     my $sql = q{
         SELECT  s.cities_id AS city_id,
@@ -85,7 +104,15 @@ sub themes_subthemes {
 # -------------------------------------------------
 sub themes_url {
     my ($theme_url, $c) = @_;
-    return undef unless defined $theme_url;
+    
+    # Validate theme URL
+    eval {
+        $theme_url = validate_string($theme_url, 1, 255);  # Required, max 255 chars
+    };
+    if ($@) {
+        warn "Input validation failed in themes_url(): $@";
+        return undef;
+    }
 
     my $sql = q{
         SELECT  pagename,
@@ -121,12 +148,28 @@ sub themetrips {
     );
     $theme = $theme_map{ lc($theme) } // $theme;
 
-    my $order_by = 'f.orderno';
-    $order_by = 'cost'    if $order =~ /price/i;
-    $order_by = 'numdays' if $order =~ /days/i;
-    $order_by = 'f.title' if $order =~ /name/i;
-    $order_by = 'f.url'   if $order =~ /url/i;
-    $order_by .= ' DESC'  if $order =~ /desc/i;
+    # Use an explicit mapping for ORDER BY to avoid accidental identifier injection.
+    my %order_map = (
+        price      => 'cost',      # alias produced by subquery
+        days       => 'numdays',
+        name       => 'f.title',
+        url        => 'f.url',
+        popularity => 'f.orderno',
+        orderno    => 'f.orderno',
+    );
+
+    my $order_norm = lc($order // 'popularity');
+    my $desc = '';
+    if ($order_norm =~ s/\bdesc\b//) { $desc = ' DESC'; }
+
+    my $key = 'popularity';
+    if ($order_norm =~ /price/)  { $key = 'price' }
+    elsif ($order_norm =~ /days/)  { $key = 'days' }
+    elsif ($order_norm =~ /name/)  { $key = 'name' }
+    elsif ($order_norm =~ /url/)   { $key = 'url' }
+    elsif ($order_norm =~ /orderno|popularity/) { $key = 'popularity' }
+
+    my $order_by = ($order_map{$key} // 'f.orderno') . $desc;
 
     my $sql = qq{
         SELECT  f.fixeditin_id  AS tour_id,

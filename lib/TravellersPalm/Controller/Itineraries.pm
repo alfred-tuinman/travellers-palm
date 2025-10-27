@@ -1,92 +1,30 @@
 package TravellersPalm::Controller::Itineraries;
 
 use Mojo::Base 'Mojolicious::Controller', -signatures;
-use POSIX qw(strftime);
+use POSIX qw();
 use TravellersPalm::Constants qw(:all);
 use TravellersPalm::Functions qw(ourtime addptags linkify url2text);
 
 BEGIN { require TravellersPalm::Database::General; }
-
 my $session_currency = 'USD';
 
-# -----------------------------
-# Listing routes
-# -----------------------------
-sub route_listing ($self) {
+# /destinations/:country/:option/:view/:order/:region
+sub itineraries_option_view_order_region ($self) {
     my $req         = $self->req;
-    my $destination = $self->stash('destination');
-    my $option      = $self->stash('option');
+    my $destination = $self->stash('country') // '';
+    my $option      = $self->stash('option') // '';
     my $view        = $self->stash('view') // 'list';
     my $order       = $self->stash('order') // 'days';
     my $region      = $self->stash('region');
-
-    return $self->render(status => 400, text => "Invalid view '$view'")
-        unless $view =~ /^(grid|block|list)$/;
-
-    my $crumb = sprintf(
-        "<li>Destinations</li><li><a href='%s/destinations/%s'>%s</a></li>",
-        $req->url->base,
-        $destination,
-        url2text($destination)
+    return $self->render(status => 400, text => "Invalid view '$view'") unless $view =~ /^(grid|block|list)$/;
+    my $crumb = sprintf("<li>Destinations</li><li><a href='%s/destinations/%s'>%s</a></li>", $req->url->base, $destination, url2text($destination));
+    # This is a generic fallback for custom options, can be specialized as needed
+    my $itineraries = TravellersPalm::Database::General::modules(
+        region   => $region,
+        currency => $session_currency,
+        order    => $order,
+        $self
     );
-
-    my ($itineraries, $states, $state, $stateinfo, $state_writeup, $regioninfo, $places, $filter, $regions);
-
-    if ($option eq TAILOR) {
-        $itineraries = TravellersPalm::Database::Itineraries::itineraries(
-            option   => 'itin',
-            currency => $session_currency,
-            order    => $order,
-            $self
-        );
-        $filter = 'tailor';
-        $crumb .= "<li class='active'>" . url2text(TAILOR) . "</li>";
-    }
-    elsif ($option eq REGIONS) {
-        $itineraries = TravellersPalm::Database::General::modules(
-            region   => $region,
-            currency => $session_currency,
-            order    => $order,
-            $self
-        );
-        $regioninfo = TravellersPalm::Database::General::regionsurl($region, $self);
-        $regions    = TravellersPalm::Database::General::regions($self);
-        $filter     = 'regions';
-
-        $crumb .= sprintf(
-            "<li><a href='%s/destinations/%s/%s'>%s</a></li><li class='active'>%s</li>",
-            $req->url->base,
-            $destination,
-            REGIONS,
-            url2text(REGIONS),
-            $regioninfo->{title}
-        );
-    }
-    elsif ($option eq STATES) {
-        $state       = $region;
-        $stateinfo   = TravellersPalm::Database::States::statesurl($state, $self);
-        $itineraries = TravellersPalm::Database::States::toursinstate(
-            state    => $state,
-            currency => $session_currency,
-            order    => $order,
-            $self
-        );
-        $states = TravellersPalm::Database::States::states($destination, $self);
-        $filter = 'states';
-
-        $crumb .= sprintf(
-            "<li><a href='%s/destinations/%s/%s'>%s</a></li><li class='active'>%s</li>",
-            $req->url->base,
-            $destination,
-            STATES,
-            url2text(STATES),
-            url2text($state)
-        );
-
-        ($state_writeup, $places) = linkify(addptags($stateinfo->{webwriteup}));
-    }
-
-    # Min/max calculations
     my ($min_duration, $max_duration, $min_cost, $max_cost) = (30, 0, 1_000_000, 0);
     for my $trip (@$itineraries) {
         $min_duration = $trip->{numdays} if $trip->{numdays} < $min_duration;
@@ -94,34 +32,51 @@ sub route_listing ($self) {
         $min_cost     = $trip->{cost}    if $trip->{cost}    < $min_cost;
         $max_cost     = $trip->{cost}    if $trip->{cost}    > $max_cost;
     }
-
-    # Batch webtexts for templates
     my $webtexts = TravellersPalm::Database::General::webtext_multi([190, 118, 176, 73, 184, 185], $self);
+    return $self->render(
+        template          => 'tours',
+        metatags          => TravellersPalm::Database::General::metatags($option, $self),
+        country           => $destination,
+        itineraries       => $itineraries,
+        crumb             => $crumb,
+        filter            => $option,
+        display           => $view,
+        pathname          => $option,
+        order             => $order,
+        min_cost          => $min_cost,
+        max_cost          => $max_cost,
+        min_duration      => $min_duration,
+        max_duration      => $max_duration,
+        page_title        => url2text($option),
+        regionname        => $region,
+        special_interests => $webtexts->{190},
+        currency          => $session_currency,
+    );
+}
+# -----------------------------
+# Listing routes
+# -----------------------------
 
-    if ($option eq STATES) {
-        return $self->render(
-            template        => 'states',
-            metatags        => $stateinfo,
-            country         => $destination,
-            itineraries     => $itineraries,
-            states          => $states,
-            crumb           => $crumb,
-            stateinfo       => $stateinfo,
-            filter          => $filter,
-            pathname        => STATES,
-            state           => $state,
-            display         => $view,
-            order           => $order,
-            state_intro     => addptags($stateinfo->{writeup}),
-            state_writeup   => $state_writeup,
-            cities          => $places,
-            min_cost        => $min_cost,
-            max_cost        => $max_cost,
-            min_duration    => $min_duration,
-            max_duration    => $max_duration,
-        );
+# Refactored: Each route gets its own handler below
+
+# /itineraries/:option (option=TAILOR)
+sub itineraries_tailor ($self) {
+    my $req         = $self->req;
+    my $destination = $self->stash('country') // '';
+    my $view        = $self->stash('view') // 'list';
+    my $order       = $self->stash('order') // 'days';
+    return $self->render(status => 400, text => "Invalid view '$view'") unless $view =~ /^(grid|block|list)$/;
+    my $crumb = sprintf("<li>Destinations</li><li><a href='%s/destinations/%s'>%s</a></li><li class='active'>%s</li>", $req->url->base, $destination, url2text($destination), url2text(TAILOR));
+    my $itineraries = TravellersPalm::Database::Itineraries::itineraries($self);
+    my $filter = 'tailor';
+    my ($min_duration, $max_duration, $min_cost, $max_cost) = (30, 0, 1_000_000, 0);
+    for my $trip (@$itineraries) {
+        $min_duration = $trip->{numdays} if $trip->{numdays} < $min_duration;
+        $max_duration = $trip->{numdays} if $trip->{numdays} > $max_duration;
+        $min_cost     = $trip->{cost}    if $trip->{cost}    < $min_cost;
+        $max_cost     = $trip->{cost}    if $trip->{cost}    > $max_cost;
     }
-
+    my $webtexts = TravellersPalm::Database::General::webtext_multi([190, 118, 176, 73, 184, 185], $self);
     return $self->render(
         template          => 'tours',
         metatags          => TravellersPalm::Database::General::metatags(TAILOR, $self),
@@ -131,17 +86,112 @@ sub route_listing ($self) {
         crumb             => $crumb,
         filter            => $filter,
         display           => $view,
-        pathname          => $option,
+        pathname          => TAILOR,
         order             => $order,
         min_cost          => $min_cost,
         max_cost          => $max_cost,
         min_duration      => $min_duration,
         max_duration      => $max_duration,
-        page_title        => ($option eq REGIONS) ? $regioninfo->{title} : url2text($option),
+        page_title        => url2text(TAILOR),
+        currency          => $session_currency,
+        special_interests => $webtexts->{190},
+    );
+}
+
+# /destinations/:country/regions/:region/list (option=REGIONS)
+sub itineraries_regions ($self) {
+    my $req         = $self->req;
+    my $destination = $self->stash('country') // '';
+    my $region      = $self->stash('region');
+    my $view        = $self->stash('view') // 'list';
+    my $order       = $self->stash('order') // 'days';
+    return $self->render(status => 400, text => "Invalid view '$view'") unless $view =~ /^(grid|block|list)$/;
+    my $itineraries = TravellersPalm::Database::General::modules(
+        region   => $region,
+        currency => $session_currency,
+        order    => $order,
+        $self
+    );
+    my $regioninfo = TravellersPalm::Database::General::regionsurl($region, $self);
+    my $regions    = TravellersPalm::Database::General::regions($self);
+    my $filter     = 'regions';
+    my $crumb = sprintf("<li>Destinations</li><li><a href='%s/destinations/%s'>%s</a></li><li><a href='%s/destinations/%s/%s'>%s</a></li><li class='active'>%s</li>", $req->url->base, $destination, url2text($destination), $req->url->base, $destination, REGIONS, url2text(REGIONS), $regioninfo->{title});
+    my ($min_duration, $max_duration, $min_cost, $max_cost) = (30, 0, 1_000_000, 0);
+    for my $trip (@$itineraries) {
+        $min_duration = $trip->{numdays} if $trip->{numdays} < $min_duration;
+        $max_duration = $trip->{numdays} if $trip->{numdays} > $max_duration;
+        $min_cost     = $trip->{cost}    if $trip->{cost}    < $min_cost;
+        $max_cost     = $trip->{cost}    if $trip->{cost}    > $max_cost;
+    }
+    my $webtexts = TravellersPalm::Database::General::webtext_multi([190, 118, 176, 73, 184, 185], $self);
+    return $self->render(
+        template          => 'tours',
+        metatags          => TravellersPalm::Database::General::metatags(REGIONS, $self),
+        country           => $destination,
+        itineraries       => $itineraries,
+        crumb             => $crumb,
+        filter            => $filter,
+        display           => $view,
+        pathname          => REGIONS,
+        order             => $order,
+        min_cost          => $min_cost,
+        max_cost          => $max_cost,
+        min_duration      => $min_duration,
+        max_duration      => $max_duration,
+        page_title        => $regioninfo->{title},
         regionname        => $region,
         special_interests => $webtexts->{190},
         regions           => $regions,
         currency          => $session_currency,
+    );
+}
+
+# /destinations/india/states/:state/list (option=STATES)
+sub itineraries_states ($self) {
+    my $req         = $self->req;
+    my $destination = $self->stash('country') // '';
+    my $state       = $self->stash('region');
+    my $view        = $self->stash('view') // 'list';
+    my $order       = $self->stash('order') // 'days';
+    return $self->render(status => 400, text => "Invalid view '$view'") unless $view =~ /^(grid|block|list)$/;
+    my $stateinfo   = TravellersPalm::Database::States::statesurl($state, $self);
+    my $itineraries = TravellersPalm::Database::States::toursinstate(
+        state    => $state,
+        currency => $session_currency,
+        order    => $order,
+        $self
+    );
+    my $states = TravellersPalm::Database::States::states($destination, $self);
+    my $filter = 'states';
+    my $crumb = sprintf("<li>Destinations</li><li><a href='%s/destinations/%s'>%s</a></li><li><a href='%s/destinations/%s/%s'>%s</a></li><li class='active'>%s</li>", $req->url->base, $destination, url2text($destination), $req->url->base, $destination, STATES, url2text(STATES), url2text($state));
+    my ($state_writeup, $places) = linkify(addptags($stateinfo->{webwriteup}));
+    my ($min_duration, $max_duration, $min_cost, $max_cost) = (30, 0, 1_000_000, 0);
+    for my $trip (@$itineraries) {
+        $min_duration = $trip->{numdays} if $trip->{numdays} < $min_duration;
+        $max_duration = $trip->{numdays} if $trip->{numdays} > $max_duration;
+        $min_cost     = $trip->{cost}    if $trip->{cost}    < $min_cost;
+        $max_cost     = $trip->{cost}    if $trip->{cost}    > $max_cost;
+    }
+    return $self->render(
+        template        => 'states',
+        metatags        => $stateinfo,
+        country         => $destination,
+        itineraries     => $itineraries,
+        states          => $states,
+        crumb           => $crumb,
+        stateinfo       => $stateinfo,
+        filter          => $filter,
+        pathname        => STATES,
+        state           => $state,
+        display         => $view,
+        order           => $order,
+        state_intro     => addptags($stateinfo->{writeup}),
+        state_writeup   => $state_writeup,
+        cities          => $places,
+        min_cost        => $min_cost,
+        max_cost        => $max_cost,
+        min_duration    => $min_duration,
+        max_duration    => $max_duration,
     );
 }
 
@@ -210,3 +260,53 @@ sub route_itinerary ($self) {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+TravellersPalm::Controller::Itineraries - Controller for itinerary-related routes
+
+=head1 DESCRIPTION
+
+Handles listing and detail routes for itineraries, regions, states, and single itinerary display.
+
+=head2 itineraries_option_view_order_region
+
+    $self->itineraries_option_view_order_region
+
+Handles generic itinerary listing for /destinations/:country/:option/:view/:order/:region
+
+=head2 itineraries_tailor
+
+    $self->itineraries_tailor
+
+Handles tailor-made itinerary listing for /itineraries/tailor
+
+=head2 itineraries_regions
+
+    $self->itineraries_regions
+
+Handles region-based itinerary listing for /destinations/:country/regions/:region/list
+
+=head2 itineraries_states
+
+    $self->itineraries_states
+
+Handles state-based itinerary listing for /destinations/india/states/:state/list
+
+=head2 route_itinerary
+
+    $self->route_itinerary
+
+Displays a single itinerary detail page for /itineraries/:option/:tour
+
+=head1 AUTHOR
+
+Travellers Palm Team
+
+=head1 LICENSE
+
+See the main project LICENSE file.
+
+=cut

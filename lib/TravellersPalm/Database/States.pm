@@ -4,21 +4,27 @@ use strict;
 use warnings;
 
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
-
-=pod
-our @EXPORT_OK = qw(
-    state
-    states
-    statesurl
-=cut
+use TravellersPalm::Database::Core::Connector qw(fetch_all fetch_row);
+use TravellersPalm::Database::Core::Validation qw(
+    validate_string 
+    validate_integer
+    validate_order
+);
 
 # -----------------------------
 # Get a single state by ID
 # -----------------------------
 sub state {
     my ($states_id, $c) = @_;
-    return undef unless defined $states_id;
+    
+    # Validate state ID
+    eval {
+        $states_id = validate_integer($states_id, 1, 1, 1000); # Required, range 1-1000
+    };
+    if ($@) {
+        warn "Input validation failed in state(): $@";
+        return undef;
+    }
 
     my $sql = q{
         SELECT states_id, statecode, state, countries_id, printstate,
@@ -36,18 +42,30 @@ sub state {
 # -----------------------------
 sub states {
     my ($country, $order, $c) = @_;
-    $country //= 'IN';
-    $order //= 'state';
+    
+    # Validate inputs
+    eval {
+        $country = validate_string($country, 0, 2, 'IN');    # Optional (defaults to IN), 2 chars
+        $order = validate_string($order, 0, 50, 'state');    # Optional (defaults to 'state')
+    };
+    if ($@) {
+        warn "Input validation failed in states(): $@";
+        return undef;
+    }
 
-    # sanitize order column to prevent SQL injection
-    $order = 'states.url' if $order =~ /url/i;
-    $order = 'state'      if $order =~ /name/i;
+    # Safe mapping of sort keys to full column names to avoid SQL injection
+    my %order_map = (
+        'statecode'  => 's.statecode',
+        'state'      => 's.state',
+        'printstate' => 's.printstate',
+        'oneliner'   => 's.oneliner',
+        'url'        => 's.url'
+    );
 
+    # Default to statecode if order key not found in mapping
+    my $order_col = $order_map{$order // ''} || $order_map{'statecode'};
+    
     my $category_hotel = 27;
-
-    # whitelist allowed columns for ordering
-    my %allowed_columns = map { $_ => 1 } qw(statecode state printstate oneliner);
-    $order = 'statecode' unless $allowed_columns{$order};
 
     my $sql = qq{
         SELECT DISTINCT s.states_id, s.statecode, s.state, s.countries_id, s.printstate,
@@ -59,7 +77,7 @@ sub states {
         INNER JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
         WHERE a.categories_id = ?
           AND c.url LIKE ?
-        ORDER BY s."$order"
+        ORDER BY $order_col
     };
 
     return fetch_all($sql, [$category_hotel, "$country%"], 'NAME', 'jadoo', $c);
@@ -70,7 +88,15 @@ sub states {
 # -----------------------------
 sub statesurl {
     my ($url, $c) = @_;
-    return undef unless defined $url;
+    
+    # Validate URL
+    eval {
+        $url = validate_string($url, 1, 255); # Required, max 255 chars
+    };
+    if ($@) {
+        warn "Input validation failed in statesurl(): $@";
+        return undef;
+    }
 
     my $sql = q{
         SELECT states_id, statecode, state, countries_id, oneliner, writeup,

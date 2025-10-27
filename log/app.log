@@ -1,269 +1,798 @@
-[2025-10-26 15:26:38 +07] [pid:7] DEBUG Logger initialized at /usr/src/app/log/app.log
-[2025-10-26 15:26:38 +07] [pid:7] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x63fe3a550038)
-[2025-10-26 15:26:38 +07] [pid:7] DEBUG Email transport initialized for host: smtp.odyssey.co.in
-[2025-10-26 15:26:39 +07] [pid:7] DEBUG Cache system initialized
-[2025-10-26 15:26:39 +07] [pid:7] DEBUG Helpers registered
-[2025-10-26 15:26:39 +07] [pid:7] DEBUG Hooks registered
-[2025-10-26 15:26:39 +07] [pid:7] DEBUG All routes registered successfully
-[2025-10-26 15:26:39 +07] [pid:7] DEBUG TravellersPalm application started with database 'users.db'
-[2025-10-26 16:13:06 +07] [pid:7] DEBUG Logger initialized at /usr/src/app/log/app.log
-[2025-10-26 16:13:06 +07] [pid:7] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5de0f9b66930)
-[2025-10-26 16:13:06 +07] [pid:7] DEBUG Email transport initialized for host: smtp.odyssey.co.in
-[2025-10-26 16:13:07 +07] [pid:7] DEBUG Cache system initialized
-[2025-10-26 16:13:07 +07] [pid:7] DEBUG Helpers registered
-[2025-10-26 16:13:07 +07] [pid:7] DEBUG Hooks registered
-[2025-10-26 16:13:07 +07] [pid:7] DEBUG All routes registered successfully
-[2025-10-26 16:13:07 +07] [pid:7] DEBUG TravellersPalm application started with database 'Jadoo_2006.db'
-[2025-10-26 16:30:55 +07] [pid:7] DEBUG Logger initialized at /usr/src/app/log/app.log
-[2025-10-26 16:30:55 +07] [pid:7] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x62f1956512f8)
-[2025-10-26 16:30:55 +07] [pid:7] DEBUG Email transport initialized for host: smtp.odyssey.co.in
-[2025-10-26 16:30:56 +07] [pid:7] DEBUG Cache system initialized
-[2025-10-26 16:30:56 +07] [pid:7] DEBUG Helpers registered
-[2025-10-26 16:30:56 +07] [pid:7] DEBUG Hooks registered
-[2025-10-26 16:30:56 +07] [pid:7] DEBUG All routes registered successfully
-[2025-10-26 16:30:56 +07] [pid:7] DEBUG TravellersPalm application started with database 'Jadoo_2006.db'
-[2025-10-26 16:38:56 +07] [pid:7] DEBUG Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
-[2025-10-26 16:38:56 +07] [pid:7] DEBUG [SQL]
-    
-            SELECT meta_title, meta_descr, meta_keywords
-            FROM webpages
-            WHERE url = ?
-        
- | binds: explore-by-state | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
-[2025-10-26 16:38:56 +07] [pid:7] DEBUG [SQL]
-    
-            SELECT srno, title, pagename, writeup, webpages_id
-            FROM Web
-            WHERE Web_id = ?
-        
- | binds: 122 | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
-[2025-10-26 16:38:56 +07] [pid:7] DEBUG [SQL]
-    
-            SELECT s.states_id, s.statecode, s.state, s.countries_id, s.printstate,
-                   s.oneliner, s.writeup, s.webwriteup, s.latitude, s.longitude,
-                   s.meta_title, s.meta_descr, s.meta_keywords, s.url
-            FROM states s
-            INNER JOIN countries c ON c.countries_id = s.countries_id
-            WHERE s.states_id IN (
-                SELECT DISTINCT st.states_id
-                FROM vw_hoteldetails h
-                JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
-                JOIN states st ON h.states_id = st.states_id
-                WHERE a.categories_id = ?
-            )
-            AND c.url LIKE ?
-            ORDER BY order
-        
- | binds: 27, IN% | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 128 | route: /destinations/india/states
-[2025-10-26 16:38:56 +07] [pid:7] ERROR Dispatch error: Database error: DBD::SQLite::db prepare failed: near "order": syntax error at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 143.
-[2025-10-26 16:38:56 +07] [pid:7] ERROR [zbZ8WgtQTTmF]No handler for "tt" found
-[2025-10-26 16:38:56 +07] [pid:7] ERROR [zbZ8WgtQTTmF]Could not render a response at /usr/src/app/lib/TravellersPalm/Hooks.pm line 95.
-[2025-10-26 16:38:56 +07] [pid:7] ERROR [zbZ8WgtQTTmF]No handler for "tt" found
-[2025-10-26 16:38:56 +07] [pid:7] ERROR 500 error email sent for http://localhost:3000/destinations/india/states
-[2025-10-26 16:43:13 +07] [pid:7] DEBUG [SQL]
-    
-            SELECT meta_title, meta_descr, meta_keywords
-            FROM webpages
-            WHERE url = ?
-        
- | binds: explore-by-state | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
-[2025-10-26 16:43:13 +07] [pid:7] DEBUG [SQL]
-    
-            SELECT srno, title, pagename, writeup, webpages_id
-            FROM Web
-            WHERE Web_id = ?
-        
- | binds: 122 | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
-[2025-10-26 16:43:13 +07] [pid:7] DEBUG [SQL]
-    
-            SELECT s.states_id, s.statecode, s.state, s.countries_id, s.printstate,
-                   s.oneliner, s.writeup, s.webwriteup, s.latitude, s.longitude,
-                   s.meta_title, s.meta_descr, s.meta_keywords, s.url
-            FROM states s
-            INNER JOIN countries c ON c.countries_id = s.countries_id
-            WHERE s.states_id IN (
-                SELECT DISTINCT st.states_id
-                FROM vw_hoteldetails h
-                JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
-                JOIN states st ON h.states_id = st.states_id
-                WHERE a.categories_id = ?
-            )
-            AND c.url LIKE ?
-            ORDER BY order
-        
- | binds: 27, IN% | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 128 | route: /destinations/india/states
-[2025-10-26 16:43:13 +07] [pid:7] ERROR Dispatch error: Database error: DBD::SQLite::db prepare failed: near "order": syntax error at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 143.
-[2025-10-26 16:43:13 +07] [pid:7] ERROR [JHGVBy88Kjty]No handler for "tt" found
-[2025-10-26 16:43:13 +07] [pid:7] ERROR [JHGVBy88Kjty]Could not render a response at /usr/src/app/lib/TravellersPalm/Hooks.pm line 95.
-[2025-10-26 16:43:13 +07] [pid:7] ERROR [JHGVBy88Kjty]No handler for "tt" found
-[2025-10-26 16:43:13 +07] [pid:7] ERROR 500 error email sent for http://localhost:3000/destinations/india/states
-[2025-10-26 17:12:48 +07] [pid:9] DEBUG Logger initialized at /usr/src/app/log/app.log
-[2025-10-26 17:12:48 +07] [pid:9] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c8040b7c9c0)
-[2025-10-26 17:12:48 +07] [pid:9] DEBUG Email transport initialized for host: smtp.odyssey.co.in
-[2025-10-26 17:12:49 +07] [pid:9] DEBUG Cache system initialized
-[2025-10-26 17:12:49 +07] [pid:9] DEBUG Helpers registered
-[2025-10-26 17:12:49 +07] [pid:9] DEBUG Hooks registered safely
-[2025-10-26 17:12:49 +07] [pid:9] DEBUG All routes registered successfully
-[2025-10-26 17:12:49 +07] [pid:9] DEBUG TravellersPalm application started with database 'Jadoo_2006.db'
-[2025-10-26 17:14:28 +07] [pid:9] DEBUG Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
-[2025-10-26 17:14:28 +07] [pid:9] DEBUG [SQL]
-    
-            SELECT meta_title, meta_descr, meta_keywords
-            FROM webpages
-            WHERE url = ?
-        
- | binds: explore-by-state | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
-[2025-10-26 17:14:28 +07] [pid:9] DEBUG [SQL]
-    
-            SELECT srno, title, pagename, writeup, webpages_id
-            FROM Web
-            WHERE Web_id = ?
-        
- | binds: 122 | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
-[2025-10-26 17:14:28 +07] [pid:9] DEBUG [SQL]
-    
-            SELECT s.states_id, s.statecode, s.state, s.countries_id, s.printstate,
-                   s.oneliner, s.writeup, s.webwriteup, s.latitude, s.longitude,
-                   s.meta_title, s.meta_descr, s.meta_keywords, s.url
-            FROM states s
-            INNER JOIN countries c ON c.countries_id = s.countries_id
-            WHERE s.states_id IN (
-                SELECT DISTINCT st.states_id
-                FROM vw_hoteldetails h
-                JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
-                JOIN states st ON h.states_id = st.states_id
-                WHERE a.categories_id = ?
-            )
-            AND c.url LIKE ?
-            ORDER BY order
-        
- | binds: 27, IN% | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 128 | route: /destinations/india/states
-[2025-10-26 17:14:28 +07] [pid:9] ERROR Dispatch error: Database error: DBD::SQLite::db prepare failed: near "order": syntax error at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 143.
-[2025-10-26 17:14:28 +07] [pid:9] ERROR [LWUI4FfiTFII]No handler for "tt" found
-[2025-10-26 17:14:28 +07] [pid:9] ERROR Failed to render 500 template: Could not render a response at /usr/src/app/lib/TravellersPalm/Hooks.pm line 121.
-[2025-10-26 17:15:00 +07] [pid:9] DEBUG [SQL]
-    
-            SELECT meta_title, meta_descr, meta_keywords
-            FROM webpages
-            WHERE url = ?
-        
- | binds: explore-by-state | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
-[2025-10-26 17:15:00 +07] [pid:9] DEBUG [SQL]
-    
-            SELECT srno, title, pagename, writeup, webpages_id
-            FROM Web
-            WHERE Web_id = ?
-        
- | binds: 122 | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
-[2025-10-26 17:15:00 +07] [pid:9] DEBUG [SQL]
-    
-            SELECT s.states_id, s.statecode, s.state, s.countries_id, s.printstate,
-                   s.oneliner, s.writeup, s.webwriteup, s.latitude, s.longitude,
-                   s.meta_title, s.meta_descr, s.meta_keywords, s.url
-            FROM states s
-            INNER JOIN countries c ON c.countries_id = s.countries_id
-            WHERE s.states_id IN (
-                SELECT DISTINCT st.states_id
-                FROM vw_hoteldetails h
-                JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
-                JOIN states st ON h.states_id = st.states_id
-                WHERE a.categories_id = ?
-            )
-            AND c.url LIKE ?
-            ORDER BY order
-        
- | binds: 27, IN% | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 128 | route: /destinations/india/states
-[2025-10-26 17:15:01 +07] [pid:9] ERROR Dispatch error: Database error: DBD::SQLite::db prepare failed: near "order": syntax error at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 143.
-[2025-10-26 17:15:01 +07] [pid:9] ERROR [z7FN_IbV2MoU]No handler for "tt" found
-[2025-10-26 17:15:01 +07] [pid:9] ERROR Failed to render 500 template: Could not render a response at /usr/src/app/lib/TravellersPalm/Hooks.pm line 121.
-[2025-10-26 17:15:39 +07] [pid:9] DEBUG [SQL]
-    
-            SELECT meta_title, meta_descr, meta_keywords
-            FROM webpages
-            WHERE url = ?
-        
- | binds: explore-by-state | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
-[2025-10-26 17:15:39 +07] [pid:9] DEBUG [SQL]
-    
-            SELECT srno, title, pagename, writeup, webpages_id
-            FROM Web
-            WHERE Web_id = ?
-        
- | binds: 122 | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 127 | route: /destinations/india/states
-[2025-10-26 17:15:39 +07] [pid:9] DEBUG [SQL]
-    
-            SELECT s.states_id, s.statecode, s.state, s.countries_id, s.printstate,
-                   s.oneliner, s.writeup, s.webwriteup, s.latitude, s.longitude,
-                   s.meta_title, s.meta_descr, s.meta_keywords, s.url
-            FROM states s
-            INNER JOIN countries c ON c.countries_id = s.countries_id
-            WHERE s.states_id IN (
-                SELECT DISTINCT st.states_id
-                FROM vw_hoteldetails h
-                JOIN addresscategories a ON a.addressbook_id = h.addressbook_id
-                JOIN states st ON h.states_id = st.states_id
-                WHERE a.categories_id = ?
-            )
-            AND c.url LIKE ?
-            ORDER BY order
-        
- | binds: 27, IN% | called from: TravellersPalm::Database::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 128 | route: /destinations/india/states
-[2025-10-26 17:15:39 +07] [pid:9] ERROR Dispatch error: Database error: DBD::SQLite::db prepare failed: near "order": syntax error at /usr/src/app/lib/TravellersPalm/Database/Connector.pm line 143.
-[2025-10-26 17:15:39 +07] [pid:9] ERROR [txtFrEyU-yZH]No handler for "tt" found
-[2025-10-26 17:15:39 +07] [pid:9] ERROR Failed to render 500 template: Could not render a response at /usr/src/app/lib/TravellersPalm/Hooks.pm line 121.
-[2025-10-26 17:55:54 +07] [pid:8] DEBUG Logger initialized at /usr/src/app/log/app.log
-[2025-10-26 17:55:54 +07] [pid:8] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4e1ce0)
-[2025-10-26 17:55:54 +07] [pid:8] DEBUG Email transport initialized for host: smtp.odyssey.co.in
-[2025-10-26 17:55:55 +07] [pid:8] DEBUG Cache system initialized
-[2025-10-26 17:55:55 +07] [pid:8] DEBUG Helpers registered
-[2025-10-26 17:55:55 +07] [pid:8] DEBUG Hooks registered safely
-[2025-10-26 17:55:55 +07] [pid:8] DEBUG All routes registered successfully
-[2025-10-26 17:55:55 +07] [pid:8] DEBUG TravellersPalm application started with database 'users.db'
-[2025-10-26 17:57:44 +07] [pid:11] DEBUG Logger initialized at /usr/src/app/log/app.log
-[2025-10-26 17:57:44 +07] [pid:11] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4de7f0)
-[2025-10-26 17:57:44 +07] [pid:11] DEBUG Email transport initialized for host: smtp.odyssey.co.in
-[2025-10-26 17:57:45 +07] [pid:11] DEBUG Cache system initialized
-[2025-10-26 17:57:45 +07] [pid:11] DEBUG Helpers registered
-[2025-10-26 17:57:45 +07] [pid:11] DEBUG Hooks registered safely
-[2025-10-26 17:57:45 +07] [pid:11] DEBUG All routes registered successfully
-[2025-10-26 17:57:45 +07] [pid:11] DEBUG TravellersPalm application started with database 'users.db'
-[2025-10-26 18:07:03 +07] [pid:14] DEBUG Logger initialized at /usr/src/app/log/app.log
-[2025-10-26 18:07:03 +07] [pid:14] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4ec6c0)
-[2025-10-26 18:07:03 +07] [pid:14] DEBUG Email transport initialized for host: smtp.odyssey.co.in
-[2025-10-26 18:07:04 +07] [pid:14] DEBUG Cache system initialized
-[2025-10-26 18:07:04 +07] [pid:14] DEBUG Helpers registered
-[2025-10-26 18:07:04 +07] [pid:14] DEBUG Hooks registered safely
-[2025-10-26 18:07:04 +07] [pid:14] DEBUG All routes registered successfully
-[2025-10-26 18:07:04 +07] [pid:14] DEBUG TravellersPalm application started with database 'Jadoo_2006.db'
-[2025-10-26 18:17:49 +07] [pid:17] DEBUG Logger initialized at /usr/src/app/log/app.log
-[2025-10-26 18:17:49 +07] [pid:17] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4ce4b0)
-[2025-10-26 18:17:49 +07] [pid:17] DEBUG Email transport initialized for host: smtp.odyssey.co.in
-[2025-10-26 18:17:50 +07] [pid:17] DEBUG Cache system initialized
-[2025-10-26 18:17:50 +07] [pid:17] DEBUG Helpers registered
-[2025-10-26 18:17:50 +07] [pid:17] DEBUG Hooks registered safely
-[2025-10-26 18:17:50 +07] [pid:17] DEBUG All routes registered successfully
-[2025-10-26 18:17:50 +07] [pid:17] DEBUG TravellersPalm application started with database 'Jadoo_2006.db'
-[2025-10-26 18:19:21 +07] [pid:20] DEBUG Logger initialized at /usr/src/app/log/app.log
-[2025-10-26 18:19:21 +07] [pid:20] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4ec618)
-[2025-10-26 18:19:21 +07] [pid:20] DEBUG Email transport initialized for host: smtp.odyssey.co.in
-[2025-10-26 18:19:21 +07] [pid:20] DEBUG Cache system initialized
-[2025-10-26 18:19:21 +07] [pid:20] DEBUG Helpers registered
-[2025-10-26 18:19:21 +07] [pid:20] DEBUG Hooks registered safely
-[2025-10-26 18:19:21 +07] [pid:20] DEBUG All routes registered successfully
-[2025-10-26 18:19:21 +07] [pid:20] DEBUG TravellersPalm application started with database 'Jadoo_2006.db'
-[2025-10-26 18:19:38 +07] [pid:23] DEBUG Logger initialized at /usr/src/app/log/app.log
-[2025-10-26 18:19:38 +07] [pid:23] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4ce018)
-[2025-10-26 18:19:38 +07] [pid:23] DEBUG Email transport initialized for host: smtp.odyssey.co.in
-[2025-10-26 18:19:39 +07] [pid:23] DEBUG Cache system initialized
-[2025-10-26 18:19:39 +07] [pid:23] DEBUG Helpers registered
-[2025-10-26 18:19:39 +07] [pid:23] DEBUG Hooks registered safely
-[2025-10-26 18:19:39 +07] [pid:23] DEBUG All routes registered successfully
-[2025-10-26 18:19:39 +07] [pid:23] DEBUG TravellersPalm application started with database 'users.db'
-[2025-10-26 18:19:45 +07] [pid:26] DEBUG Logger initialized at /usr/src/app/log/app.log
-[2025-10-26 18:19:45 +07] [pid:26] DEBUG Calling DB setup, app=TravellersPalm=HASH(0x5c6d5c4ecd80)
-[2025-10-26 18:19:45 +07] [pid:26] DEBUG Email transport initialized for host: smtp.odyssey.co.in
-[2025-10-26 18:19:46 +07] [pid:26] DEBUG Cache system initialized
-[2025-10-26 18:19:46 +07] [pid:26] DEBUG Helpers registered
-[2025-10-26 18:19:46 +07] [pid:26] DEBUG Hooks registered safely
-[2025-10-26 18:19:46 +07] [pid:26] DEBUG All routes registered successfully
-[2025-10-26 18:19:46 +07] [pid:26] DEBUG TravellersPalm application started with database 'users.db'
+[2025-10-28 00:04:07 +07] [pid:10] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:04:07 +07] [pid:10] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:04:08 +07] [pid:10] DEBUG Cache system initialized
+[2025-10-28 00:04:08 +07] [pid:10] DEBUG Helpers registered
+[2025-10-28 00:04:08 +07] [pid:10] DEBUG Hooks registered safely
+[2025-10-28 00:04:08 +07] [pid:10] DEBUG All routes registered successfully
+[2025-10-28 00:04:08 +07] [pid:10] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:05:40 +07] [pid:13] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:05:40 +07] [pid:13] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:05:40 +07] [pid:13] DEBUG Cache system initialized
+[2025-10-28 00:05:40 +07] [pid:13] DEBUG Helpers registered
+[2025-10-28 00:05:40 +07] [pid:13] DEBUG Hooks registered safely
+[2025-10-28 00:05:40 +07] [pid:13] DEBUG All routes registered successfully
+[2025-10-28 00:05:40 +07] [pid:13] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:10:08 +07] [pid:16] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:10:08 +07] [pid:16] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:10:09 +07] [pid:16] DEBUG Cache system initialized
+[2025-10-28 00:10:09 +07] [pid:16] DEBUG Helpers registered
+[2025-10-28 00:10:09 +07] [pid:16] DEBUG Hooks registered safely
+[2025-10-28 00:10:09 +07] [pid:16] DEBUG All routes registered successfully
+[2025-10-28 00:10:09 +07] [pid:16] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:11:45 +07] [pid:19] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:11:45 +07] [pid:19] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:11:45 +07] [pid:19] DEBUG Cache system initialized
+[2025-10-28 00:11:45 +07] [pid:19] DEBUG Helpers registered
+[2025-10-28 00:11:45 +07] [pid:19] DEBUG Hooks registered safely
+[2025-10-28 00:11:45 +07] [pid:19] DEBUG All routes registered successfully
+[2025-10-28 00:11:45 +07] [pid:19] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:14:34 +07] [pid:22] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:14:34 +07] [pid:22] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:14:35 +07] [pid:22] DEBUG Cache system initialized
+[2025-10-28 00:14:35 +07] [pid:22] DEBUG Helpers registered
+[2025-10-28 00:14:35 +07] [pid:22] DEBUG Hooks registered safely
+[2025-10-28 00:14:35 +07] [pid:22] DEBUG All routes registered successfully
+[2025-10-28 00:14:35 +07] [pid:22] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:18:29 +07] [pid:23] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:18:29 +07] [pid:23] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:18:30 +07] [pid:23] DEBUG Cache system initialized
+[2025-10-28 00:18:30 +07] [pid:23] DEBUG Helpers registered
+[2025-10-28 00:18:30 +07] [pid:23] DEBUG Hooks registered safely
+[2025-10-28 00:18:30 +07] [pid:23] DEBUG All routes registered successfully
+[2025-10-28 00:18:30 +07] [pid:23] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:18:34 +07] [pid:24] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:18:34 +07] [pid:24] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:18:35 +07] [pid:24] DEBUG Cache system initialized
+[2025-10-28 00:18:35 +07] [pid:24] DEBUG Helpers registered
+[2025-10-28 00:18:35 +07] [pid:24] DEBUG Hooks registered safely
+[2025-10-28 00:18:35 +07] [pid:24] DEBUG All routes registered successfully
+[2025-10-28 00:18:35 +07] [pid:24] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:20:35 +07] [pid:25] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:20:35 +07] [pid:25] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:20:35 +07] [pid:25] DEBUG Cache system initialized
+[2025-10-28 00:20:35 +07] [pid:25] DEBUG Helpers registered
+[2025-10-28 00:20:35 +07] [pid:25] DEBUG Hooks registered safely
+[2025-10-28 00:20:35 +07] [pid:25] DEBUG All routes registered successfully
+[2025-10-28 00:20:35 +07] [pid:25] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:20:39 +07] [pid:26] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:20:39 +07] [pid:26] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:20:40 +07] [pid:26] DEBUG Cache system initialized
+[2025-10-28 00:20:40 +07] [pid:26] DEBUG Helpers registered
+[2025-10-28 00:20:40 +07] [pid:26] DEBUG Hooks registered safely
+[2025-10-28 00:20:40 +07] [pid:26] DEBUG All routes registered successfully
+[2025-10-28 00:20:40 +07] [pid:26] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:22:05 +07] [pid:27] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:22:05 +07] [pid:27] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:22:06 +07] [pid:27] DEBUG Cache system initialized
+[2025-10-28 00:22:06 +07] [pid:27] DEBUG Helpers registered
+[2025-10-28 00:22:06 +07] [pid:27] DEBUG Hooks registered safely
+[2025-10-28 00:22:06 +07] [pid:27] DEBUG All routes registered successfully
+[2025-10-28 00:22:06 +07] [pid:27] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:23:05 +07] [pid:28] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:23:05 +07] [pid:28] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:23:06 +07] [pid:28] DEBUG Cache system initialized
+[2025-10-28 00:23:06 +07] [pid:28] DEBUG Helpers registered
+[2025-10-28 00:23:06 +07] [pid:28] DEBUG Hooks registered safely
+[2025-10-28 00:23:06 +07] [pid:28] DEBUG All routes registered successfully
+[2025-10-28 00:23:06 +07] [pid:28] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:34:53 +07] [pid:29] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:34:53 +07] [pid:29] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:34:55 +07] [pid:29] DEBUG Cache system initialized
+[2025-10-28 00:34:55 +07] [pid:29] DEBUG Helpers registered
+[2025-10-28 00:34:55 +07] [pid:29] DEBUG Hooks registered safely
+[2025-10-28 00:34:55 +07] [pid:29] DEBUG All routes registered successfully
+[2025-10-28 00:34:55 +07] [pid:29] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:34:56 +07] [pid:30] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:34:56 +07] [pid:30] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:34:57 +07] [pid:30] DEBUG Cache system initialized
+[2025-10-28 00:34:57 +07] [pid:30] DEBUG Helpers registered
+[2025-10-28 00:34:57 +07] [pid:30] DEBUG Hooks registered safely
+[2025-10-28 00:34:57 +07] [pid:30] DEBUG All routes registered successfully
+[2025-10-28 00:34:57 +07] [pid:30] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:34:59 +07] [pid:31] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:34:59 +07] [pid:31] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:35:00 +07] [pid:31] DEBUG Cache system initialized
+[2025-10-28 00:35:00 +07] [pid:31] DEBUG Helpers registered
+[2025-10-28 00:35:00 +07] [pid:31] DEBUG Hooks registered safely
+[2025-10-28 00:35:00 +07] [pid:31] DEBUG All routes registered successfully
+[2025-10-28 00:35:00 +07] [pid:31] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:55:28 +07] [pid:32] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:55:28 +07] [pid:32] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:55:29 +07] [pid:32] DEBUG Cache system initialized
+[2025-10-28 00:55:29 +07] [pid:32] DEBUG Helpers registered
+[2025-10-28 00:55:29 +07] [pid:32] DEBUG Hooks registered safely
+[2025-10-28 00:55:29 +07] [pid:32] DEBUG All routes registered successfully
+[2025-10-28 00:55:29 +07] [pid:32] DEBUG TravellersPalm app started successfully
+[2025-10-28 00:56:07 +07] [pid:33] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 00:56:07 +07] [pid:33] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 00:56:08 +07] [pid:33] DEBUG Cache system initialized
+[2025-10-28 00:56:08 +07] [pid:33] DEBUG Helpers registered
+[2025-10-28 00:56:08 +07] [pid:33] DEBUG Hooks registered safely
+[2025-10-28 00:56:08 +07] [pid:33] DEBUG All routes registered successfully
+[2025-10-28 00:56:08 +07] [pid:33] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:01:38 +07] [pid:34] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:01:38 +07] [pid:34] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:01:39 +07] [pid:34] DEBUG Cache system initialized
+[2025-10-28 01:01:39 +07] [pid:34] DEBUG Helpers registered
+[2025-10-28 01:01:39 +07] [pid:34] DEBUG Hooks registered safely
+[2025-10-28 01:01:39 +07] [pid:34] DEBUG All routes registered successfully
+[2025-10-28 01:01:39 +07] [pid:34] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:02:39 +07] [pid:35] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:02:39 +07] [pid:35] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:02:40 +07] [pid:35] DEBUG Cache system initialized
+[2025-10-28 01:02:40 +07] [pid:35] DEBUG Helpers registered
+[2025-10-28 01:02:40 +07] [pid:35] DEBUG Hooks registered safely
+[2025-10-28 01:02:40 +07] [pid:35] DEBUG All routes registered successfully
+[2025-10-28 01:02:40 +07] [pid:35] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:11:24 +07] [pid:36] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:11:24 +07] [pid:36] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:11:26 +07] [pid:36] DEBUG Cache system initialized
+[2025-10-28 01:11:26 +07] [pid:36] DEBUG Helpers registered
+[2025-10-28 01:11:26 +07] [pid:36] DEBUG Hooks registered safely
+[2025-10-28 01:11:26 +07] [pid:36] DEBUG All routes registered successfully
+[2025-10-28 01:11:26 +07] [pid:36] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:12:57 +07] [pid:37] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:12:57 +07] [pid:37] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:12:58 +07] [pid:37] DEBUG Cache system initialized
+[2025-10-28 01:12:58 +07] [pid:37] DEBUG Helpers registered
+[2025-10-28 01:12:58 +07] [pid:37] DEBUG Hooks registered safely
+[2025-10-28 01:12:58 +07] [pid:37] DEBUG All routes registered successfully
+[2025-10-28 01:12:58 +07] [pid:37] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:13:25 +07] [pid:40] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:13:25 +07] [pid:40] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:13:26 +07] [pid:40] DEBUG Cache system initialized
+[2025-10-28 01:13:26 +07] [pid:40] DEBUG Helpers registered
+[2025-10-28 01:13:26 +07] [pid:40] DEBUG Hooks registered safely
+[2025-10-28 01:13:26 +07] [pid:40] DEBUG All routes registered successfully
+[2025-10-28 01:13:26 +07] [pid:40] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:15:34 +07] [pid:43] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:15:34 +07] [pid:43] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:15:35 +07] [pid:43] DEBUG Cache system initialized
+[2025-10-28 01:15:35 +07] [pid:43] DEBUG Helpers registered
+[2025-10-28 01:15:35 +07] [pid:43] DEBUG Hooks registered safely
+[2025-10-28 01:15:35 +07] [pid:43] DEBUG All routes registered successfully
+[2025-10-28 01:15:35 +07] [pid:43] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:16:47 +07] [pid:46] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:16:47 +07] [pid:46] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:16:34 +07] [pid:46] DEBUG Cache system initialized
+[2025-10-28 01:16:34 +07] [pid:46] DEBUG Helpers registered
+[2025-10-28 01:16:34 +07] [pid:46] DEBUG Hooks registered safely
+[2025-10-28 01:16:34 +07] [pid:46] DEBUG All routes registered successfully
+[2025-10-28 01:16:34 +07] [pid:46] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:17:48 +07] [pid:49] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:17:48 +07] [pid:49] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:17:48 +07] [pid:49] DEBUG Cache system initialized
+[2025-10-28 01:17:48 +07] [pid:49] DEBUG Helpers registered
+[2025-10-28 01:17:48 +07] [pid:49] DEBUG Hooks registered safely
+[2025-10-28 01:17:48 +07] [pid:49] DEBUG All routes registered successfully
+[2025-10-28 01:17:48 +07] [pid:49] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:19:11 +07] [pid:52] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:19:11 +07] [pid:52] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:19:13 +07] [pid:52] DEBUG Cache system initialized
+[2025-10-28 01:19:13 +07] [pid:52] DEBUG Helpers registered
+[2025-10-28 01:19:13 +07] [pid:52] DEBUG Hooks registered safely
+[2025-10-28 01:19:13 +07] [pid:52] DEBUG All routes registered successfully
+[2025-10-28 01:19:13 +07] [pid:52] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:19:56 +07] [pid:55] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:19:56 +07] [pid:55] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:19:56 +07] [pid:55] DEBUG Cache system initialized
+[2025-10-28 01:19:56 +07] [pid:55] DEBUG Helpers registered
+[2025-10-28 01:19:56 +07] [pid:55] DEBUG Hooks registered safely
+[2025-10-28 01:19:56 +07] [pid:55] DEBUG All routes registered successfully
+[2025-10-28 01:19:56 +07] [pid:55] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:21:49 +07] [pid:58] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:21:49 +07] [pid:58] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:21:49 +07] [pid:58] DEBUG Cache system initialized
+[2025-10-28 01:21:49 +07] [pid:58] DEBUG Helpers registered
+[2025-10-28 01:21:49 +07] [pid:58] DEBUG Hooks registered safely
+[2025-10-28 01:21:49 +07] [pid:58] DEBUG All routes registered successfully
+[2025-10-28 01:21:49 +07] [pid:58] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:30:42 +07] [pid:61] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:30:42 +07] [pid:61] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:30:43 +07] [pid:61] DEBUG Cache system initialized
+[2025-10-28 01:30:43 +07] [pid:61] DEBUG Helpers registered
+[2025-10-28 01:30:43 +07] [pid:61] DEBUG Hooks registered safely
+[2025-10-28 01:30:43 +07] [pid:61] DEBUG All routes registered successfully
+[2025-10-28 01:30:43 +07] [pid:61] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:34:09 +07] [pid:64] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:34:09 +07] [pid:64] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:34:10 +07] [pid:64] DEBUG Cache system initialized
+[2025-10-28 01:34:10 +07] [pid:64] DEBUG Helpers registered
+[2025-10-28 01:34:10 +07] [pid:64] DEBUG Hooks registered safely
+[2025-10-28 01:34:10 +07] [pid:64] DEBUG All routes registered successfully
+[2025-10-28 01:34:10 +07] [pid:64] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:34:46 +07] [pid:67] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:34:46 +07] [pid:67] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:34:47 +07] [pid:67] DEBUG Cache system initialized
+[2025-10-28 01:34:47 +07] [pid:67] DEBUG Helpers registered
+[2025-10-28 01:34:47 +07] [pid:67] DEBUG Hooks registered safely
+[2025-10-28 01:34:47 +07] [pid:67] DEBUG All routes registered successfully
+[2025-10-28 01:34:47 +07] [pid:67] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:40:20 +07] [pid:70] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:40:20 +07] [pid:70] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:40:21 +07] [pid:70] DEBUG Cache system initialized
+[2025-10-28 01:40:21 +07] [pid:70] DEBUG Helpers registered
+[2025-10-28 01:40:21 +07] [pid:70] DEBUG Hooks registered safely
+[2025-10-28 01:40:21 +07] [pid:70] DEBUG All routes registered successfully
+[2025-10-28 01:40:21 +07] [pid:70] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:40:51 +07] [pid:73] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:40:51 +07] [pid:73] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:40:52 +07] [pid:73] DEBUG Cache system initialized
+[2025-10-28 01:40:52 +07] [pid:73] DEBUG Helpers registered
+[2025-10-28 01:40:52 +07] [pid:73] DEBUG Hooks registered safely
+[2025-10-28 01:40:52 +07] [pid:73] DEBUG All routes registered successfully
+[2025-10-28 01:40:52 +07] [pid:73] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:41:05 +07] [pid:76] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:41:05 +07] [pid:76] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:41:06 +07] [pid:76] DEBUG Cache system initialized
+[2025-10-28 01:41:06 +07] [pid:76] DEBUG Helpers registered
+[2025-10-28 01:41:06 +07] [pid:76] DEBUG Hooks registered safely
+[2025-10-28 01:41:06 +07] [pid:76] DEBUG All routes registered successfully
+[2025-10-28 01:41:06 +07] [pid:76] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:43:32 +07] [pid:79] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:43:32 +07] [pid:79] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:43:32 +07] [pid:79] DEBUG Cache system initialized
+[2025-10-28 01:43:32 +07] [pid:79] DEBUG Helpers registered
+[2025-10-28 01:43:32 +07] [pid:79] DEBUG Hooks registered safely
+[2025-10-28 01:43:32 +07] [pid:79] DEBUG All routes registered successfully
+[2025-10-28 01:43:32 +07] [pid:79] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:47:00 +07] [pid:82] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:47:00 +07] [pid:82] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:47:01 +07] [pid:82] DEBUG Cache system initialized
+[2025-10-28 01:47:01 +07] [pid:82] DEBUG Helpers registered
+[2025-10-28 01:47:01 +07] [pid:82] DEBUG Hooks registered safely
+[2025-10-28 01:47:01 +07] [pid:82] DEBUG All routes registered successfully
+[2025-10-28 01:47:01 +07] [pid:82] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:47:07 +07] [pid:85] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:47:07 +07] [pid:85] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:47:08 +07] [pid:85] DEBUG Cache system initialized
+[2025-10-28 01:47:08 +07] [pid:85] DEBUG Helpers registered
+[2025-10-28 01:47:08 +07] [pid:85] DEBUG Hooks registered safely
+[2025-10-28 01:47:08 +07] [pid:85] DEBUG All routes registered successfully
+[2025-10-28 01:47:08 +07] [pid:85] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:49:19 +07] [pid:88] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:49:19 +07] [pid:88] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:49:20 +07] [pid:88] DEBUG Cache system initialized
+[2025-10-28 01:49:20 +07] [pid:88] DEBUG Helpers registered
+[2025-10-28 01:49:20 +07] [pid:88] DEBUG Hooks registered safely
+[2025-10-28 01:49:20 +07] [pid:88] DEBUG All routes registered successfully
+[2025-10-28 01:49:20 +07] [pid:88] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:53:29 +07] [pid:91] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:53:29 +07] [pid:91] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:53:29 +07] [pid:91] DEBUG Cache system initialized
+[2025-10-28 01:53:29 +07] [pid:91] DEBUG Helpers registered
+[2025-10-28 01:53:29 +07] [pid:91] DEBUG Hooks registered safely
+[2025-10-28 01:53:29 +07] [pid:91] DEBUG All routes registered successfully
+[2025-10-28 01:53:29 +07] [pid:91] DEBUG TravellersPalm app started successfully
+[2025-10-28 01:56:46 +07] [pid:94] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 01:56:46 +07] [pid:94] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 01:56:47 +07] [pid:94] DEBUG Cache system initialized
+[2025-10-28 01:56:47 +07] [pid:94] DEBUG Helpers registered
+[2025-10-28 01:56:47 +07] [pid:94] DEBUG Hooks registered safely
+[2025-10-28 01:56:47 +07] [pid:94] DEBUG All routes registered successfully
+[2025-10-28 01:56:47 +07] [pid:94] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:02:19 +07] [pid:97] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:02:19 +07] [pid:97] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:02:19 +07] [pid:97] DEBUG Cache system initialized
+[2025-10-28 02:02:19 +07] [pid:97] DEBUG Helpers registered
+[2025-10-28 02:02:19 +07] [pid:97] DEBUG Hooks registered safely
+[2025-10-28 02:02:19 +07] [pid:97] DEBUG All routes registered successfully
+[2025-10-28 02:02:19 +07] [pid:97] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:06:48 +07] [pid:100] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:06:48 +07] [pid:100] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:06:49 +07] [pid:100] DEBUG Cache system initialized
+[2025-10-28 02:06:49 +07] [pid:100] DEBUG Helpers registered
+[2025-10-28 02:06:49 +07] [pid:100] DEBUG Hooks registered safely
+[2025-10-28 02:06:49 +07] [pid:100] DEBUG All routes registered successfully
+[2025-10-28 02:06:49 +07] [pid:100] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:07:01 +07] [pid:103] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:07:01 +07] [pid:103] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:07:01 +07] [pid:103] DEBUG Cache system initialized
+[2025-10-28 02:07:01 +07] [pid:103] DEBUG Helpers registered
+[2025-10-28 02:07:01 +07] [pid:103] DEBUG Hooks registered safely
+[2025-10-28 02:07:01 +07] [pid:103] DEBUG All routes registered successfully
+[2025-10-28 02:07:01 +07] [pid:103] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:07:10 +07] [pid:106] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:07:10 +07] [pid:106] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:07:11 +07] [pid:106] DEBUG Cache system initialized
+[2025-10-28 02:07:11 +07] [pid:106] DEBUG Helpers registered
+[2025-10-28 02:07:11 +07] [pid:106] DEBUG Hooks registered safely
+[2025-10-28 02:07:11 +07] [pid:106] DEBUG All routes registered successfully
+[2025-10-28 02:07:11 +07] [pid:106] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:08:27 +07] [pid:109] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:08:27 +07] [pid:109] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:08:29 +07] [pid:109] DEBUG Cache system initialized
+[2025-10-28 02:08:29 +07] [pid:109] DEBUG Helpers registered
+[2025-10-28 02:08:29 +07] [pid:109] DEBUG Hooks registered safely
+[2025-10-28 02:08:29 +07] [pid:109] DEBUG All routes registered successfully
+[2025-10-28 02:08:29 +07] [pid:109] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:08:48 +07] [pid:112] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:08:48 +07] [pid:112] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:08:49 +07] [pid:112] DEBUG Cache system initialized
+[2025-10-28 02:08:49 +07] [pid:112] DEBUG Helpers registered
+[2025-10-28 02:08:49 +07] [pid:112] DEBUG Hooks registered safely
+[2025-10-28 02:08:49 +07] [pid:112] DEBUG All routes registered successfully
+[2025-10-28 02:08:49 +07] [pid:112] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:09:01 +07] [pid:115] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:09:01 +07] [pid:115] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:09:02 +07] [pid:115] DEBUG Cache system initialized
+[2025-10-28 02:09:02 +07] [pid:115] DEBUG Helpers registered
+[2025-10-28 02:09:02 +07] [pid:115] DEBUG Hooks registered safely
+[2025-10-28 02:09:02 +07] [pid:115] DEBUG All routes registered successfully
+[2025-10-28 02:09:02 +07] [pid:115] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:09:18 +07] [pid:118] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:09:18 +07] [pid:118] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:09:19 +07] [pid:118] DEBUG Cache system initialized
+[2025-10-28 02:09:19 +07] [pid:118] DEBUG Helpers registered
+[2025-10-28 02:09:19 +07] [pid:118] DEBUG Hooks registered safely
+[2025-10-28 02:09:19 +07] [pid:118] DEBUG All routes registered successfully
+[2025-10-28 02:09:19 +07] [pid:118] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:09:30 +07] [pid:121] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:09:30 +07] [pid:121] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:09:30 +07] [pid:121] DEBUG Cache system initialized
+[2025-10-28 02:09:30 +07] [pid:121] DEBUG Helpers registered
+[2025-10-28 02:09:30 +07] [pid:121] DEBUG Hooks registered safely
+[2025-10-28 02:09:30 +07] [pid:121] DEBUG All routes registered successfully
+[2025-10-28 02:09:30 +07] [pid:121] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:09:41 +07] [pid:124] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:09:41 +07] [pid:124] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:09:42 +07] [pid:124] DEBUG Cache system initialized
+[2025-10-28 02:09:42 +07] [pid:124] DEBUG Helpers registered
+[2025-10-28 02:09:42 +07] [pid:124] DEBUG Hooks registered safely
+[2025-10-28 02:09:42 +07] [pid:124] DEBUG All routes registered successfully
+[2025-10-28 02:09:42 +07] [pid:124] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:10:50 +07] [pid:127] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:10:50 +07] [pid:127] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:10:50 +07] [pid:127] DEBUG Cache system initialized
+[2025-10-28 02:10:50 +07] [pid:127] DEBUG Helpers registered
+[2025-10-28 02:10:50 +07] [pid:127] DEBUG Hooks registered safely
+[2025-10-28 02:10:50 +07] [pid:127] DEBUG All routes registered successfully
+[2025-10-28 02:10:50 +07] [pid:127] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:11:04 +07] [pid:130] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:11:04 +07] [pid:130] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:11:04 +07] [pid:130] DEBUG Cache system initialized
+[2025-10-28 02:11:04 +07] [pid:130] DEBUG Helpers registered
+[2025-10-28 02:11:04 +07] [pid:130] DEBUG Hooks registered safely
+[2025-10-28 02:11:04 +07] [pid:130] DEBUG All routes registered successfully
+[2025-10-28 02:11:04 +07] [pid:130] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:11:34 +07] [pid:133] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:11:34 +07] [pid:133] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:11:35 +07] [pid:133] DEBUG Cache system initialized
+[2025-10-28 02:11:35 +07] [pid:133] DEBUG Helpers registered
+[2025-10-28 02:11:35 +07] [pid:133] DEBUG Hooks registered safely
+[2025-10-28 02:11:35 +07] [pid:133] DEBUG All routes registered successfully
+[2025-10-28 02:11:35 +07] [pid:133] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:11:45 +07] [pid:136] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:11:45 +07] [pid:136] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:11:46 +07] [pid:136] DEBUG Cache system initialized
+[2025-10-28 02:11:46 +07] [pid:136] DEBUG Helpers registered
+[2025-10-28 02:11:46 +07] [pid:136] DEBUG Hooks registered safely
+[2025-10-28 02:11:46 +07] [pid:136] DEBUG All routes registered successfully
+[2025-10-28 02:11:46 +07] [pid:136] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:11:58 +07] [pid:139] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:11:58 +07] [pid:139] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:11:59 +07] [pid:139] DEBUG Cache system initialized
+[2025-10-28 02:11:59 +07] [pid:139] DEBUG Helpers registered
+[2025-10-28 02:11:59 +07] [pid:139] DEBUG Hooks registered safely
+[2025-10-28 02:11:59 +07] [pid:139] DEBUG All routes registered successfully
+[2025-10-28 02:11:59 +07] [pid:139] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:11:50 +07] [pid:142] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:11:50 +07] [pid:142] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:11:50 +07] [pid:142] DEBUG Cache system initialized
+[2025-10-28 02:11:50 +07] [pid:142] DEBUG Helpers registered
+[2025-10-28 02:11:50 +07] [pid:142] DEBUG Hooks registered safely
+[2025-10-28 02:11:50 +07] [pid:142] DEBUG All routes registered successfully
+[2025-10-28 02:11:50 +07] [pid:142] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:12:02 +07] [pid:145] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:12:02 +07] [pid:145] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:12:04 +07] [pid:145] DEBUG Cache system initialized
+[2025-10-28 02:12:04 +07] [pid:145] DEBUG Helpers registered
+[2025-10-28 02:12:04 +07] [pid:145] DEBUG Hooks registered safely
+[2025-10-28 02:12:04 +07] [pid:145] DEBUG All routes registered successfully
+[2025-10-28 02:12:04 +07] [pid:145] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:12:15 +07] [pid:148] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:12:15 +07] [pid:148] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:12:16 +07] [pid:148] DEBUG Cache system initialized
+[2025-10-28 02:12:16 +07] [pid:148] DEBUG Helpers registered
+[2025-10-28 02:12:16 +07] [pid:148] DEBUG Hooks registered safely
+[2025-10-28 02:12:16 +07] [pid:148] DEBUG All routes registered successfully
+[2025-10-28 02:12:16 +07] [pid:148] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:12:27 +07] [pid:151] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:12:27 +07] [pid:151] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:12:28 +07] [pid:151] DEBUG Cache system initialized
+[2025-10-28 02:12:28 +07] [pid:151] DEBUG Helpers registered
+[2025-10-28 02:12:28 +07] [pid:151] DEBUG Hooks registered safely
+[2025-10-28 02:12:28 +07] [pid:151] DEBUG All routes registered successfully
+[2025-10-28 02:12:28 +07] [pid:151] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:12:46 +07] [pid:154] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:12:46 +07] [pid:154] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:12:47 +07] [pid:154] DEBUG Cache system initialized
+[2025-10-28 02:12:47 +07] [pid:154] DEBUG Helpers registered
+[2025-10-28 02:12:47 +07] [pid:154] DEBUG Hooks registered safely
+[2025-10-28 02:12:47 +07] [pid:154] DEBUG All routes registered successfully
+[2025-10-28 02:12:47 +07] [pid:154] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:13:41 +07] [pid:157] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:13:41 +07] [pid:157] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:13:41 +07] [pid:157] DEBUG Cache system initialized
+[2025-10-28 02:13:41 +07] [pid:157] DEBUG Helpers registered
+[2025-10-28 02:13:41 +07] [pid:157] DEBUG Hooks registered safely
+[2025-10-28 02:13:41 +07] [pid:157] DEBUG All routes registered successfully
+[2025-10-28 02:13:41 +07] [pid:157] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:14:04 +07] [pid:160] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:14:04 +07] [pid:160] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:14:04 +07] [pid:160] DEBUG Cache system initialized
+[2025-10-28 02:14:04 +07] [pid:160] DEBUG Helpers registered
+[2025-10-28 02:14:04 +07] [pid:160] DEBUG Hooks registered safely
+[2025-10-28 02:14:04 +07] [pid:160] DEBUG All routes registered successfully
+[2025-10-28 02:14:04 +07] [pid:160] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:14:16 +07] [pid:163] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:14:16 +07] [pid:163] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:14:17 +07] [pid:163] DEBUG Cache system initialized
+[2025-10-28 02:14:17 +07] [pid:163] DEBUG Helpers registered
+[2025-10-28 02:14:17 +07] [pid:163] DEBUG Hooks registered safely
+[2025-10-28 02:14:17 +07] [pid:163] DEBUG All routes registered successfully
+[2025-10-28 02:14:17 +07] [pid:163] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:14:45 +07] [pid:166] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:14:45 +07] [pid:166] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:14:46 +07] [pid:166] DEBUG Cache system initialized
+[2025-10-28 02:14:46 +07] [pid:166] DEBUG Helpers registered
+[2025-10-28 02:14:46 +07] [pid:166] DEBUG Hooks registered safely
+[2025-10-28 02:14:46 +07] [pid:166] DEBUG All routes registered successfully
+[2025-10-28 02:14:46 +07] [pid:166] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:15:00 +07] [pid:169] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:15:01 +07] [pid:169] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:15:02 +07] [pid:169] DEBUG Cache system initialized
+[2025-10-28 02:15:02 +07] [pid:169] DEBUG Helpers registered
+[2025-10-28 02:15:02 +07] [pid:169] DEBUG Hooks registered safely
+[2025-10-28 02:15:02 +07] [pid:169] DEBUG All routes registered successfully
+[2025-10-28 02:15:02 +07] [pid:169] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:15:16 +07] [pid:172] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:15:16 +07] [pid:172] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:15:17 +07] [pid:172] DEBUG Cache system initialized
+[2025-10-28 02:15:17 +07] [pid:172] DEBUG Helpers registered
+[2025-10-28 02:15:17 +07] [pid:172] DEBUG Hooks registered safely
+[2025-10-28 02:15:17 +07] [pid:172] DEBUG All routes registered successfully
+[2025-10-28 02:15:17 +07] [pid:172] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:15:50 +07] [pid:175] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:15:50 +07] [pid:175] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:15:51 +07] [pid:175] DEBUG Cache system initialized
+[2025-10-28 02:15:51 +07] [pid:175] DEBUG Helpers registered
+[2025-10-28 02:15:51 +07] [pid:175] DEBUG Hooks registered safely
+[2025-10-28 02:15:51 +07] [pid:175] DEBUG All routes registered successfully
+[2025-10-28 02:15:51 +07] [pid:175] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:16:04 +07] [pid:178] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:16:04 +07] [pid:178] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:16:05 +07] [pid:178] DEBUG Cache system initialized
+[2025-10-28 02:16:05 +07] [pid:178] DEBUG Helpers registered
+[2025-10-28 02:16:05 +07] [pid:178] DEBUG Hooks registered safely
+[2025-10-28 02:16:05 +07] [pid:178] DEBUG All routes registered successfully
+[2025-10-28 02:16:05 +07] [pid:178] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:16:04 +07] [pid:181] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:16:04 +07] [pid:181] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:16:05 +07] [pid:181] DEBUG Cache system initialized
+[2025-10-28 02:16:05 +07] [pid:181] DEBUG Helpers registered
+[2025-10-28 02:16:05 +07] [pid:181] DEBUG Hooks registered safely
+[2025-10-28 02:16:05 +07] [pid:181] DEBUG All routes registered successfully
+[2025-10-28 02:16:05 +07] [pid:181] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:16:14 +07] [pid:184] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:16:14 +07] [pid:184] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:16:15 +07] [pid:184] DEBUG Cache system initialized
+[2025-10-28 02:16:15 +07] [pid:184] DEBUG Helpers registered
+[2025-10-28 02:16:15 +07] [pid:184] DEBUG Hooks registered safely
+[2025-10-28 02:16:15 +07] [pid:184] DEBUG All routes registered successfully
+[2025-10-28 02:16:15 +07] [pid:184] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:16:36 +07] [pid:187] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:16:36 +07] [pid:187] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:16:36 +07] [pid:187] DEBUG Cache system initialized
+[2025-10-28 02:16:36 +07] [pid:187] DEBUG Helpers registered
+[2025-10-28 02:16:36 +07] [pid:187] DEBUG Hooks registered safely
+[2025-10-28 02:16:36 +07] [pid:187] DEBUG All routes registered successfully
+[2025-10-28 02:16:36 +07] [pid:187] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:17:01 +07] [pid:190] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:17:01 +07] [pid:190] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:17:02 +07] [pid:190] DEBUG Cache system initialized
+[2025-10-28 02:17:02 +07] [pid:190] DEBUG Helpers registered
+[2025-10-28 02:17:02 +07] [pid:190] DEBUG Hooks registered safely
+[2025-10-28 02:17:02 +07] [pid:190] DEBUG All routes registered successfully
+[2025-10-28 02:17:02 +07] [pid:190] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:17:14 +07] [pid:193] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:17:14 +07] [pid:193] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:17:15 +07] [pid:193] DEBUG Cache system initialized
+[2025-10-28 02:17:15 +07] [pid:193] DEBUG Helpers registered
+[2025-10-28 02:17:15 +07] [pid:193] DEBUG Hooks registered safely
+[2025-10-28 02:17:15 +07] [pid:193] DEBUG All routes registered successfully
+[2025-10-28 02:17:15 +07] [pid:193] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:17:31 +07] [pid:196] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:17:31 +07] [pid:196] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:17:32 +07] [pid:196] DEBUG Cache system initialized
+[2025-10-28 02:17:32 +07] [pid:196] DEBUG Helpers registered
+[2025-10-28 02:17:32 +07] [pid:196] DEBUG Hooks registered safely
+[2025-10-28 02:17:32 +07] [pid:196] DEBUG All routes registered successfully
+[2025-10-28 02:17:32 +07] [pid:196] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:17:39 +07] [pid:199] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:17:39 +07] [pid:199] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:17:41 +07] [pid:199] DEBUG Cache system initialized
+[2025-10-28 02:17:41 +07] [pid:199] DEBUG Helpers registered
+[2025-10-28 02:17:41 +07] [pid:199] DEBUG Hooks registered safely
+[2025-10-28 02:17:41 +07] [pid:199] DEBUG All routes registered successfully
+[2025-10-28 02:17:41 +07] [pid:199] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:17:46 +07] [pid:202] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:17:46 +07] [pid:202] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:17:46 +07] [pid:202] DEBUG Cache system initialized
+[2025-10-28 02:17:46 +07] [pid:202] DEBUG Helpers registered
+[2025-10-28 02:17:46 +07] [pid:202] DEBUG Hooks registered safely
+[2025-10-28 02:17:46 +07] [pid:202] DEBUG All routes registered successfully
+[2025-10-28 02:17:46 +07] [pid:202] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:18:02 +07] [pid:205] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:18:02 +07] [pid:205] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:18:03 +07] [pid:205] DEBUG Cache system initialized
+[2025-10-28 02:18:03 +07] [pid:205] DEBUG Helpers registered
+[2025-10-28 02:18:03 +07] [pid:205] DEBUG Hooks registered safely
+[2025-10-28 02:18:03 +07] [pid:205] DEBUG All routes registered successfully
+[2025-10-28 02:18:03 +07] [pid:205] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:18:42 +07] [pid:208] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:18:42 +07] [pid:208] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:18:43 +07] [pid:208] DEBUG Cache system initialized
+[2025-10-28 02:18:43 +07] [pid:208] DEBUG Helpers registered
+[2025-10-28 02:18:43 +07] [pid:208] DEBUG Hooks registered safely
+[2025-10-28 02:18:43 +07] [pid:208] DEBUG All routes registered successfully
+[2025-10-28 02:18:43 +07] [pid:208] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:18:58 +07] [pid:211] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:18:58 +07] [pid:211] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:18:59 +07] [pid:211] DEBUG Cache system initialized
+[2025-10-28 02:18:59 +07] [pid:211] DEBUG Helpers registered
+[2025-10-28 02:18:59 +07] [pid:211] DEBUG Hooks registered safely
+[2025-10-28 02:18:59 +07] [pid:211] DEBUG All routes registered successfully
+[2025-10-28 02:18:59 +07] [pid:211] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:19:48 +07] [pid:214] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:19:48 +07] [pid:214] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:19:49 +07] [pid:214] DEBUG Cache system initialized
+[2025-10-28 02:19:49 +07] [pid:214] DEBUG Helpers registered
+[2025-10-28 02:19:49 +07] [pid:214] DEBUG Hooks registered safely
+[2025-10-28 02:19:49 +07] [pid:214] DEBUG All routes registered successfully
+[2025-10-28 02:19:49 +07] [pid:214] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:20:02 +07] [pid:217] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:20:02 +07] [pid:217] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:20:03 +07] [pid:217] DEBUG Cache system initialized
+[2025-10-28 02:20:03 +07] [pid:217] DEBUG Helpers registered
+[2025-10-28 02:20:03 +07] [pid:217] DEBUG Hooks registered safely
+[2025-10-28 02:20:03 +07] [pid:217] DEBUG All routes registered successfully
+[2025-10-28 02:20:03 +07] [pid:217] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:20:14 +07] [pid:220] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:20:14 +07] [pid:220] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:20:15 +07] [pid:220] DEBUG Cache system initialized
+[2025-10-28 02:20:15 +07] [pid:220] DEBUG Helpers registered
+[2025-10-28 02:20:15 +07] [pid:220] DEBUG Hooks registered safely
+[2025-10-28 02:20:15 +07] [pid:220] DEBUG All routes registered successfully
+[2025-10-28 02:20:15 +07] [pid:220] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:20:36 +07] [pid:223] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:20:36 +07] [pid:223] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:20:36 +07] [pid:223] DEBUG Cache system initialized
+[2025-10-28 02:20:36 +07] [pid:223] DEBUG Helpers registered
+[2025-10-28 02:20:36 +07] [pid:223] DEBUG Hooks registered safely
+[2025-10-28 02:20:36 +07] [pid:223] DEBUG All routes registered successfully
+[2025-10-28 02:20:36 +07] [pid:223] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:20:44 +07] [pid:226] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:20:44 +07] [pid:226] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:20:45 +07] [pid:226] DEBUG Cache system initialized
+[2025-10-28 02:20:45 +07] [pid:226] DEBUG Helpers registered
+[2025-10-28 02:20:45 +07] [pid:226] DEBUG Hooks registered safely
+[2025-10-28 02:20:45 +07] [pid:226] DEBUG All routes registered successfully
+[2025-10-28 02:20:45 +07] [pid:226] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:20:52 +07] [pid:229] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:20:52 +07] [pid:229] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:20:52 +07] [pid:229] DEBUG Cache system initialized
+[2025-10-28 02:20:52 +07] [pid:229] DEBUG Helpers registered
+[2025-10-28 02:20:52 +07] [pid:229] DEBUG Hooks registered safely
+[2025-10-28 02:20:52 +07] [pid:229] DEBUG All routes registered successfully
+[2025-10-28 02:20:52 +07] [pid:229] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:21:03 +07] [pid:232] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:21:03 +07] [pid:232] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:21:04 +07] [pid:232] DEBUG Cache system initialized
+[2025-10-28 02:21:04 +07] [pid:232] DEBUG Helpers registered
+[2025-10-28 02:21:04 +07] [pid:232] DEBUG Hooks registered safely
+[2025-10-28 02:21:04 +07] [pid:232] DEBUG All routes registered successfully
+[2025-10-28 02:21:04 +07] [pid:232] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:21:14 +07] [pid:235] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:21:14 +07] [pid:235] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:21:14 +07] [pid:235] DEBUG Cache system initialized
+[2025-10-28 02:21:14 +07] [pid:235] DEBUG Helpers registered
+[2025-10-28 02:21:14 +07] [pid:235] DEBUG Hooks registered safely
+[2025-10-28 02:21:14 +07] [pid:235] DEBUG All routes registered successfully
+[2025-10-28 02:21:14 +07] [pid:235] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:21:24 +07] [pid:238] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:21:24 +07] [pid:238] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:21:24 +07] [pid:238] DEBUG Cache system initialized
+[2025-10-28 02:21:24 +07] [pid:238] DEBUG Helpers registered
+[2025-10-28 02:21:24 +07] [pid:238] DEBUG Hooks registered safely
+[2025-10-28 02:21:24 +07] [pid:238] DEBUG All routes registered successfully
+[2025-10-28 02:21:24 +07] [pid:238] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:21:54 +07] [pid:241] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:21:54 +07] [pid:241] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:21:55 +07] [pid:241] DEBUG Cache system initialized
+[2025-10-28 02:21:55 +07] [pid:241] DEBUG Helpers registered
+[2025-10-28 02:21:55 +07] [pid:241] DEBUG Hooks registered safely
+[2025-10-28 02:21:55 +07] [pid:241] DEBUG All routes registered successfully
+[2025-10-28 02:21:55 +07] [pid:241] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:24:02 +07] [pid:244] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:24:02 +07] [pid:244] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:24:03 +07] [pid:244] DEBUG Cache system initialized
+[2025-10-28 02:24:03 +07] [pid:244] DEBUG Helpers registered
+[2025-10-28 02:24:03 +07] [pid:244] DEBUG Hooks registered safely
+[2025-10-28 02:24:03 +07] [pid:244] DEBUG All routes registered successfully
+[2025-10-28 02:24:03 +07] [pid:244] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:24:12 +07] [pid:247] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:24:12 +07] [pid:247] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:24:13 +07] [pid:247] DEBUG Cache system initialized
+[2025-10-28 02:24:13 +07] [pid:247] DEBUG Helpers registered
+[2025-10-28 02:24:13 +07] [pid:247] DEBUG Hooks registered safely
+[2025-10-28 02:24:13 +07] [pid:247] DEBUG All routes registered successfully
+[2025-10-28 02:24:13 +07] [pid:247] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:24:22 +07] [pid:250] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:24:22 +07] [pid:250] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:24:22 +07] [pid:250] DEBUG Cache system initialized
+[2025-10-28 02:24:22 +07] [pid:250] DEBUG Helpers registered
+[2025-10-28 02:24:22 +07] [pid:250] DEBUG Hooks registered safely
+[2025-10-28 02:24:22 +07] [pid:250] DEBUG All routes registered successfully
+[2025-10-28 02:24:22 +07] [pid:250] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:24:36 +07] [pid:253] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:24:37 +07] [pid:253] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:24:37 +07] [pid:253] DEBUG Cache system initialized
+[2025-10-28 02:24:37 +07] [pid:253] DEBUG Helpers registered
+[2025-10-28 02:24:37 +07] [pid:253] DEBUG Hooks registered safely
+[2025-10-28 02:24:37 +07] [pid:253] DEBUG All routes registered successfully
+[2025-10-28 02:24:37 +07] [pid:253] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:24:46 +07] [pid:256] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:24:46 +07] [pid:256] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:24:47 +07] [pid:256] DEBUG Cache system initialized
+[2025-10-28 02:24:47 +07] [pid:256] DEBUG Helpers registered
+[2025-10-28 02:24:47 +07] [pid:256] DEBUG Hooks registered safely
+[2025-10-28 02:24:47 +07] [pid:256] DEBUG All routes registered successfully
+[2025-10-28 02:24:47 +07] [pid:256] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:24:58 +07] [pid:259] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:24:58 +07] [pid:259] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:24:58 +07] [pid:259] DEBUG Cache system initialized
+[2025-10-28 02:24:58 +07] [pid:259] DEBUG Helpers registered
+[2025-10-28 02:24:58 +07] [pid:259] DEBUG Hooks registered safely
+[2025-10-28 02:24:58 +07] [pid:259] DEBUG All routes registered successfully
+[2025-10-28 02:24:58 +07] [pid:259] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:25:08 +07] [pid:262] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:25:08 +07] [pid:262] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:25:08 +07] [pid:262] DEBUG Cache system initialized
+[2025-10-28 02:25:08 +07] [pid:262] DEBUG Helpers registered
+[2025-10-28 02:25:08 +07] [pid:262] DEBUG Hooks registered safely
+[2025-10-28 02:25:08 +07] [pid:262] DEBUG All routes registered successfully
+[2025-10-28 02:25:08 +07] [pid:262] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:27:21 +07] [pid:265] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:27:21 +07] [pid:265] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:27:22 +07] [pid:265] DEBUG Cache system initialized
+[2025-10-28 02:27:22 +07] [pid:265] DEBUG Helpers registered
+[2025-10-28 02:27:22 +07] [pid:265] DEBUG Hooks registered safely
+[2025-10-28 02:27:22 +07] [pid:265] DEBUG All routes registered successfully
+[2025-10-28 02:27:22 +07] [pid:265] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:27:25 +07] [pid:268] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:27:25 +07] [pid:268] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:27:26 +07] [pid:268] DEBUG Cache system initialized
+[2025-10-28 02:27:26 +07] [pid:268] DEBUG Helpers registered
+[2025-10-28 02:27:26 +07] [pid:268] DEBUG Hooks registered safely
+[2025-10-28 02:27:26 +07] [pid:268] DEBUG All routes registered successfully
+[2025-10-28 02:27:26 +07] [pid:268] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:27:37 +07] [pid:271] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:27:37 +07] [pid:271] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:27:39 +07] [pid:271] DEBUG Cache system initialized
+[2025-10-28 02:27:39 +07] [pid:271] DEBUG Helpers registered
+[2025-10-28 02:27:39 +07] [pid:271] DEBUG Hooks registered safely
+[2025-10-28 02:27:39 +07] [pid:271] DEBUG All routes registered successfully
+[2025-10-28 02:27:39 +07] [pid:271] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:28:05 +07] [pid:274] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:28:05 +07] [pid:274] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:28:07 +07] [pid:274] DEBUG Cache system initialized
+[2025-10-28 02:28:07 +07] [pid:274] DEBUG Helpers registered
+[2025-10-28 02:28:07 +07] [pid:274] DEBUG Hooks registered safely
+[2025-10-28 02:28:07 +07] [pid:274] DEBUG All routes registered successfully
+[2025-10-28 02:28:07 +07] [pid:274] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:28:13 +07] [pid:277] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:28:13 +07] [pid:277] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:28:14 +07] [pid:277] DEBUG Cache system initialized
+[2025-10-28 02:28:14 +07] [pid:277] DEBUG Helpers registered
+[2025-10-28 02:28:14 +07] [pid:277] DEBUG Hooks registered safely
+[2025-10-28 02:28:14 +07] [pid:277] DEBUG All routes registered successfully
+[2025-10-28 02:28:14 +07] [pid:277] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:28:22 +07] [pid:280] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:28:22 +07] [pid:280] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:28:23 +07] [pid:280] DEBUG Cache system initialized
+[2025-10-28 02:28:23 +07] [pid:280] DEBUG Helpers registered
+[2025-10-28 02:28:23 +07] [pid:280] DEBUG Hooks registered safely
+[2025-10-28 02:28:23 +07] [pid:280] DEBUG All routes registered successfully
+[2025-10-28 02:28:23 +07] [pid:280] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:28:24 +07] [pid:283] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:28:24 +07] [pid:283] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:28:25 +07] [pid:283] DEBUG Cache system initialized
+[2025-10-28 02:28:25 +07] [pid:283] DEBUG Helpers registered
+[2025-10-28 02:28:25 +07] [pid:283] DEBUG Hooks registered safely
+[2025-10-28 02:28:25 +07] [pid:283] DEBUG All routes registered successfully
+[2025-10-28 02:28:25 +07] [pid:283] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:28:32 +07] [pid:286] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:28:32 +07] [pid:286] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:28:33 +07] [pid:286] DEBUG Cache system initialized
+[2025-10-28 02:28:33 +07] [pid:286] DEBUG Helpers registered
+[2025-10-28 02:28:33 +07] [pid:286] DEBUG Hooks registered safely
+[2025-10-28 02:28:33 +07] [pid:286] DEBUG All routes registered successfully
+[2025-10-28 02:28:33 +07] [pid:286] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:28:42 +07] [pid:289] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:28:42 +07] [pid:289] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:28:43 +07] [pid:289] DEBUG Cache system initialized
+[2025-10-28 02:28:43 +07] [pid:289] DEBUG Helpers registered
+[2025-10-28 02:28:43 +07] [pid:289] DEBUG Hooks registered safely
+[2025-10-28 02:28:43 +07] [pid:289] DEBUG All routes registered successfully
+[2025-10-28 02:28:43 +07] [pid:289] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:28:53 +07] [pid:292] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:28:53 +07] [pid:292] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:28:54 +07] [pid:292] DEBUG Cache system initialized
+[2025-10-28 02:28:54 +07] [pid:292] DEBUG Helpers registered
+[2025-10-28 02:28:54 +07] [pid:292] DEBUG Hooks registered safely
+[2025-10-28 02:28:54 +07] [pid:292] DEBUG All routes registered successfully
+[2025-10-28 02:28:54 +07] [pid:292] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:29:40 +07] [pid:295] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:29:40 +07] [pid:295] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:29:41 +07] [pid:295] DEBUG Cache system initialized
+[2025-10-28 02:29:41 +07] [pid:295] DEBUG Helpers registered
+[2025-10-28 02:29:41 +07] [pid:295] DEBUG Hooks registered safely
+[2025-10-28 02:29:41 +07] [pid:295] DEBUG All routes registered successfully
+[2025-10-28 02:29:41 +07] [pid:295] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:29:44 +07] [pid:298] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:29:44 +07] [pid:298] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:29:44 +07] [pid:298] DEBUG Cache system initialized
+[2025-10-28 02:29:44 +07] [pid:298] DEBUG Helpers registered
+[2025-10-28 02:29:44 +07] [pid:298] DEBUG Hooks registered safely
+[2025-10-28 02:29:44 +07] [pid:298] DEBUG All routes registered successfully
+[2025-10-28 02:29:44 +07] [pid:298] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:29:54 +07] [pid:301] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:29:54 +07] [pid:301] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:29:55 +07] [pid:301] DEBUG Cache system initialized
+[2025-10-28 02:29:55 +07] [pid:301] DEBUG Helpers registered
+[2025-10-28 02:29:55 +07] [pid:301] DEBUG Hooks registered safely
+[2025-10-28 02:29:55 +07] [pid:301] DEBUG All routes registered successfully
+[2025-10-28 02:29:55 +07] [pid:301] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:30:19 +07] [pid:304] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:30:19 +07] [pid:304] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:30:20 +07] [pid:304] DEBUG Cache system initialized
+[2025-10-28 02:30:20 +07] [pid:304] DEBUG Helpers registered
+[2025-10-28 02:30:20 +07] [pid:304] DEBUG Hooks registered safely
+[2025-10-28 02:30:20 +07] [pid:304] DEBUG All routes registered successfully
+[2025-10-28 02:30:20 +07] [pid:304] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:50:16 +07] [pid:307] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:50:16 +07] [pid:307] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:50:17 +07] [pid:307] DEBUG Cache system initialized
+[2025-10-28 02:50:17 +07] [pid:307] DEBUG Helpers registered
+[2025-10-28 02:50:17 +07] [pid:307] DEBUG Hooks registered safely
+[2025-10-28 02:50:17 +07] [pid:307] DEBUG All routes registered successfully
+[2025-10-28 02:50:17 +07] [pid:307] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:50:20 +07] [pid:310] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:50:20 +07] [pid:310] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:50:21 +07] [pid:310] DEBUG Cache system initialized
+[2025-10-28 02:50:21 +07] [pid:310] DEBUG Helpers registered
+[2025-10-28 02:50:21 +07] [pid:310] DEBUG Hooks registered safely
+[2025-10-28 02:50:21 +07] [pid:310] DEBUG All routes registered successfully
+[2025-10-28 02:50:21 +07] [pid:310] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:50:31 +07] [pid:313] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:50:31 +07] [pid:313] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:50:32 +07] [pid:313] DEBUG Cache system initialized
+[2025-10-28 02:50:32 +07] [pid:313] DEBUG Helpers registered
+[2025-10-28 02:50:32 +07] [pid:313] DEBUG Hooks registered safely
+[2025-10-28 02:50:32 +07] [pid:313] DEBUG All routes registered successfully
+[2025-10-28 02:50:32 +07] [pid:313] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:50:33 +07] [pid:316] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:50:33 +07] [pid:316] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:50:34 +07] [pid:316] DEBUG Cache system initialized
+[2025-10-28 02:50:34 +07] [pid:316] DEBUG Helpers registered
+[2025-10-28 02:50:34 +07] [pid:316] DEBUG Hooks registered safely
+[2025-10-28 02:50:34 +07] [pid:316] DEBUG All routes registered successfully
+[2025-10-28 02:50:34 +07] [pid:316] DEBUG TravellersPalm app started successfully
+[2025-10-28 02:50:48 +07] [pid:319] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-28 02:50:48 +07] [pid:319] DEBUG Email transport initialized for host: smtp.odyssey.co.in
+[2025-10-28 02:50:48 +07] [pid:319] DEBUG Cache system initialized
+[2025-10-28 02:50:48 +07] [pid:319] DEBUG Helpers registered
+[2025-10-28 02:50:48 +07] [pid:319] DEBUG Hooks registered safely
+[2025-10-28 02:50:48 +07] [pid:319] DEBUG All routes registered successfully
+[2025-10-28 02:50:48 +07] [pid:319] DEBUG TravellersPalm app started successfully

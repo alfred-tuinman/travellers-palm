@@ -31,3 +31,15 @@ sub user_info {
 }
 
 1;
+
+__END__
+
+=head1 AUTHOR
+
+Travellers Palm Team
+
+=head1 LICENSE
+
+See the main project LICENSE file.
+
+=cut

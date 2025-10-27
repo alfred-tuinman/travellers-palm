@@ -1,37 +1,56 @@
-package TravellersPalm::Database::Itineraries;
+package TravellersPalm::Database::Itinerary;
 
 use strict;
 use warnings;
 
 use Data::Dumper;
 use Exporter 'import';
-use TravellersPalm::Database::Connector qw(fetch_all fetch_row);
+use TravellersPalm::Database::Core::Connector qw(fetch_all fetch_row);
+use TravellersPalm::Database::Core::Validation qw(
+    validate_string 
+    validate_integer
+    validate_order
+);
 
-=pod
-our @EXPORT_OK = qw(
-    route_listing
-    itinerary_details
-    itinerary_days
-    itinerary_modules
-    itinerary_regions
-    itinerary_themes
-    itinerary_search
-=cut
+
 
 # -----------------------------
 # Route listing for a destination
 # -----------------------------
 sub route_listing {
     my ($destination, $option, $view, $order, $c) = @_;
+
+    # Validate inputs
+    eval {
+        $destination = validate_string($destination, 1, 100); # Required, max 100 chars
+        $option = validate_string($option, 0, 50);           # Optional, max 50 chars
+        $view = validate_string($view, 0, 50);               # Optional, max 50 chars
+    };
+    if ($@) {
+        warn "Input validation failed in route_listing(): $@";
+        return undef;
+    }
+
+    # Safe mapping of sort keys to full column names to avoid SQL injection
+    my %order_map = (
+        'title'        => 'i.title',
+        'duration'     => 'i.duration',
+        'difficulty'   => 'i.difficulty',
+        'itinerary_id' => 'i.itinerary_id'
+    );
+
+    # Default to title if order key not found in mapping
+    my $order_col = $order_map{$order // ''} || $order_map{'title'};
+
     my $sql = q{
         SELECT i.itinerary_id, i.title, i.description, i.duration, i.difficulty
         FROM itineraries i
         JOIN destinations d ON d.destination_id = i.destination_id
         WHERE d.name = ?
-        AND i.option_type = ?
-        ORDER BY ?
-    };
-    return fetch_all($sql, [$destination, $option, $order], 'NAME', 'jadoo', $c);
+          AND i.option_type = ?
+        ORDER BY } . $order_col;
+
+    return fetch_all($sql, [$destination, $option], 'NAME', 'jadoo', $c);
 }
 
 # -----------------------------
@@ -39,6 +58,16 @@ sub route_listing {
 # -----------------------------
 sub itinerary_details {
     my ($itinerary_id, $c) = @_;
+    
+    # Validate itinerary ID
+    eval {
+        $itinerary_id = validate_integer($itinerary_id, 1, 1, 10000); # Required, range 1-10000
+    };
+    if ($@) {
+        warn "Input validation failed in itinerary_details(): $@";
+        return undef;
+    }
+
     my $sql = q{
         SELECT i.itinerary_id, i.title, i.description, i.duration, i.difficulty, i.price
         FROM itineraries i
@@ -52,6 +81,16 @@ sub itinerary_details {
 # -----------------------------
 sub itinerary_days {
     my ($itinerary_id, $c) = @_;
+    
+    # Validate itinerary ID
+    eval {
+        $itinerary_id = validate_integer($itinerary_id, 1, 1, 10000); # Required, range 1-10000
+    };
+    if ($@) {
+        warn "Input validation failed in itinerary_days(): $@";
+        return undef;
+    }
+
     my $sql = q{
         SELECT day_no, title, description
         FROM daybyday
@@ -111,6 +150,8 @@ sub itinerary_themes {
 # -----------------------------
 sub itinerary_search {
     my ($keyword, $c) = @_;
+    return [] unless defined $keyword && length $keyword;
+
     my $sql = q{
         SELECT i.itinerary_id, i.title, i.description, i.duration, i.difficulty
         FROM itineraries i
