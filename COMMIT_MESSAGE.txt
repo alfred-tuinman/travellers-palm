@@ -1,0 +1,62 @@
+refactor(db): move core modules to Database/Core and add comprehensive validation
+
+BREAKING CHANGE: Database infrastructure modules moved to Core namespace
+- Connector.pm → Database/Core/Connector.pm
+- Validation.pm → Database/Core/Validation.pm  
+- Initializer.pm → Database/Core/Initializer.pm
+
+Backward-compatible shims remain at old paths for gradual migration.
+
+## Database Core Refactor
+
+### Architecture
+- Created `lib/TravellersPalm/Database/Core/` for infrastructure modules
+- Separates database utilities from entity modules (Cities, Users, etc.)
+- Updated all imports across codebase to use `TravellersPalm::Database::Core::*`
+- Added backward-compatible shims at old module paths
+
+### Validation Improvements
+Created centralized validation utility with:
+- `validate_string()` - string length and required checks
+- `validate_integer()` - integer format and range validation
+- `validate_filter()` - whitelist-based filter validation
+- `validate_order()` - safe ORDER BY column validation
+- `validate_array()` - array element validation with callbacks
+
+Applied comprehensive input validation to:
+- Images.pm - image properties, categories, types, dimensions
+- Cities.pm - city IDs, country codes, category mappings
+- General.pm - web content, hotel data, array parameters
+- States.pm - state IDs, country codes, order columns (+ fixed duplicate ORDER BY)
+- Themes.pm - theme IDs, filter values, order columns
+- Itinerary.pm - itinerary IDs and parameters
+- Users.pm - emails, passwords, user data with security checks
+- Currencies.pm - currency codes and exchange rates
+
+All validation follows consistent pattern:
+- eval/warn error handling for graceful failures
+- Return empty results on validation errors
+- Clear error messages with parameter names
+- SQL injection protection via parameter validation
+
+### Developer Experience
+Added Docker test helpers:
+- `bin/test-in-docker.ps1` - PowerShell wrapper for Windows
+- `bin/test-in-docker.sh` - Bash wrapper for WSL/Linux/macOS
+
+Run tests in Docker with: `bash bin/test-in-docker.sh` or `.\bin\test-in-docker.ps1`
+
+### Files Changed
+- Created: lib/TravellersPalm/Database/Core/{Connector,Validation,Initializer}.pm
+- Updated: lib/TravellersPalm.pm, lib/TravellersPalm/Routes.pm
+- Updated: 9 database modules (Cities, States, General, Themes, Itinerary, Itineraries, Users, Currencies, Images)
+- Created: bin/test-in-docker.{ps1,sh}
+- Shimmed: lib/TravellersPalm/Database/{Connector,Validation,Initializer}.pm (BC)
+
+### Migration Notes
+- All modules now import from `TravellersPalm::Database::Core::*`
+- Old paths kept as thin delegation layers for backward compatibility
+- External code can migrate gradually; shims can be removed in future release
+- No functional changes to database operations; only validation additions
+
+Tested-by: Docker compose + Carton test suite
