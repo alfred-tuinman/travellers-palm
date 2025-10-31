@@ -5,6 +5,8 @@
 
 set -e  # exit on errors
 
+echo "=== Travellers Palm Restart Script ==="
+
 echo "Stopping and removing old containers..."
 docker compose down
 
@@ -22,16 +24,24 @@ echo "✅ Containers started in ${ELAPSED} seconds."
 echo "Current running containers:"
 docker compose ps
 
-# Check logs of travellers_palm_app for Carton activity
+# Check logs for carton activity
 echo
-echo "Checking if Carton ran during startup..."
-if docker compose logs travellers_palm_app | grep -q "Carton snapshot changed\|installing modules"; then
-    echo "⚠️ Carton install ran during startup!"
+echo "Checking build logs for carton activity..."
+CARTON_LOGS=$(docker compose logs travellers_palm_app | grep -i "successfully installed" || true)
+if [ -n "$CARTON_LOGS" ]; then
+    INSTALL_COUNT=$(echo "$CARTON_LOGS" | wc -l)
+    echo "📦 First build: installed $INSTALL_COUNT modules (creating Docker-compatible snapshot)"
+    echo "   Next builds will be much faster using Docker layer caching!"
 else
-    echo "✅ No Carton install ran during startup, using cached modules."
+    echo "✅ No modules installed - using cached Docker layer (super fast!)"
 fi
 
-# Optional: show last few log lines for verification
 echo
-echo "Last 10 lines of travellers_palm_app logs:"
-docker compose logs --tail=10 travellers_palm_app
+echo "Last 5 lines of app logs:"
+docker compose logs --tail=5 travellers_palm_app
+
+echo
+echo "=== Restart complete ==="
+echo "Application should be available at: http://localhost:3000"
+echo
+echo "💡 Run ./restart.sh again to see Docker layer caching in action!"

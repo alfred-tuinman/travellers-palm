@@ -10,7 +10,7 @@ sub register {
     my $r = $app->routes;
 
     # Home
-    $r->get('/')->to('home#index');
+    $r->get('/')->to('staticpages#index');
         $r->get('/about-us')->to('staticpages#about');
         $r->get('/before-you-go')->to('staticpages#before_you_go');
         $r->get('/contact-us')->to('staticpages#contact_us');
@@ -26,8 +26,8 @@ sub register {
         $r->get('/why-travel-with-us')->to('staticpages#why_travel_with_us');
 
     # Enquiry (GET + POST)
-    $r->get('/enquiry')->to('home#get_enquiry');
-    $r->post('/enquiry')->to('home#post_enquiry');
+    $r->get('/enquiry')->to('staticpages#get_enquiry');
+    $r->post('/enquiry')->to('staticpages#post_enquiry');
 
     # Hotels routes
     $r->get('/hotel-categories')->to('hotels#show_hotel_categories');

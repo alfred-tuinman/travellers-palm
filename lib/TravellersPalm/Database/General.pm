@@ -95,7 +95,7 @@ sub metatags {
     return {} unless defined $url;
 
     eval {
-        validate_string($url, "url", 1, 255);  # Required, reasonable URL length
+        validate_string($url, 1, 255);  # Required, reasonable URL length
     };
     if ($@) {
         warn "Input validation failed in metatags(): $@";

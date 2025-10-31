@@ -1,0 +1,31 @@
+# Ignore runtime and development files
+data/
+log/
+local/
+.git/
+.gitignore
+README.md
+*.md
+*.old
+restart.sh
+rs.sh
+rename_photos.sh
+docker-compose.old
+Dockerfile.old
+Dockerfile.last
+Dockerfile.multistage
+
+# Ignore test files
+t/
+bin/
+
+# Ignore environment and cache files
+.env
+COMMIT_MESSAGE.txt
+carton_cache/
+
+# Ignore any temporary or changing files
+*.tmp
+*.log
+*~
+.DS_Store

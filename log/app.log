@@ -796,3 +796,405 @@
 [2025-10-28 02:50:48 +07] [pid:319] DEBUG Hooks registered safely
 [2025-10-28 02:50:48 +07] [pid:319] DEBUG All routes registered successfully
 [2025-10-28 02:50:48 +07] [pid:319] DEBUG TravellersPalm app started successfully
+[2025-10-31 13:54:07 +07] [pid:9] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 13:54:07 +07] [pid:9] DEBUG Email transport initialized for host: smtp.gmail.com
+[2025-10-31 13:54:07 +07] [pid:9] DEBUG Cache system initialized
+[2025-10-31 13:54:07 +07] [pid:9] DEBUG Helpers registered
+[2025-10-31 13:54:07 +07] [pid:9] DEBUG Hooks registered safely
+[2025-10-31 13:54:07 +07] [pid:9] DEBUG All routes registered successfully
+[2025-10-31 13:54:07 +07] [pid:9] DEBUG TravellersPalm app started successfully
+[2025-10-31 13:54:08 +07] [pid:9] DEBUG Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-31 13:54:08 +07] [pid:9] DEBUG [SQL]
+    SELECT srno, title, pagename, writeup, webpages_id FROM Web WHERE Web_id = ?
+ | binds: 122 | called from: TravellersPalm::Database::Core::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Core/Connector.pm line 129 | route: /destinations/india/states
+[2025-10-31 13:54:08 +07] [pid:9] DEBUG [SQL]
+    SELECT DISTINCT s.states_id, s.statecode, s.state, s.countries_id, s.printstate, s.oneliner, s.writeup, s.webwriteup, s.latitude, s.longitude, s.meta_title, s.meta_descr, s.meta_keywords, s.url FROM states s INNER JOIN countries c ON c.countries_id = s.countries_id INNER JOIN vw_hoteldetails h ON h.states_id = s.states_id INNER JOIN addresscategories a ON a.addressbook_id = h.addressbook_id WHERE a.categories_id = ? AND c.url LIKE ? ORDER BY s.statecode
+ | binds: 27, 'IN%' | called from: TravellersPalm::Database::Core::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Core/Connector.pm line 130 | route: /destinations/india/states
+[2025-10-31 13:54:09 +07] [pid:9] DEBUG [SQL]
+    SELECT srno, title, pagename, writeup, webpages_id FROM Web WHERE Web_id = ?
+ | binds: 175 | called from: TravellersPalm::Database::Core::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Core/Connector.pm line 129 | route: /destinations/india/states
+[2025-10-31 13:54:09 +07] [pid:9] ERROR Dispatch error: Controller "TravellersPalm::Home" does not exist at /usr/src/app/local/lib/perl5/Mojolicious.pm line 127.
+[2025-10-31 13:54:16 +07] [pid:9] ERROR 500 error email processed for http://localhost:3000/?code=4/0Ab32j92jDYnZoUkcV5I1I8RcsdUhsrJYGyR1_1sxLB1Q4we8YrNHsynVaPBv76WdgbLEfw&scope=https://www.googleapis.com/auth/gmail.send
+[2025-10-31 13:54:16 +07] [pid:9] ERROR Dispatch error: Controller "TravellersPalm::Home" does not exist at /usr/src/app/local/lib/perl5/Mojolicious.pm line 127.
+[2025-10-31 13:54:25 +07] [pid:9] ERROR 500 error email processed for http://localhost:3000/?code=4/0Ab32j93XmD2uKZY-ETJAEBR2tdU9g3Mqr8_DFGuzE28BZdYaW5zFk6Z0e0C_CgIyPtZcJQ&scope=https://www.googleapis.com/auth/gmail.send
+[2025-10-31 13:54:25 +07] [pid:9] ERROR Dispatch error: Controller "TravellersPalm::Home" does not exist at /usr/src/app/local/lib/perl5/Mojolicious.pm line 127.
+[2025-10-31 13:57:16 +07] [pid:7] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 13:57:16 +07] [pid:7] DEBUG Email transport initialized for host: smtp.gmail.com
+[2025-10-31 13:57:17 +07] [pid:7] DEBUG Cache system initialized
+[2025-10-31 13:57:17 +07] [pid:7] DEBUG Helpers registered
+[2025-10-31 13:57:17 +07] [pid:7] DEBUG Hooks registered safely
+[2025-10-31 13:57:17 +07] [pid:7] DEBUG All routes registered successfully
+[2025-10-31 13:57:17 +07] [pid:7] DEBUG TravellersPalm app started successfully
+[2025-10-31 13:57:32 +07] [pid:7] ERROR Dispatch error: Controller "TravellersPalm::Home" does not exist at /usr/src/app/local/lib/perl5/Mojolicious.pm line 127.
+[2025-10-31 13:57:42 +07] [pid:7] ERROR 500 error email processed for http://localhost:3000/?code=4/0Ab32j90AN20NO3x7iFM9XVggbMHP-tsHDbaKqgNK774JEY9uqLdWymR_z1PdbWYMCmTYIw&scope=https://www.googleapis.com/auth/gmail.send
+[2025-10-31 14:32:47 +07] [pid:10] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 14:32:47 +07] [pid:10] DEBUG Email transport initialized for host: smtp.gmail.com
+[2025-10-31 14:32:48 +07] [pid:10] DEBUG Cache system initialized
+[2025-10-31 14:32:48 +07] [pid:10] DEBUG Helpers registered
+[2025-10-31 14:32:48 +07] [pid:10] DEBUG Hooks registered safely
+[2025-10-31 14:32:48 +07] [pid:10] DEBUG All routes registered successfully
+[2025-10-31 14:32:48 +07] [pid:10] DEBUG TravellersPalm app started successfully
+[2025-10-31 14:32:59 +07] [pid:13] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 14:32:59 +07] [pid:13] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 14:33:49 +07] [pid:14] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 14:33:49 +07] [pid:14] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 14:33:49 +07] [pid:14] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 14:33:49 +07] [pid:14] DEBUG Cache system initialized
+[2025-10-31 14:33:49 +07] [pid:14] DEBUG Helpers registered
+[2025-10-31 14:33:49 +07] [pid:14] DEBUG Hooks registered safely
+[2025-10-31 14:33:49 +07] [pid:14] DEBUG All routes registered successfully
+[2025-10-31 14:33:49 +07] [pid:14] DEBUG TravellersPalm app started successfully
+[2025-10-31 14:35:37 +07] [pid:17] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 14:35:37 +07] [pid:17] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 14:35:37 +07] [pid:17] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 14:35:38 +07] [pid:17] DEBUG Cache system initialized
+[2025-10-31 14:35:38 +07] [pid:17] DEBUG Helpers registered
+[2025-10-31 14:35:38 +07] [pid:17] DEBUG Hooks registered safely
+[2025-10-31 14:35:38 +07] [pid:17] DEBUG All routes registered successfully
+[2025-10-31 14:35:38 +07] [pid:17] DEBUG TravellersPalm app started successfully
+[2025-10-31 14:35:42 +07] [pid:20] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 14:35:42 +07] [pid:20] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 14:35:42 +07] [pid:20] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 14:35:43 +07] [pid:20] DEBUG Cache system initialized
+[2025-10-31 14:35:43 +07] [pid:20] DEBUG Helpers registered
+[2025-10-31 14:35:43 +07] [pid:20] DEBUG Hooks registered safely
+[2025-10-31 14:35:43 +07] [pid:20] DEBUG All routes registered successfully
+[2025-10-31 14:35:43 +07] [pid:20] DEBUG TravellersPalm app started successfully
+[2025-10-31 14:40:04 +07] [pid:23] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 14:40:04 +07] [pid:23] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 14:40:04 +07] [pid:23] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 14:40:05 +07] [pid:23] DEBUG Cache system initialized
+[2025-10-31 14:40:05 +07] [pid:23] DEBUG Helpers registered
+[2025-10-31 14:40:05 +07] [pid:23] DEBUG Hooks registered safely
+[2025-10-31 14:40:05 +07] [pid:23] DEBUG All routes registered successfully
+[2025-10-31 14:40:05 +07] [pid:23] DEBUG TravellersPalm app started successfully
+[2025-10-31 14:40:22 +07] [pid:26] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 14:40:22 +07] [pid:26] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 14:40:22 +07] [pid:26] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 14:40:23 +07] [pid:26] DEBUG Cache system initialized
+[2025-10-31 14:40:23 +07] [pid:26] DEBUG Helpers registered
+[2025-10-31 14:40:23 +07] [pid:26] DEBUG Hooks registered safely
+[2025-10-31 14:40:23 +07] [pid:26] DEBUG All routes registered successfully
+[2025-10-31 14:40:23 +07] [pid:26] DEBUG TravellersPalm app started successfully
+[2025-10-31 15:13:04 +07] [pid:29] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 15:13:04 +07] [pid:29] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 15:13:04 +07] [pid:29] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 15:13:05 +07] [pid:29] DEBUG Cache system initialized
+[2025-10-31 15:13:05 +07] [pid:29] DEBUG Helpers registered
+[2025-10-31 15:13:05 +07] [pid:29] DEBUG Hooks registered safely
+[2025-10-31 15:13:05 +07] [pid:29] DEBUG All routes registered successfully
+[2025-10-31 15:13:05 +07] [pid:29] DEBUG TravellersPalm app started successfully
+[2025-10-31 15:13:11 +07] [pid:32] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 15:13:11 +07] [pid:32] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 15:13:11 +07] [pid:32] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 15:13:12 +07] [pid:32] DEBUG Cache system initialized
+[2025-10-31 15:13:12 +07] [pid:32] DEBUG Helpers registered
+[2025-10-31 15:13:12 +07] [pid:32] DEBUG Hooks registered safely
+[2025-10-31 15:13:12 +07] [pid:32] DEBUG All routes registered successfully
+[2025-10-31 15:13:12 +07] [pid:32] DEBUG TravellersPalm app started successfully
+[2025-10-31 15:49:56 +07] [pid:32] ERROR Dispatch error: Controller "TravellersPalm::Home" does not exist at /usr/src/app/local/lib/perl5/Mojolicious.pm line 127.
+[2025-10-31 15:49:57 +07] [pid:32] ERROR Failed to send 500 error email: Failed to refresh OAuth2 token: 400 Bad Request
+{
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+} at /usr/src/app/lib/TravellersPalm/Mailer/OAuth2.pm line 52.
+[2025-10-31 15:49:57 +07] [pid:32] ERROR 500 error email processed for http://localhost:3000/?code=4/0Ab32j91f9dc7K4jf8yoGRFRpcTOCnkoreTHErd4WhEx2X7EQg5TGC_Y-cz6aPrzpMUSFzQ&scope=https://www.googleapis.com/auth/gmail.send
+[2025-10-31 15:52:09 +07] [pid:35] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 15:52:09 +07] [pid:35] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 15:52:09 +07] [pid:35] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 15:52:09 +07] [pid:35] DEBUG Cache system initialized
+[2025-10-31 15:52:09 +07] [pid:35] DEBUG Helpers registered
+[2025-10-31 15:52:09 +07] [pid:35] DEBUG Hooks registered safely
+[2025-10-31 15:52:09 +07] [pid:35] DEBUG All routes registered successfully
+[2025-10-31 15:52:09 +07] [pid:35] DEBUG TravellersPalm app started successfully
+[2025-10-31 15:52:23 +07] [pid:38] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 15:52:23 +07] [pid:38] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 15:52:23 +07] [pid:38] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 15:52:25 +07] [pid:38] DEBUG Cache system initialized
+[2025-10-31 15:52:25 +07] [pid:38] DEBUG Helpers registered
+[2025-10-31 15:52:25 +07] [pid:38] DEBUG Hooks registered safely
+[2025-10-31 15:52:25 +07] [pid:38] DEBUG All routes registered successfully
+[2025-10-31 15:52:25 +07] [pid:38] DEBUG TravellersPalm app started successfully
+[2025-10-31 16:01:39 +07] [pid:38] ERROR Dispatch error: Controller "TravellersPalm::Home" does not exist at /usr/src/app/local/lib/perl5/Mojolicious.pm line 127.
+[2025-10-31 16:01:39 +07] [pid:38] ERROR Failed to send 500 error email: Failed to refresh OAuth2 token: 400 Bad Request
+{
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+} at /usr/src/app/lib/TravellersPalm/Mailer/OAuth2.pm line 48.
+[2025-10-31 16:01:39 +07] [pid:38] ERROR 500 error email processed for http://localhost:3000/?code=4/0Ab32j93_WQZssqw8T7MAkvYui1iwfiCH7bjV9Notta-KsUolCrYcMV7v4mg8OipAC6DdrA&scope=https://www.googleapis.com/auth/gmail.send
+[2025-10-31 16:06:41 +07] [pid:41] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 16:06:41 +07] [pid:41] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 16:06:41 +07] [pid:41] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 16:06:42 +07] [pid:41] DEBUG Cache system initialized
+[2025-10-31 16:06:42 +07] [pid:41] DEBUG Helpers registered
+[2025-10-31 16:06:42 +07] [pid:41] DEBUG Hooks registered safely
+[2025-10-31 16:06:42 +07] [pid:41] DEBUG All routes registered successfully
+[2025-10-31 16:06:42 +07] [pid:41] DEBUG TravellersPalm app started successfully
+[2025-10-31 16:06:56 +07] [pid:44] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 16:06:56 +07] [pid:44] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 16:06:56 +07] [pid:44] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 16:06:56 +07] [pid:44] DEBUG Cache system initialized
+[2025-10-31 16:06:56 +07] [pid:44] DEBUG Helpers registered
+[2025-10-31 16:06:56 +07] [pid:44] DEBUG Hooks registered safely
+[2025-10-31 16:06:57 +07] [pid:44] DEBUG All routes registered successfully
+[2025-10-31 16:06:57 +07] [pid:44] DEBUG TravellersPalm app started successfully
+[2025-10-31 16:07:07 +07] [pid:47] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 16:07:07 +07] [pid:47] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 16:07:07 +07] [pid:47] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 16:07:08 +07] [pid:47] DEBUG Cache system initialized
+[2025-10-31 16:07:08 +07] [pid:47] DEBUG Helpers registered
+[2025-10-31 16:07:08 +07] [pid:47] DEBUG Hooks registered safely
+[2025-10-31 16:07:08 +07] [pid:47] DEBUG All routes registered successfully
+[2025-10-31 16:07:08 +07] [pid:47] DEBUG TravellersPalm app started successfully
+[2025-10-31 16:19:10 +07] [pid:50] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 16:19:10 +07] [pid:50] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 16:19:10 +07] [pid:50] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 16:19:11 +07] [pid:50] DEBUG Cache system initialized
+[2025-10-31 16:19:11 +07] [pid:50] DEBUG Helpers registered
+[2025-10-31 16:19:11 +07] [pid:50] DEBUG Hooks registered safely
+[2025-10-31 16:19:11 +07] [pid:50] DEBUG All routes registered successfully
+[2025-10-31 16:19:11 +07] [pid:50] DEBUG TravellersPalm app started successfully
+[2025-10-31 16:19:18 +07] [pid:53] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 16:19:18 +07] [pid:53] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 16:19:18 +07] [pid:53] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 16:19:19 +07] [pid:53] DEBUG Cache system initialized
+[2025-10-31 16:19:19 +07] [pid:53] DEBUG Helpers registered
+[2025-10-31 16:19:19 +07] [pid:53] DEBUG Hooks registered safely
+[2025-10-31 16:19:19 +07] [pid:53] DEBUG All routes registered successfully
+[2025-10-31 16:19:19 +07] [pid:53] DEBUG TravellersPalm app started successfully
+[2025-10-31 16:19:40 +07] [pid:56] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 16:19:40 +07] [pid:56] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 16:19:40 +07] [pid:56] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 16:19:41 +07] [pid:56] DEBUG Cache system initialized
+[2025-10-31 16:19:41 +07] [pid:56] DEBUG Helpers registered
+[2025-10-31 16:19:41 +07] [pid:56] DEBUG Hooks registered safely
+[2025-10-31 16:19:41 +07] [pid:56] DEBUG All routes registered successfully
+[2025-10-31 16:19:41 +07] [pid:56] DEBUG TravellersPalm app started successfully
+[2025-10-31 16:20:47 +07] [pid:59] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 16:20:47 +07] [pid:59] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 16:20:47 +07] [pid:59] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 16:20:47 +07] [pid:59] DEBUG Cache system initialized
+[2025-10-31 16:20:47 +07] [pid:59] DEBUG Helpers registered
+[2025-10-31 16:20:47 +07] [pid:59] DEBUG Hooks registered safely
+[2025-10-31 16:20:47 +07] [pid:59] DEBUG All routes registered successfully
+[2025-10-31 16:20:47 +07] [pid:59] DEBUG TravellersPalm app started successfully
+[2025-10-31 16:21:20 +07] [pid:59] ERROR Dispatch error: Controller "TravellersPalm::Home" does not exist at /usr/src/app/local/lib/perl5/Mojolicious.pm line 127.
+[2025-10-31 16:21:20 +07] [pid:59] ERROR Failed to send 500 error email: Failed to refresh OAuth2 token: 400 Bad Request
+{
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+} at /usr/src/app/lib/TravellersPalm/Mailer/OAuth2.pm line 55.
+[2025-10-31 16:21:20 +07] [pid:59] ERROR 500 error email processed for http://localhost:3000/?code=4/0Ab32j91lWXjX0Fi944-9qVlOE9k8syR6rO_grZ5mpO405QsWvIi4A5yy4OYYWQ7_bUqqpg&scope=https://www.googleapis.com/auth/gmail.send
+[2025-10-31 16:21:39 +07] [pid:59] ERROR Dispatch error: Undefined subroutine &TravellersPalm::Database::General::themes called at /usr/src/app/lib/TravellersPalm/Controller/Destinations.pm line 71.
+[2025-10-31 16:21:40 +07] [pid:59] ERROR Failed to send 500 error email: Failed to refresh OAuth2 token: 400 Bad Request
+{
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+} at /usr/src/app/lib/TravellersPalm/Mailer/OAuth2.pm line 55.
+[2025-10-31 16:21:40 +07] [pid:59] ERROR 500 error email processed for http://localhost:3000/destinations/india/themes
+[2025-10-31 16:21:45 +07] [pid:59] ERROR Dispatch error: Undefined subroutine &TravellersPalm::Database::General::themes called at /usr/src/app/lib/TravellersPalm/Controller/Destinations.pm line 71.
+[2025-10-31 16:21:45 +07] [pid:59] ERROR Failed to send 500 error email: Failed to refresh OAuth2 token: 400 Bad Request
+{
+  "error": "invalid_grant",
+  "error_description": "Bad Request"
+} at /usr/src/app/lib/TravellersPalm/Mailer/OAuth2.pm line 55.
+[2025-10-31 16:21:45 +07] [pid:59] ERROR 500 error email processed for http://localhost:3000/destinations/india/themes
+[2025-10-31 18:47:57 +07] [pid:7] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 18:47:57 +07] [pid:7] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 18:47:57 +07] [pid:7] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 18:48:04 +07] [pid:7] DEBUG Cache system initialized
+[2025-10-31 18:48:04 +07] [pid:7] DEBUG Helpers registered
+[2025-10-31 18:48:04 +07] [pid:7] DEBUG Hooks registered safely
+[2025-10-31 18:48:04 +07] [pid:7] DEBUG All routes registered successfully
+[2025-10-31 18:48:04 +07] [pid:7] DEBUG TravellersPalm app started successfully
+[2025-10-31 18:49:26 +07] [pid:7] ERROR Dispatch error: Controller "TravellersPalm::Home" does not exist at /usr/src/app/local/lib/perl5/Mojolicious.pm line 127.
+[2025-10-31 18:49:38 +07] [pid:7] ERROR Failed to send 500 error email: Cannot connect to smtp.gmail.com: Bad file descriptor at /usr/src/app/lib/TravellersPalm/Mailer/OAuth2.pm line 97.
+[2025-10-31 18:49:38 +07] [pid:7] ERROR 500 error email processed for http://localhost:3000/
+[2025-10-31 18:52:17 +07] [pid:10] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 18:52:17 +07] [pid:10] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 18:52:17 +07] [pid:10] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 18:52:18 +07] [pid:10] DEBUG Cache system initialized
+[2025-10-31 18:52:18 +07] [pid:10] DEBUG Helpers registered
+[2025-10-31 18:52:18 +07] [pid:10] DEBUG Hooks registered safely
+[2025-10-31 18:52:18 +07] [pid:10] DEBUG All routes registered successfully
+[2025-10-31 18:52:18 +07] [pid:10] DEBUG TravellersPalm app started successfully
+[2025-10-31 18:52:21 +07] [pid:13] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 18:52:21 +07] [pid:13] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 18:52:21 +07] [pid:13] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 18:52:21 +07] [pid:13] DEBUG Cache system initialized
+[2025-10-31 18:52:21 +07] [pid:13] DEBUG Helpers registered
+[2025-10-31 18:52:21 +07] [pid:13] DEBUG Hooks registered safely
+[2025-10-31 18:52:21 +07] [pid:13] DEBUG All routes registered successfully
+[2025-10-31 18:52:21 +07] [pid:13] DEBUG TravellersPalm app started successfully
+[2025-10-31 18:53:22 +07] [pid:16] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 18:53:22 +07] [pid:16] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 18:53:22 +07] [pid:16] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 18:53:23 +07] [pid:16] DEBUG Cache system initialized
+[2025-10-31 18:53:23 +07] [pid:16] DEBUG Helpers registered
+[2025-10-31 18:53:23 +07] [pid:16] DEBUG Hooks registered safely
+[2025-10-31 18:53:23 +07] [pid:16] DEBUG All routes registered successfully
+[2025-10-31 18:53:23 +07] [pid:16] DEBUG TravellersPalm app started successfully
+[2025-10-31 18:54:07 +07] [pid:19] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 18:54:07 +07] [pid:19] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 18:54:07 +07] [pid:19] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 18:54:08 +07] [pid:19] DEBUG Cache system initialized
+[2025-10-31 18:54:08 +07] [pid:19] DEBUG Helpers registered
+[2025-10-31 18:54:08 +07] [pid:19] DEBUG Hooks registered safely
+[2025-10-31 18:54:08 +07] [pid:19] DEBUG All routes registered successfully
+[2025-10-31 18:54:08 +07] [pid:19] DEBUG TravellersPalm app started successfully
+[2025-10-31 18:56:48 +07] [pid:22] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 18:56:48 +07] [pid:22] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 18:56:48 +07] [pid:22] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 18:56:48 +07] [pid:22] DEBUG Cache system initialized
+[2025-10-31 18:56:48 +07] [pid:22] DEBUG Helpers registered
+[2025-10-31 18:56:48 +07] [pid:22] DEBUG Hooks registered safely
+[2025-10-31 18:56:48 +07] [pid:22] DEBUG All routes registered successfully
+[2025-10-31 18:56:48 +07] [pid:22] DEBUG TravellersPalm app started successfully
+[2025-10-31 18:57:03 +07] [pid:25] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 18:57:03 +07] [pid:25] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 18:57:03 +07] [pid:25] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 18:57:04 +07] [pid:25] DEBUG Cache system initialized
+[2025-10-31 18:57:04 +07] [pid:25] DEBUG Helpers registered
+[2025-10-31 18:57:04 +07] [pid:25] DEBUG Hooks registered safely
+[2025-10-31 18:57:04 +07] [pid:25] DEBUG All routes registered successfully
+[2025-10-31 18:57:04 +07] [pid:25] DEBUG TravellersPalm app started successfully
+[2025-10-31 18:57:25 +07] [pid:28] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 18:57:25 +07] [pid:28] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 18:57:25 +07] [pid:28] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 18:57:26 +07] [pid:28] DEBUG Cache system initialized
+[2025-10-31 18:57:26 +07] [pid:28] DEBUG Helpers registered
+[2025-10-31 18:57:26 +07] [pid:28] DEBUG Hooks registered safely
+[2025-10-31 18:57:26 +07] [pid:28] DEBUG All routes registered successfully
+[2025-10-31 18:57:26 +07] [pid:28] DEBUG TravellersPalm app started successfully
+[2025-10-31 18:59:26 +07] [pid:31] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 18:59:26 +07] [pid:31] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 18:59:26 +07] [pid:31] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 18:59:27 +07] [pid:31] DEBUG Cache system initialized
+[2025-10-31 18:59:27 +07] [pid:31] DEBUG Helpers registered
+[2025-10-31 18:59:27 +07] [pid:31] DEBUG Hooks registered safely
+[2025-10-31 18:59:27 +07] [pid:31] DEBUG All routes registered successfully
+[2025-10-31 18:59:27 +07] [pid:31] DEBUG TravellersPalm app started successfully
+[2025-10-31 18:59:39 +07] [pid:34] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 18:59:39 +07] [pid:34] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 18:59:39 +07] [pid:34] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 18:59:40 +07] [pid:34] DEBUG Cache system initialized
+[2025-10-31 18:59:40 +07] [pid:34] DEBUG Helpers registered
+[2025-10-31 18:59:40 +07] [pid:34] DEBUG Hooks registered safely
+[2025-10-31 18:59:40 +07] [pid:34] DEBUG All routes registered successfully
+[2025-10-31 18:59:40 +07] [pid:34] DEBUG TravellersPalm app started successfully
+[2025-10-31 18:59:49 +07] [pid:37] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 18:59:49 +07] [pid:37] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 18:59:49 +07] [pid:37] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 18:59:49 +07] [pid:37] DEBUG Cache system initialized
+[2025-10-31 18:59:49 +07] [pid:37] DEBUG Helpers registered
+[2025-10-31 18:59:49 +07] [pid:37] DEBUG Hooks registered safely
+[2025-10-31 18:59:49 +07] [pid:37] DEBUG All routes registered successfully
+[2025-10-31 18:59:49 +07] [pid:37] DEBUG TravellersPalm app started successfully
+[2025-10-31 19:02:35 +07] [pid:40] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 19:02:35 +07] [pid:40] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 19:02:35 +07] [pid:40] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 19:02:36 +07] [pid:40] DEBUG Cache system initialized
+[2025-10-31 19:02:36 +07] [pid:40] DEBUG Helpers registered
+[2025-10-31 19:02:36 +07] [pid:40] DEBUG Hooks registered safely
+[2025-10-31 19:02:36 +07] [pid:40] DEBUG All routes registered successfully
+[2025-10-31 19:02:36 +07] [pid:40] DEBUG TravellersPalm app started successfully
+[2025-10-31 19:10:06 +07] [pid:43] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 19:10:06 +07] [pid:43] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 19:10:06 +07] [pid:43] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 19:10:08 +07] [pid:43] DEBUG Cache system initialized
+[2025-10-31 19:10:08 +07] [pid:43] DEBUG Helpers registered
+[2025-10-31 19:10:08 +07] [pid:43] DEBUG Hooks registered safely
+[2025-10-31 19:10:08 +07] [pid:43] DEBUG All routes registered successfully
+[2025-10-31 19:10:08 +07] [pid:43] DEBUG TravellersPalm app started successfully
+[2025-10-31 21:06:33 +07] [pid:46] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 21:06:33 +07] [pid:46] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 21:06:33 +07] [pid:46] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 21:06:33 +07] [pid:46] DEBUG Cache system initialized
+[2025-10-31 21:06:33 +07] [pid:46] DEBUG Helpers registered
+[2025-10-31 21:06:33 +07] [pid:46] DEBUG Hooks registered safely
+[2025-10-31 21:06:33 +07] [pid:46] DEBUG All routes registered successfully
+[2025-10-31 21:06:33 +07] [pid:46] DEBUG TravellersPalm app started successfully
+[2025-10-31 21:06:47 +07] [pid:49] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 21:06:47 +07] [pid:49] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 21:06:47 +07] [pid:49] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 21:06:47 +07] [pid:49] DEBUG Cache system initialized
+[2025-10-31 21:06:47 +07] [pid:49] DEBUG Helpers registered
+[2025-10-31 21:06:47 +07] [pid:49] DEBUG Hooks registered safely
+[2025-10-31 21:06:47 +07] [pid:49] DEBUG All routes registered successfully
+[2025-10-31 21:06:47 +07] [pid:49] DEBUG TravellersPalm app started successfully
+[2025-10-31 21:07:04 +07] [pid:52] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 21:07:04 +07] [pid:52] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 21:07:04 +07] [pid:52] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 21:07:05 +07] [pid:52] DEBUG Cache system initialized
+[2025-10-31 21:07:05 +07] [pid:52] DEBUG Helpers registered
+[2025-10-31 21:07:05 +07] [pid:52] DEBUG Hooks registered safely
+[2025-10-31 21:07:05 +07] [pid:52] DEBUG All routes registered successfully
+[2025-10-31 21:07:05 +07] [pid:52] DEBUG TravellersPalm app started successfully
+[2025-10-31 21:09:07 +07] [pid:7] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 21:09:07 +07] [pid:7] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 21:09:07 +07] [pid:7] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 21:09:08 +07] [pid:7] DEBUG Cache system initialized
+[2025-10-31 21:09:08 +07] [pid:7] DEBUG Helpers registered
+[2025-10-31 21:09:08 +07] [pid:7] DEBUG Hooks registered safely
+[2025-10-31 21:09:08 +07] [pid:7] DEBUG All routes registered successfully
+[2025-10-31 21:09:08 +07] [pid:7] DEBUG TravellersPalm app started successfully
+[2025-10-31 21:09:30 +07] [pid:10] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 21:09:30 +07] [pid:10] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 21:09:30 +07] [pid:10] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 21:09:31 +07] [pid:10] DEBUG Cache system initialized
+[2025-10-31 21:09:31 +07] [pid:10] DEBUG Helpers registered
+[2025-10-31 21:09:31 +07] [pid:10] DEBUG Hooks registered safely
+[2025-10-31 21:09:31 +07] [pid:10] DEBUG All routes registered successfully
+[2025-10-31 21:09:31 +07] [pid:10] DEBUG TravellersPalm app started successfully
+[2025-10-31 21:09:48 +07] [pid:13] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 21:09:48 +07] [pid:13] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 21:09:48 +07] [pid:13] DEBUG OAuth2 transport created successfully
+[2025-10-31 21:09:48 +07] [pid:13] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 21:09:49 +07] [pid:13] DEBUG Cache system initialized
+[2025-10-31 21:09:49 +07] [pid:13] DEBUG Helpers registered
+[2025-10-31 21:09:49 +07] [pid:13] DEBUG Hooks registered safely
+[2025-10-31 21:09:49 +07] [pid:13] DEBUG All routes registered successfully
+[2025-10-31 21:09:49 +07] [pid:13] DEBUG TravellersPalm app started successfully
+[2025-10-31 21:10:14 +07] [pid:7] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 21:10:14 +07] [pid:7] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 21:10:14 +07] [pid:7] DEBUG OAuth2 transport created successfully
+[2025-10-31 21:10:14 +07] [pid:7] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 21:10:15 +07] [pid:7] DEBUG Cache system initialized
+[2025-10-31 21:10:15 +07] [pid:7] DEBUG Helpers registered
+[2025-10-31 21:10:15 +07] [pid:7] DEBUG Hooks registered safely
+[2025-10-31 21:10:15 +07] [pid:7] DEBUG All routes registered successfully
+[2025-10-31 21:10:15 +07] [pid:7] DEBUG TravellersPalm app started successfully
+[2025-10-31 21:12:15 +07] [pid:7] DEBUG Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-10-31 21:12:15 +07] [pid:7] DEBUG [SQL]
+    SELECT meta_title, meta_descr, meta_keywords FROM webpages WHERE url = ?
+ | binds: 'explore-by-interest' | called from: TravellersPalm::Database::Core::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Core/Connector.pm line 129 | route: /destinations/india/themes
+[2025-10-31 21:12:15 +07] [pid:7] ERROR Dispatch error: Undefined subroutine &TravellersPalm::Database::General::themes called at /usr/src/app/lib/TravellersPalm/Controller/Destinations.pm line 71.
+[2025-10-31 21:12:15 +07] [pid:7] INFO Attempting to send error email:
+[2025-10-31 21:12:15 +07] [pid:7] INFO From: system@travellerspalm.com
+[2025-10-31 21:12:15 +07] [pid:7] INFO To: admin@odyssey.co.in
+[2025-10-31 21:12:15 +07] [pid:7] INFO Subject: 500 Error Notification
+[2025-10-31 21:12:44 +07] [pid:7] ERROR Failed to send 500 error email: Failed to connect after 3 attempts: Cannot connect to smtp.gmail.com:465: Interrupted system call (attempt 3/3) at /usr/src/app/lib/TravellersPalm/Mailer/OAuth2.pm line 129.
+[2025-10-31 21:12:44 +07] [pid:7] ERROR Email configuration debug:
+[2025-10-31 21:12:44 +07] [pid:7] ERROR OAuth2 configured: YES
+[2025-10-31 21:12:44 +07] [pid:7] ERROR Email host: smtp.gmail.com
+[2025-10-31 21:12:44 +07] [pid:7] ERROR Email port: 465
+[2025-10-31 21:12:44 +07] [pid:7] ERROR Email user: admin@odyssey.co.in
+[2025-10-31 21:12:44 +07] [pid:7] ERROR 500 error email processed for http://localhost:3000/destinations/india/themes
+[2025-10-31 21:12:46 +07] [pid:34] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 21:12:46 +07] [pid:34] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 21:12:46 +07] [pid:34] DEBUG OAuth2 transport created successfully
+[2025-10-31 21:12:46 +07] [pid:34] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 21:12:46 +07] [pid:34] DEBUG Cache system initialized
+[2025-10-31 21:12:46 +07] [pid:34] DEBUG Helpers registered
+[2025-10-31 21:12:46 +07] [pid:34] DEBUG Hooks registered safely
+[2025-10-31 21:12:46 +07] [pid:34] DEBUG All routes registered successfully
+[2025-10-31 21:12:46 +07] [pid:34] DEBUG TravellersPalm app started successfully
+[2025-10-31 21:17:39 +07] [pid:37] DEBUG Logger initialized at /usr/src/app/log/app.log
+[2025-10-31 21:17:39 +07] [pid:37] DEBUG Setting up OAuth2 email transport for Gmail
+[2025-10-31 21:17:39 +07] [pid:37] DEBUG OAuth2 transport created successfully
+[2025-10-31 21:17:39 +07] [pid:37] DEBUG Email transport initialized using OAuth2 for host: smtp.gmail.com
+[2025-10-31 21:17:39 +07] [pid:37] DEBUG Cache system initialized
+[2025-10-31 21:17:39 +07] [pid:37] DEBUG Helpers registered
+[2025-10-31 21:17:39 +07] [pid:37] DEBUG Hooks registered safely
+[2025-10-31 21:17:39 +07] [pid:37] DEBUG All routes registered successfully
+[2025-10-31 21:17:39 +07] [pid:37] DEBUG TravellersPalm app started successfully

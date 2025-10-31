@@ -37,7 +37,7 @@ sub _log_sql {
             }
             # Truncate overly long values
             if (length($v) > 120) {
-                $v = "'<' . 'LONG_DATA_' . length($v) . '>' . "'";
+                $v = "'<'" . 'LONG_DATA_' . length($v) . '>' . "'";
             }
             $v
         }

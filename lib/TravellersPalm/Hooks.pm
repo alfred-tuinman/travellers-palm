@@ -84,6 +84,11 @@ sub register {
         my $subject = $self->config->{email}{error}{subject} // "[TravellersPalm] Error at $url";
 
         eval {
+            $self->log->info("Attempting to send error email:");
+            $self->log->info("From: $from");
+            $self->log->info("To: $ENV{EMAIL_USER}");
+            $self->log->info("Subject: $subject");
+            
             Email::Stuffer
                 ->from($from)
                 ->to($ENV{EMAIL_USER})
@@ -91,9 +96,19 @@ sub register {
                 ->html_body($body)
                 ->transport($self->app->email_transport)
                 ->send;
+                
+            $self->log->info("=== Error email sent successfully ===");
             1;
         } or do {
-            $self->log->error("Failed to send 500 error email: $@");
+            my $error = $@;
+            $self->log->error("Failed to send 500 error email: $error");
+            
+            # Log additional debugging information
+            $self->log->error("Email configuration debug:");
+            $self->log->error("  OAuth2 configured: " . (($ENV{EMAIL_CLIENT_ID} && $ENV{EMAIL_CLIENT_SECRET} && $ENV{EMAIL_REFRESH_TOKEN}) ? "YES" : "NO"));
+            $self->log->error("  Email host: " . ($ENV{EMAIL_HOST} || "NOT SET"));
+            $self->log->error("  Email port: " . ($ENV{EMAIL_PORT} || "NOT SET"));
+            $self->log->error("  Email user: " . ($ENV{EMAIL_USER} || "NOT SET"));
         };
 
         $self->log->error("500 error email processed for $url");
