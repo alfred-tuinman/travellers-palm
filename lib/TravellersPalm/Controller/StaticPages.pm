@@ -226,7 +226,7 @@ sub post_enquiry ($self) {
     my $email  = TravellersPalm::Database::Users::user_is_registered($self) ? user_email() : "";
     my $tags   = TravellersPalm::Database::General::metatags($self->_last_path_segment, $self);
 
-    email_request($params);
+    email_request($params, $self);
 
     $self->render(
         template => 'enquiry_thankyou',

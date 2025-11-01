@@ -15,6 +15,8 @@ use TravellersPalm::Database::Core::Validation qw(
 );
 use Email::Valid;
 use MIME::Base32;
+use Email::MIME;
+use Encode;
 use Digest::SHA qw(hmac_sha1);
 use URI::Escape;
 use POSIX qw(floor);
@@ -32,13 +34,71 @@ sub send_password {
     };
     if ($@) {
         warn "Input validation failed in send_password(): $@";
-        return;
+        return { error => "Invalid email format" };
     }
 
-    # This can later integrate with TravellersPalm::Mail
-    # or a similar mailer subsystem.
-    warn "send_password() not yet implemented for $email\n";
-    return;
+    # Check if user exists
+    my $user = user_exist($email, $c);
+    unless ($user && $user->{rowid}) {
+        warn "User not found for email: $email";
+        return { error => "User not found" };
+    }
+
+    # Generate new password
+    my $new_password = generate_password(12, $c);
+    
+    # Update password in database
+    my $update_result = update_password($user->{rowid}, $new_password, $c);
+    unless ($update_result) {
+        warn "Failed to update password for user: $email";
+        return { error => "Failed to update password" };
+    }
+
+    # Send email with new password
+    eval {
+        my $from = $c->config->{email}{from} || 'noreply@travellerspalm.com';
+        my $subject = 'Your new password for ' . ($c->config->{appname} || 'TravellersPalm');
+        
+        my $body = sprintf(
+            "Hello,\n\nYour new password is: %s\n\n" .
+            "Please log in and change this password as soon as possible.\n\n" .
+            "Best regards,\n%s Team",
+            $new_password,
+            $c->config->{appname} || 'TravellersPalm'
+        );
+        
+        my $encoded_body = encode('UTF-8', $body);
+        
+        my $email_obj = Email::MIME->create(
+            header_str => [
+                From    => $from,
+                To      => $email,
+                Subject => $subject,
+            ],
+            attributes => {
+                content_type => 'text/plain',
+                charset      => 'UTF-8',
+                encoding     => 'quoted-printable',
+            },
+            body => $encoded_body,
+        );
+        
+        # Use the transport from our Mailer
+        my $transport = $c->app->email_transport;
+        $transport->send_email($email_obj, {
+            from => $from,
+            to   => [$email],
+        });
+        
+        $c->log->info("Password reset email sent to: $email");
+        
+    };
+    if ($@) {
+        warn "Failed to send password email to $email: $@";
+        return { error => "Failed to send email" };
+    }
+
+    return { success => 1 };
 }
 
 #--------------------------------------------------

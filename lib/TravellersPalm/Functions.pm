@@ -9,6 +9,8 @@ use Data::Dumper qw(Dumper);
 use Date::Manip::Date;
 use Data::FormValidator;
 use Email::Valid;
+use Email::MIME;
+use Encode;
 use Exporter 'import';
 use Geo::Location::TimeZone;
 use HTML::LinkExtor;
@@ -140,24 +142,88 @@ sub elog {
 }
 
 sub email_request {
-    my ($name, $email, $reference, $message) = @_;
+    my ($params, $c) = @_;
+    
+    # Extract parameters from params hash if it's a hash reference
+    my ($name, $email, $reference, $message);
+    if (ref($params) eq 'HASH') {
+        $name = $params->{name};
+        $email = $params->{email};
+        $reference = $params->{reference} || $params->{subject};
+        $message = $params->{message} || $params->{body};
+    } else {
+        # Legacy call with individual parameters
+        ($name, $email, $reference, $message) = ($params, $c, @_[2..3]);
+        $c = undef; # In legacy mode, we don't have controller access
+    }
 
     # Basic sanity checks
     for ($name, $email, $reference, $message) {
         return { error => 'Missing parameter(s)' } unless defined $_ && length $_;
     }
 
-    # Simple email format sanity check
-    unless ($email =~ /^[^\s@]+@[^\s@]+\.[^\s@]+$/) {
+    # Validate email format using Email::Valid
+    unless (Email::Valid->address($email)) {
         return { error => 'Invalid email format' };
     }
 
-    # Placeholder for actual mail sending logic
-    # (e.g., using Email::Stuffer, Mojo::Mail, or MIME::Lite)
-    # my $result = send_mail(...);
+    # If we don't have controller access, just return success (legacy behavior)
+    unless ($c) {
+        warn "email_request called without controller - email not sent";
+        return { success => 1 };
+    }
 
-    return 1;
-    # better would be   return { success => 1 };
+    # Send the actual email using our Mailer
+    eval {
+        my $from = $c->config->{email}{from} || 'noreply@travellerspalm.com';
+        my $to = $c->config->{email}{enquiries_to} || $c->config->{email}{admin} || 'admin@travellerspalm.com';
+        my $subject = 'Website Enquiry: ' . $reference;
+        
+        my $body = sprintf(
+            "New enquiry received:\n\n" .
+            "Name: %s\n" .
+            "Email: %s\n" .
+            "Reference: %s\n\n" .
+            "Message:\n%s\n\n" .
+            "---\n" .
+            "Sent from: %s",
+            $name, $email, $reference, $message,
+            $c->req->headers->host || 'website'
+        );
+        
+        my $encoded_body = encode('UTF-8', $body);
+        
+        my $email_obj = Email::MIME->create(
+            header_str => [
+                From     => $from,
+                To       => $to,
+                Subject  => $subject,
+                'Reply-To' => $email,  # Allow easy replies to the enquirer
+            ],
+            attributes => {
+                content_type => 'text/plain',
+                charset      => 'UTF-8',
+                encoding     => 'quoted-printable',
+            },
+            body => $encoded_body,
+        );
+        
+        # Use the transport from our Mailer
+        my $transport = $c->app->email_transport;
+        $transport->send_email($email_obj, {
+            from => $from,
+            to   => [$to],
+        });
+        
+        $c->log->info("Enquiry email sent from: $email (name: $name)");
+        
+    };
+    if ($@) {
+        warn "Failed to send enquiry email: $@";
+        return { error => "Failed to send email" };
+    }
+
+    return { success => 1 };
 }
 
 

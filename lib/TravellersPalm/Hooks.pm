@@ -3,7 +3,7 @@ package TravellersPalm::Hooks;
 use strict;
 use warnings;
 
-use Email::Stuffer;
+use Email::MIME;
 use Mojo::File;
 use POSIX qw(strftime);
 use Sys::Hostname 'hostname';
@@ -279,7 +279,7 @@ sub register {
             $self->log->error("Failed to render error_email template: $@");
         };
 
-        my $from    = $self->config->{email}{error}{from}    // 'system@travellerspalm.com';
+        my $from    = $self->config->{email}{error}{from}    // $self->config->{email}{from} // 'system@travellerspalm.com';
         my $subject = $self->config->{email}{error}{subject} // "[TravellersPalm] Error at $url";
 
         # Debug: Log the email configuration being used
@@ -289,14 +289,12 @@ sub register {
         eval {
             $self->log->info("Attempting to send error email:");
             $self->log->info("From: $from");
-            $self->log->info("To: $ENV{EMAIL_USER}");
+            my $error_to = $self->config->{email}{error}{to} || $self->config->{email}{admin} || $ENV{EMAIL_USER};
+            $self->log->info("To: $error_to");
             $self->log->info("Subject: $subject");
             
             # Get the transport object
             my $transport = $self->app->email_transport;
-            
-            # Create a simple email object that our transport can handle
-            require Email::MIME;
             
             # Properly encode the body to avoid wide character issues
             my $encoded_body = encode('UTF-8', $body);
@@ -304,7 +302,7 @@ sub register {
             my $email = Email::MIME->create(
                 header_str => [
                     From    => $from,
-                    To      => $ENV{EMAIL_USER},
+                    To      => $error_to,
                     Subject => $subject,
                 ],
                 attributes => {
@@ -318,7 +316,7 @@ sub register {
             # Use our transport directly
             $transport->send_email($email, {
                 from => $from,
-                to   => [$ENV{EMAIL_USER}]
+                to   => [$error_to]
             });
                 
             $self->log->info("=== Error email sent successfully ===");
@@ -332,7 +330,7 @@ sub register {
             $self->log->error("  OAuth2 configured: " . (($ENV{EMAIL_CLIENT_ID} && $ENV{EMAIL_CLIENT_SECRET} && $ENV{EMAIL_REFRESH_TOKEN}) ? "YES" : "NO"));
             $self->log->error("  Email host: " . ($ENV{EMAIL_HOST} || "NOT SET"));
             $self->log->error("  Email port: " . ($ENV{EMAIL_PORT} || "NOT SET"));
-            $self->log->error("  Email user: " . ($ENV{EMAIL_USER} || "NOT SET"));
+            $self->log->error("  Email user: " . ($error_to || "NOT SET"));
         };
 
         $self->log->error("500 error email processed for $url");

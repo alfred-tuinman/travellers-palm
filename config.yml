@@ -12,9 +12,20 @@ log:
   timezone: "Asia/Kolkata"
 
 email:
+  # Default sending address for outgoing emails
+  from: 'noreply@travellerspalm.com'
+  
+  # Administrative emails
+  admin: 'admin@odyssey.co.in'
+  
+  # Contact form and enquiries
+  enquiries_to: 'admin@odyssey.co.in'
+  
+  # Error notification settings
   error:
     from:    'system@travellerspalm.com'
     subject: '500 Error Notification'
+    to:      'admin@odyssey.co.in'
 
 template_tokens:
   PHONE1: "+91 88051 22221"

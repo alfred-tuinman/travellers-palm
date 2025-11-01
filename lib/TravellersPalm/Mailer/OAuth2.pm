@@ -223,32 +223,19 @@ TravellersPalm::Mailer::OAuth2 - OAuth2 Gmail authentication for Email::Sender
 =head1 SYNOPSIS
 
     use TravellersPalm::Mailer::OAuth2;
-    use Email::Stuffer;
     
-    # Create OAuth2 mailer
-    my $oauth_mailer = TravellersPalm::Mailer::OAuth2->new(
+    my $mailer = TravellersPalm::Mailer::OAuth2->new(
         client_id     => $ENV{EMAIL_CLIENT_ID},
         client_secret => $ENV{EMAIL_CLIENT_SECRET}, 
         refresh_token => $ENV{EMAIL_REFRESH_TOKEN},
         email_user    => $ENV{EMAIL_USER},
     );
     
-    # Direct sending
-    $oauth_mailer->send_email(
-        to      => 'recipient@example.com',
-        subject => 'Test Message',
-        body    => 'Hello from OAuth2!',
+    $mailer->send_email(
+        to      => 'user@example.com',
+        subject => 'Subject',
+        body    => 'Message body',
     );
-    
-    # Or use with Email::Stuffer
-    my $transport = $oauth_mailer->get_transport();
-    
-    Email::Stuffer->from('admin@odyssey.co.in')
-                  ->to('recipient@example.com')
-                  ->subject('Test Message')
-                  ->text_body('Hello from OAuth2!')
-                  ->transport($transport)
-                  ->send;
 
 =head1 DESCRIPTION
 

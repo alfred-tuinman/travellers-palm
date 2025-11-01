@@ -6,8 +6,8 @@ use DBI;
 use Data::Dumper;
 use Exporter 'import';
 use POSIX qw(strftime);
-use Email::Sender::Transport::SMTP;
-use Email::Stuffer;
+use Email::MIME;
+use Encode;
 
 our @EXPORT_OK = qw(fetch_row fetch_all insert_row update_row delete_row);
 
@@ -168,7 +168,7 @@ sub _handle_db_error {
 
     if ($c && $c->config->{email}) {
         my $url     = $c->req->url->path->to_string;
-        my $from    = $c->config->{email}{error}{from}    // 'noreply@travellerspalm.com';
+        my $from    = $c->config->{email}{error}{from}    // $c->config->{email}{from} // 'system@travellerspalm.com';
         my $subject = $c->config->{email}{error}{subject}
             // ( $c->config->{appname} // 'TravellersPalm') . " Error at $url";
 
@@ -176,12 +176,30 @@ sub _handle_db_error {
             $op, $error, $url, scalar localtime );
 
         eval {
-            Email::Stuffer->from($from)
-                          ->to($ENV{EMAIL_USER})
-                          ->subject($subject)
-                          ->text_body($body)
-                          ->transport($c->app->email_transport)
-                          ->send;
+            # Create email using Email::MIME to work with our transport
+            my $encoded_body = encode('UTF-8', $body);
+            
+            my $email = Email::MIME->create(
+                header_str => [
+                    From    => $from,
+                    To      => $c->config->{email}{error}{to} || $c->config->{email}{admin} || $ENV{EMAIL_USER},
+                    Subject => $subject,
+                ],
+                attributes => {
+                    content_type => 'text/plain',
+                    charset      => 'UTF-8',
+                    encoding     => 'quoted-printable',
+                },
+                body => $encoded_body,
+            );
+            
+            # Use the transport from our Mailer
+            my $transport = $c->app->email_transport;
+            my $error_to = $c->config->{email}{error}{to} || $c->config->{email}{admin} || $ENV{EMAIL_USER};
+            $transport->send_email($email, {
+                from => $from,
+                to   => [$error_to],
+            });
         };
     }
 
