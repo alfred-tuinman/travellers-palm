@@ -1,7 +1,12 @@
 #!/bin/bash
 
-# Stop, rebuild, start containers, measure startup time,
-# and check if Carton installs anything.
+# NOTE for Copilot and developers:
+# This script intelligently rebuilds only when dependencies change.
+# It checks if cpanfile or cpanfile.snapshot are newer than the last build.
+# Rebuilds reinstall all Perl modules and are only needed when dependencies change.
+
+# Stop, restart containers with intelligent rebuild detection,
+# measure startup time, and check if Carton installs anything.
 
 set -e  # exit on errors
 
@@ -11,10 +16,18 @@ echo "Stopping and removing old containers..."
 docker compose down
 
 echo
-echo "Rebuilding and starting containers..."
+echo "Starting containers (using cached images)..."
 START_TIME=$(date +%s)
 
-docker compose up --build -d
+# Only rebuild if cpanfile or cpanfile.snapshot changed
+if [ cpanfile -nt .docker-deps-cache ] || [ cpanfile.snapshot -nt .docker-deps-cache ] || [ ! -f .docker-deps-cache ]; then
+    echo "📦 Dependencies changed - rebuilding image..."
+    docker compose up --build -d
+    touch .docker-deps-cache
+else
+    echo "✅ Using cached image (dependencies unchanged)"
+    docker compose up -d
+fi
 
 END_TIME=$(date +%s)
 ELAPSED=$((END_TIME - START_TIME))
@@ -44,4 +57,4 @@ echo
 echo "=== Restart complete ==="
 echo "Application should be available at: http://localhost:3000"
 echo
-echo "💡 Run ./restart.sh again to see Docker layer caching in action!"
+echo "💡 Dependencies are cached - next restart will be even faster if no cpanfile changes!"

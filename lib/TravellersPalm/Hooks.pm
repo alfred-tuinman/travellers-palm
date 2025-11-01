@@ -7,6 +7,8 @@ use Email::Stuffer;
 use Mojo::File;
 use POSIX qw(strftime);
 use Sys::Hostname 'hostname';
+use DateTime;
+use DateTime::TimeZone;
 
 sub register {
     my ($self) = @_;
@@ -23,13 +25,18 @@ sub register {
     $self->hook(before_dispatch => sub {
         my ($c) = @_;
 
-        my $date = strftime('%Y-%m-%d', localtime);
+        # Get current date in configured timezone for log rotation
+        my $timezone = $self->config->{log}{timezone} // 'UTC';
+        my $dt = DateTime->now(time_zone => $timezone);
+        my $date = $dt->strftime('%Y-%m-%d');
 
         # Rotate daily log
         eval {
             my $log_path = $self->config->{log}{path};
-            my $log_dir  = Mojo::File->new($log_path)->dirname;
-            my $current_log = $log_dir->child("travellers_palm.log.$date");
+            my $log_file = Mojo::File->new($log_path);
+            my $log_dir  = $log_file->dirname;
+            my $log_basename = $log_file->basename;
+            my $current_log = $log_dir->child("$log_basename.$date");
             rename $log_path, $current_log if -f $log_path && !-f $current_log;
             1;
         } or do {

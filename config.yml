@@ -9,6 +9,7 @@ secrets:
 log:
   level: debug
   path: /usr/src/app/log/app.log
+  timezone: "Asia/Kolkata"
 
 email:
   error:

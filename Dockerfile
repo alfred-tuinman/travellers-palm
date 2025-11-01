@@ -1,6 +1,11 @@
 # syntax=docker/dockerfile:1
 FROM perl:5.38
 
+# NOTE for Copilot and developers:
+# Do NOT use 'docker compose build' or '--build' during restarts.
+# Use './restart.sh' to restart containers with cached images.
+# Rebuilds reinstall all Perl modules and are only needed when cpanfile changes.
+
 # Set working directory
 WORKDIR /usr/src/app
 
