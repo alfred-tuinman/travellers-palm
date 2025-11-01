@@ -6886,3 +6886,280 @@ Line: 127
 [2025-11-01 20:49:00 IST] [pid:59] DEBUG Hooks registered safely
 [2025-11-01 20:49:00 IST] [pid:59] DEBUG All routes registered successfully
 [2025-11-01 20:49:00 IST] [pid:59] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:36:22 IST] [pid:9] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:36:22 IST] [pid:9] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:36:22 IST] [pid:9] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:36:22 IST] [pid:9] DEBUG Cache system initialized
+[2025-11-01 22:36:22 IST] [pid:9] DEBUG Helpers registered
+[2025-11-01 22:36:22 IST] [pid:9] DEBUG Hooks registered safely
+[2025-11-01 22:36:22 IST] [pid:9] DEBUG All routes registered successfully
+[2025-11-01 22:36:22 IST] [pid:9] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG [SQL]
+    SELECT meta_title, meta_descr, meta_keywords FROM webpages WHERE url = ?
+ | binds: 'explore-by-interest' | called from: TravellersPalm::Database::Core::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Core/Connector.pm line 129 | route: /destinations/india/themes
+[2025-11-01 22:36:23 IST] [pid:9] ERROR Dispatch error: Undefined subroutine &TravellersPalm::Database::Themes::themes called at /usr/src/app/lib/TravellersPalm/Controller/Destinations.pm line 71.
+[2025-11-01 22:36:23 IST] [pid:9] INFO SANITIZATION TEST: Original exception length: 141, Sanitized length: 110
+[2025-11-01 22:36:23 IST] [pid:9] INFO DEBUG: after_dispatch triggered with status 500
+[2025-11-01 22:36:23 IST] [pid:9] INFO DEBUG: Exception data: Undefined subroutine &TravellersPalm::Database::Themes::themes called at [ENCODED_TOKEN_REDACTED].pm line 71.
+[2025-11-01 22:36:23 IST] [pid:9] INFO DEBUG: Response body: 500 Internal Server Error occurred at http://localhost:3000/destinations/india/themes
+Method: GET
+Exception: Undefined subroutine &TravellersPalm::Database::Themes::themes called at [ENCODED_TOKEN_REDACTED].pm line 71.
+
+Time: Sat Nov  1 17:06:23 2025
+User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0
+IP Address: 172.19.0.1
+Main Heading: System Error (500)
+Error Text: Choice();
+Content Preview:  MAKE AN ENQUIRY Mobile Menu Toggle The experts in tailor-made holidays to India Home About Us Testimonials Explore India Explore by Region Explore by State Explore by Interest Ready Tours FAQ What to Expect Why Travel With Us Hand-picked Hotels Policies Contact Us Home About Us Testimonials Explore...
+File: [ENCODED_TOKEN_REDACTED].pm
+Line: 71
+[2025-11-01 22:36:23 IST] [pid:9] INFO DEBUG: Response code: 500
+[2025-11-01 22:36:23 IST] [pid:9] INFO DEBUG: Stash keys available: mojo.rendered, mojo.finished, mojo.routed, content, YEAR, STATES, IMAGE, message, REGIONS, CURRENCY, exception, status, TAILOR, mojo.content, mojo.captures, action, country, IDEAS, THEMES, PHONE1, PHONE2, controller, DOMAIN, mojo.log, COUNTRY, mojo.respond, mojo.session
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG Template rendered successfully, length: 1859
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG Template preview: 
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>[TravellersPalm] 500 Internal
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG Email From address from config: system@travellerspalm.com
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG Using From address: system@travellerspalm.com
+[2025-11-01 22:36:23 IST] [pid:9] INFO Attempting to send error email:
+[2025-11-01 22:36:23 IST] [pid:9] INFO From: system@travellerspalm.com
+[2025-11-01 22:36:23 IST] [pid:9] INFO To: admin@odyssey.co.in
+[2025-11-01 22:36:23 IST] [pid:9] INFO Subject: 500 Error Notification
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG Email object type: Email::MIME
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG Email has 1 parts
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG Part 0 content type: text/html; charset=UTF-8
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG Got body from part 0, length: 1874
+[2025-11-01 22:36:23 IST] [pid:9] INFO === EMAIL SEND ATTEMPT START ===
+[2025-11-01 22:36:23 IST] [pid:9] INFO From: system@travellerspalm.com
+[2025-11-01 22:36:23 IST] [pid:9] INFO To: admin@odyssey.co.in
+[2025-11-01 22:36:23 IST] [pid:9] INFO Subject: 500 Error Notification
+[2025-11-01 22:36:23 IST] [pid:9] INFO Body preview: 
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>[TravellersPalm] 500 Internal Error</title>
+  <style>
+    body { font-family: sans-serif; background: #fafafa; color: #333; }
+ ...
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG Attempting SMTP send via smtp.gmail.com:587
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG SMTP Config - Host: smtp.gmail.com, Port: 587, User: admin@odyssey.co.in, TLS: 1
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG All SMTP auth modules loaded successfully
+[2025-11-01 22:36:23 IST] [pid:9] DEBUG Using direct Net::SMTP for Gmail (bypass Email::Sender issues)
+[2025-11-01 22:36:24 IST] [pid:9] DEBUG STARTTLS successful, attempting authentication
+[2025-11-01 22:36:24 IST] [pid:9] DEBUG SASL modules loaded successfully
+[2025-11-01 22:36:25 IST] [pid:9] DEBUG Authentication successful, sending email
+[2025-11-01 22:36:28 IST] [pid:9] INFO EMAIL SENT SUCCESSFULLY via direct Net::SMTP to smtp.gmail.com
+[2025-11-01 22:36:28 IST] [pid:9] INFO === Error email sent successfully ===
+[2025-11-01 22:36:28 IST] [pid:9] ERROR 500 error email processed for http://localhost:3000/destinations/india/themes
+[2025-11-01 22:36:57 IST] [pid:12] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:36:57 IST] [pid:12] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:36:57 IST] [pid:12] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:36:58 IST] [pid:12] DEBUG Cache system initialized
+[2025-11-01 22:36:58 IST] [pid:12] DEBUG Helpers registered
+[2025-11-01 22:36:58 IST] [pid:12] DEBUG Hooks registered safely
+[2025-11-01 22:36:58 IST] [pid:12] DEBUG All routes registered successfully
+[2025-11-01 22:36:58 IST] [pid:12] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:37:28 IST] [pid:8] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:37:28 IST] [pid:8] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:37:28 IST] [pid:8] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:37:29 IST] [pid:8] DEBUG Cache system initialized
+[2025-11-01 22:37:29 IST] [pid:8] DEBUG Helpers registered
+[2025-11-01 22:37:29 IST] [pid:8] DEBUG Hooks registered safely
+[2025-11-01 22:37:29 IST] [pid:8] DEBUG All routes registered successfully
+[2025-11-01 22:37:29 IST] [pid:8] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:38:25 IST] [pid:11] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:38:25 IST] [pid:11] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:38:25 IST] [pid:11] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:38:26 IST] [pid:11] DEBUG Cache system initialized
+[2025-11-01 22:38:26 IST] [pid:11] DEBUG Helpers registered
+[2025-11-01 22:38:26 IST] [pid:11] DEBUG Hooks registered safely
+[2025-11-01 22:38:26 IST] [pid:11] DEBUG All routes registered successfully
+[2025-11-01 22:38:26 IST] [pid:11] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:38:33 IST] [pid:14] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:38:33 IST] [pid:14] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:38:33 IST] [pid:14] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:38:33 IST] [pid:14] DEBUG Cache system initialized
+[2025-11-01 22:38:33 IST] [pid:14] DEBUG Helpers registered
+[2025-11-01 22:38:33 IST] [pid:14] DEBUG Hooks registered safely
+[2025-11-01 22:38:33 IST] [pid:14] DEBUG All routes registered successfully
+[2025-11-01 22:38:33 IST] [pid:14] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:38:53 IST] [pid:17] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:38:53 IST] [pid:17] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:38:53 IST] [pid:17] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:38:54 IST] [pid:17] DEBUG Cache system initialized
+[2025-11-01 22:38:54 IST] [pid:17] DEBUG Helpers registered
+[2025-11-01 22:38:54 IST] [pid:17] DEBUG Hooks registered safely
+[2025-11-01 22:38:54 IST] [pid:17] DEBUG All routes registered successfully
+[2025-11-01 22:38:54 IST] [pid:17] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:39:28 IST] [pid:8] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:39:28 IST] [pid:8] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:39:28 IST] [pid:8] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:39:29 IST] [pid:8] DEBUG Cache system initialized
+[2025-11-01 22:39:29 IST] [pid:8] DEBUG Helpers registered
+[2025-11-01 22:39:29 IST] [pid:8] DEBUG Hooks registered safely
+[2025-11-01 22:39:29 IST] [pid:8] DEBUG All routes registered successfully
+[2025-11-01 22:39:29 IST] [pid:8] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:42:41 IST] [pid:11] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:42:42 IST] [pid:11] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:42:42 IST] [pid:11] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:42:42 IST] [pid:11] DEBUG Cache system initialized
+[2025-11-01 22:42:42 IST] [pid:11] DEBUG Helpers registered
+[2025-11-01 22:42:42 IST] [pid:11] DEBUG Hooks registered safely
+[2025-11-01 22:42:42 IST] [pid:11] DEBUG All routes registered successfully
+[2025-11-01 22:42:42 IST] [pid:11] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:43:31 IST] [pid:14] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:43:31 IST] [pid:14] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:43:31 IST] [pid:14] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:43:33 IST] [pid:14] DEBUG Cache system initialized
+[2025-11-01 22:43:33 IST] [pid:14] DEBUG Helpers registered
+[2025-11-01 22:43:33 IST] [pid:14] DEBUG Hooks registered safely
+[2025-11-01 22:43:33 IST] [pid:14] DEBUG All routes registered successfully
+[2025-11-01 22:43:33 IST] [pid:14] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:43:41 IST] [pid:17] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:43:41 IST] [pid:17] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:43:41 IST] [pid:17] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:43:42 IST] [pid:17] DEBUG Cache system initialized
+[2025-11-01 22:43:42 IST] [pid:17] DEBUG Helpers registered
+[2025-11-01 22:43:42 IST] [pid:17] DEBUG Hooks registered safely
+[2025-11-01 22:43:42 IST] [pid:17] DEBUG All routes registered successfully
+[2025-11-01 22:43:42 IST] [pid:17] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:45:01 IST] [pid:20] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:45:01 IST] [pid:20] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:45:01 IST] [pid:20] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:45:01 IST] [pid:20] DEBUG Cache system initialized
+[2025-11-01 22:45:01 IST] [pid:20] DEBUG Helpers registered
+[2025-11-01 22:45:01 IST] [pid:20] DEBUG Hooks registered safely
+[2025-11-01 22:45:01 IST] [pid:20] DEBUG All routes registered successfully
+[2025-11-01 22:45:01 IST] [pid:20] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:45:22 IST] [pid:23] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:45:22 IST] [pid:23] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:45:22 IST] [pid:23] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:45:22 IST] [pid:23] DEBUG Cache system initialized
+[2025-11-01 22:45:22 IST] [pid:23] DEBUG Helpers registered
+[2025-11-01 22:45:22 IST] [pid:23] DEBUG Hooks registered safely
+[2025-11-01 22:45:22 IST] [pid:23] DEBUG All routes registered successfully
+[2025-11-01 22:45:22 IST] [pid:23] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:45:57 IST] [pid:9] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:45:57 IST] [pid:9] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:45:57 IST] [pid:9] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:45:58 IST] [pid:9] DEBUG Cache system initialized
+[2025-11-01 22:45:58 IST] [pid:9] DEBUG Helpers registered
+[2025-11-01 22:45:58 IST] [pid:9] DEBUG Hooks registered safely
+[2025-11-01 22:45:58 IST] [pid:9] DEBUG All routes registered successfully
+[2025-11-01 22:45:58 IST] [pid:9] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:48:32 IST] [pid:12] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:48:32 IST] [pid:12] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:48:32 IST] [pid:12] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:48:33 IST] [pid:12] DEBUG Cache system initialized
+[2025-11-01 22:48:33 IST] [pid:12] DEBUG Helpers registered
+[2025-11-01 22:48:33 IST] [pid:12] DEBUG Hooks registered safely
+[2025-11-01 22:48:33 IST] [pid:12] DEBUG All routes registered successfully
+[2025-11-01 22:48:33 IST] [pid:12] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:48:38 IST] [pid:15] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:48:38 IST] [pid:15] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:48:38 IST] [pid:15] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:48:39 IST] [pid:15] DEBUG Cache system initialized
+[2025-11-01 22:48:39 IST] [pid:15] DEBUG Helpers registered
+[2025-11-01 22:48:39 IST] [pid:15] DEBUG Hooks registered safely
+[2025-11-01 22:48:39 IST] [pid:15] DEBUG All routes registered successfully
+[2025-11-01 22:48:39 IST] [pid:15] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:49:00 IST] [pid:18] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:49:00 IST] [pid:18] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:49:00 IST] [pid:18] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:49:04 IST] [pid:18] DEBUG Cache system initialized
+[2025-11-01 22:49:04 IST] [pid:18] DEBUG Helpers registered
+[2025-11-01 22:49:04 IST] [pid:18] DEBUG Hooks registered safely
+[2025-11-01 22:49:04 IST] [pid:18] DEBUG All routes registered successfully
+[2025-11-01 22:49:04 IST] [pid:18] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:49:30 IST] [pid:8] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:49:30 IST] [pid:8] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:49:30 IST] [pid:8] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:49:30 IST] [pid:8] DEBUG Cache system initialized
+[2025-11-01 22:49:30 IST] [pid:8] DEBUG Helpers registered
+[2025-11-01 22:49:30 IST] [pid:8] DEBUG Hooks registered safely
+[2025-11-01 22:49:30 IST] [pid:8] DEBUG All routes registered successfully
+[2025-11-01 22:49:30 IST] [pid:8] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:50:04 IST] [pid:8] DEBUG Connected to DB [jadoo] dsn=dbi:SQLite:dbname=/usr/src/app/localdb/Jadoo_2006.db
+[2025-11-01 22:50:04 IST] [pid:8] DEBUG [SQL]
+    SELECT meta_title, meta_descr, meta_keywords FROM webpages WHERE url = ?
+ | binds: 'explore-by-interest' | called from: TravellersPalm::Database::Core::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Core/Connector.pm line 129 | route: /destinations/india/themes
+[2025-11-01 22:50:04 IST] [pid:8] DEBUG [SQL]
+    SELECT pagename, introduction, url, oneliner, meta_title, meta_descr, meta_keywords, themes_id FROM themes ORDER BY themes.pagename
+ | binds: (none) | called from: TravellersPalm::Database::Core::Connector::_execute_db at /usr/src/app/lib/TravellersPalm/Database/Core/Connector.pm line 130
+[2025-11-01 22:54:11 IST] [pid:11] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:54:11 IST] [pid:11] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:54:11 IST] [pid:11] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:54:11 IST] [pid:11] DEBUG Cache system initialized
+[2025-11-01 22:54:11 IST] [pid:11] DEBUG Helpers registered
+[2025-11-01 22:54:11 IST] [pid:11] DEBUG Hooks registered safely
+[2025-11-01 22:54:11 IST] [pid:11] DEBUG All routes registered successfully
+[2025-11-01 22:54:11 IST] [pid:11] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:54:18 IST] [pid:14] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:54:18 IST] [pid:14] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:54:18 IST] [pid:14] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:54:19 IST] [pid:14] DEBUG Cache system initialized
+[2025-11-01 22:54:19 IST] [pid:14] DEBUG Helpers registered
+[2025-11-01 22:54:19 IST] [pid:14] DEBUG Hooks registered safely
+[2025-11-01 22:54:19 IST] [pid:14] DEBUG All routes registered successfully
+[2025-11-01 22:54:19 IST] [pid:14] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:55:19 IST] [pid:17] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:55:19 IST] [pid:17] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:55:19 IST] [pid:17] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:55:20 IST] [pid:17] DEBUG Cache system initialized
+[2025-11-01 22:55:20 IST] [pid:17] DEBUG Helpers registered
+[2025-11-01 22:55:20 IST] [pid:17] DEBUG Hooks registered safely
+[2025-11-01 22:55:20 IST] [pid:17] DEBUG All routes registered successfully
+[2025-11-01 22:55:20 IST] [pid:17] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:57:14 IST] [pid:20] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:57:14 IST] [pid:20] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:57:14 IST] [pid:20] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:57:15 IST] [pid:20] DEBUG Cache system initialized
+[2025-11-01 22:57:15 IST] [pid:20] DEBUG Helpers registered
+[2025-11-01 22:57:15 IST] [pid:20] DEBUG Hooks registered safely
+[2025-11-01 22:57:15 IST] [pid:20] DEBUG All routes registered successfully
+[2025-11-01 22:57:15 IST] [pid:20] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:57:50 IST] [pid:7] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:57:50 IST] [pid:7] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:57:50 IST] [pid:7] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:57:51 IST] [pid:7] DEBUG Cache system initialized
+[2025-11-01 22:57:51 IST] [pid:7] DEBUG Helpers registered
+[2025-11-01 22:57:51 IST] [pid:7] DEBUG Hooks registered safely
+[2025-11-01 22:57:51 IST] [pid:7] DEBUG All routes registered successfully
+[2025-11-01 22:57:51 IST] [pid:7] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:59:18 IST] [pid:10] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:59:18 IST] [pid:10] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:59:18 IST] [pid:10] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:59:19 IST] [pid:10] DEBUG Cache system initialized
+[2025-11-01 22:59:19 IST] [pid:10] DEBUG Helpers registered
+[2025-11-01 22:59:19 IST] [pid:10] DEBUG Hooks registered safely
+[2025-11-01 22:59:19 IST] [pid:10] DEBUG All routes registered successfully
+[2025-11-01 22:59:19 IST] [pid:10] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:59:24 IST] [pid:13] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:59:24 IST] [pid:13] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:59:24 IST] [pid:13] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:59:25 IST] [pid:13] DEBUG Cache system initialized
+[2025-11-01 22:59:25 IST] [pid:13] DEBUG Helpers registered
+[2025-11-01 22:59:25 IST] [pid:13] DEBUG Hooks registered safely
+[2025-11-01 22:59:25 IST] [pid:13] DEBUG All routes registered successfully
+[2025-11-01 22:59:25 IST] [pid:13] DEBUG TravellersPalm app started successfully
+[2025-11-01 22:59:31 IST] [pid:16] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 22:59:31 IST] [pid:16] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 22:59:31 IST] [pid:16] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 22:59:32 IST] [pid:16] DEBUG Cache system initialized
+[2025-11-01 22:59:32 IST] [pid:16] DEBUG Helpers registered
+[2025-11-01 22:59:32 IST] [pid:16] DEBUG Hooks registered safely
+[2025-11-01 22:59:32 IST] [pid:16] DEBUG All routes registered successfully
+[2025-11-01 22:59:32 IST] [pid:16] DEBUG TravellersPalm app started successfully
+[2025-11-01 23:00:47 IST] [pid:19] DEBUG Logger initialized at /usr/src/app/log/app.log with timezone Asia/Kolkata
+[2025-11-01 23:00:47 IST] [pid:19] DEBUG Setting up hybrid email transport (log + send)
+[2025-11-01 23:00:47 IST] [pid:19] DEBUG Email transport initialized using Basic SMTP for host: smtp.gmail.com
+[2025-11-01 23:00:48 IST] [pid:19] DEBUG Cache system initialized
+[2025-11-01 23:00:48 IST] [pid:19] DEBUG Helpers registered
+[2025-11-01 23:00:48 IST] [pid:19] DEBUG Hooks registered safely
+[2025-11-01 23:00:48 IST] [pid:19] DEBUG All routes registered successfully
+[2025-11-01 23:00:48 IST] [pid:19] DEBUG TravellersPalm app started successfully

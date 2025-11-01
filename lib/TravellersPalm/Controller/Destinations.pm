@@ -8,6 +8,7 @@ use TravellersPalm::Functions qw(addptags boldify email_request ourtime url2text
 BEGIN { 
   require TravellersPalm::Database::General; 
   require TravellersPalm::Database::States; 
+  require TravellersPalm::Database::Themes;
 }
 
 # -----------------------------
@@ -25,9 +26,10 @@ sub regions ($self) {
     my $content = TravellersPalm::Database::General::webtext(7, $self);
     my $webpage = TravellersPalm::Database::General::webpages(11, $self);
   
-    my $crumb    = "<li>Destinations</li>
-                    <li><a href='".$self->req."/destinations/$country'>" . url2text($country) . "</a></li>
-                    <li class='active'>Regions</li>";
+    my $crumb = sprintf(
+        "<li>Destinations</li><li><a href='%s/destinations/%s'>%s</a></li><li class='active'>Regions</li>",
+        $self->req->url->base, $country, url2text($country)
+    );
 
     $self->render(
         template   => 'regions',
@@ -42,10 +44,10 @@ sub regions ($self) {
 };
 
 sub states ($self) {
-
-    my $crumb    = "<li>Destinations</li>
-                 <li><a href='".$self->req."/destinations/india'>India</a></li>
-                 <li class='active'>States</li>";
+    my $crumb = sprintf(
+        "<li>Destinations</li><li><a href='%s/destinations/india'>India</a></li><li class='active'>States</li>",
+        $self->req->url->base
+    );
 
     $self->render(
         template        => 'states',
@@ -64,9 +66,10 @@ sub states ($self) {
 sub themes($self) {
     my $country = $self->stash('country'); 
 
-    my $crumb = "<li>Destinations</li>
-                 <li><a href='".$self->req."/destinations/$country'>" . url2text($country) . "</a></li>
-                 <li class='active'>Themes</a></li>";
+    my $crumb = sprintf(
+        "<li>Destinations</li><li><a href='%s/destinations/%s'>%s</a></li><li class='active'>Themes</li>",
+        $self->req->url->base, $country, url2text($country)
+    );
 
     $self->render (
         template => 'themes',

@@ -32,7 +32,8 @@ sub sanitize_sensitive_data {
     $text =~ s/secret[=:]\s*[^\s&\n]+/secret=[REDACTED]/gi;
     
     # Remove long encoded strings that might be tokens (base64-like)
-    $text =~ s/[A-Za-z0-9+\/]{40,}={0,2}/[ENCODED_TOKEN_REDACTED]/g;
+    # More specific pattern: must have at least one + or / and be long enough to be a token
+    $text =~ s/[A-Za-z0-9]*[+\/][A-Za-z0-9+\/]{30,}={0,2}/[ENCODED_TOKEN_REDACTED]/g;
     
     # Remove GOCSPX- Google OAuth2 client secrets
     $text =~ s/GOCSPX-[A-Za-z0-9_-]+/GOCSPX-[REDACTED]/g;
@@ -249,7 +250,7 @@ sub register {
         my $hostname  = hostname();
 
         # Sanitize all data before passing to template
-        my $sanitized_exception = sanitize_sensitive_data($exception);
+        my $sanitized_exception_template = sanitize_sensitive_data($exception);
         my $sanitized_error_body = sanitize_sensitive_data($error_body);
         my $sanitized_url = sanitize_sensitive_data($url);
         my $sanitized_agent = sanitize_sensitive_data($agent);
@@ -266,7 +267,7 @@ sub register {
                 agent     => $sanitized_agent,
                 time      => $time,
                 host      => $hostname,
-                exception => $sanitized_exception,
+                exception => $sanitized_exception_template,
                 body      => $sanitized_error_body,
             );
             
@@ -280,6 +281,7 @@ sub register {
         };
 
         my $from    = $self->config->{email}{error}{from}    // $self->config->{email}{from} // 'system@travellerspalm.com';
+        my $error_to = $self->config->{email}{error}{to} || $self->config->{email}{admin} || $ENV{EMAIL_USER};
         my $subject = $self->config->{email}{error}{subject} // "[TravellersPalm] Error at $url";
 
         # Debug: Log the email configuration being used
@@ -289,7 +291,6 @@ sub register {
         eval {
             $self->log->info("Attempting to send error email:");
             $self->log->info("From: $from");
-            my $error_to = $self->config->{email}{error}{to} || $self->config->{email}{admin} || $ENV{EMAIL_USER};
             $self->log->info("To: $error_to");
             $self->log->info("Subject: $subject");
             

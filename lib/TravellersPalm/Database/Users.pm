@@ -286,7 +286,7 @@ sub generate_totp_code {
     $time_step //= floor(time() / 30);
     
     # Decode Base32 secret
-    my $secret = MIME::Base32::decode($secret_base32);
+    my $secret = MIME::Base32::decode_base32($secret_base32);
     
     # Convert time step to 8-byte big-endian
     my $time_bytes = pack('N2', 0, $time_step);
@@ -321,27 +321,6 @@ sub generate_2fa_qr_data {
         qr_url => $totp_url,
         manual_entry_key => $secret
     };
-}
-
-# Generate TOTP code for given secret and time step
-sub generate_totp_code {
-    my ($secret, $time_step) = @_;
-    
-    # Decode the Base32 secret
-    my $key = MIME::Base32::decode_base32($secret);
-    
-    # Convert time step to 8-byte big-endian binary
-    my $time_bytes = pack('N*', 0, $time_step);
-    
-    # Generate HMAC-SHA1
-    my $hmac = hmac_sha1($time_bytes, $key);
-    
-    # Dynamic truncation
-    my $offset = ord(substr($hmac, -1)) & 0x0F;
-    my $code = unpack('N', substr($hmac, $offset, 4)) & 0x7FFFFFFF;
-    
-    # Return 6-digit code
-    return sprintf('%06d', $code % 1000000);
 }
 
 # Verify 2FA code
