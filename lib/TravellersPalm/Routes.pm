@@ -86,8 +86,15 @@ sub register {
 
     # My Account routes
     $r->get('/login')->to('my_account#login');
+    $r->post('/login')->to('my_account#process_login');
     $r->post('/register')->to('my_account#register');
     $r->post('/mail-password')->to('my_account#mail_password');
+    
+    # 2FA routes
+    $r->get('/2fa/setup')->to('my_account#setup_2fa');
+    $r->post('/2fa/enable')->to('my_account#enable_2fa');
+    $r->post('/2fa/disable')->to('my_account#disable_2fa');
+    $r->get('/2fa/qr')->to('my_account#generate_qr_code');
 
     # Currency switcher
     $r->get('/currency/:currency' => sub {
@@ -102,6 +109,12 @@ sub register {
     # API
     $r->get('/api/ping')->to('api#ping');
     $r->get('/api/user/:id')->to('api#user_info');
+
+    # Debug route to trigger 500 error (remove after testing)
+    $r->get('/debug_500')->to(cb => sub {
+        my $c = shift;
+        die "Intentional 500 error for testing email notifications";
+    });
 
     # Catch-all fallback (404)
     $r->any('*')->to(cb => sub {

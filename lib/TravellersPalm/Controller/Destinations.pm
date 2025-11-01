@@ -71,7 +71,7 @@ sub themes($self) {
     $self->render (
         template => 'themes',
         metatags   => TravellersPalm::Database::General::metatags(THEMES, $self),
-        themes     => TravellersPalm::Database::General::themes($self),
+        themes     => TravellersPalm::Database::Themes::themes($self),
         crumb      => $crumb,
         pathname   => THEMES,
         page_title => url2text(THEMES),

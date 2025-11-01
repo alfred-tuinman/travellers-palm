@@ -14,6 +14,10 @@ use TravellersPalm::Database::Core::Validation qw(
     validate_order
 );
 use Email::Valid;
+use MIME::Base32;
+use Digest::SHA qw(hmac_sha1);
+use URI::Escape;
+use POSIX qw(floor);
 
 #--------------------------------------------------
 # Send password placeholder (stub)
@@ -187,6 +191,169 @@ sub user_update {
     );
 
     return $res;
+}
+
+#--------------------------------------------------
+# 2FA (Two-Factor Authentication) Functions
+#--------------------------------------------------
+
+# Generate 2FA secret for a user
+sub generate_2fa_secret {
+    my ($user_id, $c) = @_;
+    
+    # Generate a random 20-byte secret (160 bits - recommended for TOTP)
+    my $secret = '';
+    for (1..20) {
+        $secret .= chr(int(rand(256)));
+    }
+    
+    # Convert to Base32 for compatibility with authenticator apps
+    my $secret_base32 = MIME::Base32::encode($secret);
+    $secret_base32 =~ s/=//g; # Remove padding
+    
+    # Store in database
+    my $sql = "UPDATE users SET totp_secret = ? WHERE rowid = ?";
+    update_row($sql, [$secret_base32, $user_id], 'users', $c);
+    
+    return $secret_base32;
+}
+
+# Simple TOTP implementation
+sub generate_totp_code {
+    my ($secret_base32, $time_step) = @_;
+    
+    # Default time step is current 30-second window
+    $time_step //= floor(time() / 30);
+    
+    # Decode Base32 secret
+    my $secret = MIME::Base32::decode($secret_base32);
+    
+    # Convert time step to 8-byte big-endian
+    my $time_bytes = pack('N2', 0, $time_step);
+    
+    # Generate HMAC-SHA1
+    my $hmac = hmac_sha1($time_bytes, $secret);
+    
+    # Dynamic truncation
+    my $offset = ord(substr($hmac, -1)) & 0xF;
+    my $code = unpack('N', substr($hmac, $offset, 4)) & 0x7FFFFFFF;
+    
+    # Return 6-digit code
+    return sprintf('%06d', $code % 1000000);
+}
+
+# Generate QR code data for 2FA setup
+sub generate_2fa_qr_data {
+    my ($user_email, $secret, $c) = @_;
+    
+    # Create TOTP URL for authenticator apps
+    my $app_name = "Travellers Palm";
+    my $totp_url = sprintf(
+        "otpauth://totp/%s:%s?secret=%s&issuer=%s",
+        uri_escape($app_name),
+        uri_escape($user_email),
+        $secret,
+        uri_escape($app_name)
+    );
+    
+    return {
+        secret => $secret,
+        qr_url => $totp_url,
+        manual_entry_key => $secret
+    };
+}
+
+# Generate TOTP code for given secret and time step
+sub generate_totp_code {
+    my ($secret, $time_step) = @_;
+    
+    # Decode the Base32 secret
+    my $key = MIME::Base32::decode_base32($secret);
+    
+    # Convert time step to 8-byte big-endian binary
+    my $time_bytes = pack('N*', 0, $time_step);
+    
+    # Generate HMAC-SHA1
+    my $hmac = hmac_sha1($time_bytes, $key);
+    
+    # Dynamic truncation
+    my $offset = ord(substr($hmac, -1)) & 0x0F;
+    my $code = unpack('N', substr($hmac, $offset, 4)) & 0x7FFFFFFF;
+    
+    # Return 6-digit code
+    return sprintf('%06d', $code % 1000000);
+}
+
+# Verify 2FA code
+sub verify_2fa_code {
+    my ($user_id, $code, $c) = @_;
+    
+    # Get user's TOTP secret from database
+    my $sql = "SELECT totp_secret FROM users WHERE rowid = ?";
+    my $row = fetch_row($sql, [$user_id], 'NAME_lc', 'users', $c);
+    
+    return 0 unless $row && $row->{totp_secret};
+    
+    my $secret = $row->{totp_secret};
+    
+    # Check current time window and adjacent windows (to allow for clock skew)
+    my $current_time_step = floor(time() / 30);
+    
+    for my $time_step (($current_time_step - 1) .. ($current_time_step + 1)) {
+        my $expected_code = generate_totp_code($secret, $time_step);
+        if ($code eq $expected_code) {
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
+# Enable 2FA for a user
+sub enable_2fa {
+    my ($user_id, $c) = @_;
+    
+    my $sql = "UPDATE users SET totp_enabled = 1 WHERE rowid = ?";
+    return update_row($sql, [$user_id], 'users', $c);
+}
+
+# Disable 2FA for a user
+sub disable_2fa {
+    my ($user_id, $c) = @_;
+    
+    my $sql = "UPDATE users SET totp_enabled = 0, totp_secret = NULL WHERE rowid = ?";
+    return update_row($sql, [$user_id], 'users', $c);
+}
+
+# Check if user has 2FA enabled
+sub user_has_2fa {
+    my ($user_id, $c) = @_;
+    
+    my $sql = "SELECT totp_enabled FROM users WHERE rowid = ?";
+    my $row = fetch_row($sql, [$user_id], 'NAME_lc', 'users', $c);
+    
+    return $row && $row->{totp_enabled} ? 1 : 0;
+}
+
+# Enhanced login check with 2FA
+sub user_ok_with_2fa {
+    my ($username, $password, $totp_code, $c) = @_;
+    
+    # First check regular password
+    my $user = user_ok($username, $password, $c);
+    return 0 unless $user;
+    
+    my $user_id = $user->{rowid};
+    
+    # Check if 2FA is enabled for this user
+    if (user_has_2fa($user_id, $c)) {
+        # 2FA is enabled, verify TOTP code
+        return 0 unless $totp_code;
+        return verify_2fa_code($user_id, $totp_code, $c) ? $user : 0;
+    }
+    
+    # 2FA not enabled, regular login is sufficient
+    return $user;
 }
 
 1;
